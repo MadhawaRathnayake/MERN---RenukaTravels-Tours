@@ -10,10 +10,12 @@ import DestinationDetails from './pages/DestinationDetails'
 import Hotels from './pages/Hotels'
 import Vehicles from './pages/Vehicles'
 import Tours from './pages/Tours'
+import Header from './components/Header'
 
 export default function App() {
   return (
     <BrowserRouter>
+      <Header />
       <Routes>
         <Route path='/' element={<HomePage />}></Route>
         <Route path='/about' element={<About />}></Route>
