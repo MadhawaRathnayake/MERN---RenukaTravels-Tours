@@ -1,9 +1,10 @@
-import React from 'react'
+import React from "react";
+import SubscribeBanner from "../components/SubscribeBanner";
 
 export default function HomePage() {
   return (
     <div>
-      Home
+      <SubscribeBanner />
     </div>
-  )
+  );
 }
