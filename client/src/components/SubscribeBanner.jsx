@@ -12,7 +12,8 @@ const SubscribeBanner = () => {
             </span>
           </div>
           <h2 className="text-4xl font-bold mb-8">
-            Subscribe now to get useful traveling information
+            Subscribe now to get <span className="text-[#F4AC20]">useful </span>
+            traveling <span className="text-[#F4AC20]">information</span>
           </h2>
           <div className="flex items-center bg-white rounded-lg shadow-md p-2 mb-4">
             <input
