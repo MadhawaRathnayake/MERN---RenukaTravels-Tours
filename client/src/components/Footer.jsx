@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import maleTourist from "../images/male-tourist.png";
 
 const quick_links = [
   { path: "/home", display: "Home" },
