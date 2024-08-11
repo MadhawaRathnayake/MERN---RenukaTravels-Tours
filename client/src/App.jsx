@@ -11,7 +11,6 @@ import Hotels from "./pages/Hotels";
 import Vehicles from "./pages/Vehicles";
 import Tours from "./pages/Tours";
 import Header from "./components/Header";
-import "remixicon/fonts/remixicon.css";
 
 export default function App() {
   return (
