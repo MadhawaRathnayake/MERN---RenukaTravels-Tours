@@ -21,7 +21,7 @@ const SubscribeBanner = () => {
               placeholder="Enter your email"
               className="flex-grow border-none text-lg p-2 focus:outline-none"
             />
-            <button className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg">
+            <button className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg hover:bg-[#f49120]">
               Subscribe
             </button>
           </div>
