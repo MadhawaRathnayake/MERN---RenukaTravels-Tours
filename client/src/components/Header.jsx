@@ -1,5 +1,5 @@
 import { Navbar } from "flowbite-react";
-//import React, { useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 export default function Header() {
@@ -24,7 +24,7 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="py-8 flex justify-around items-center mx-auto">
+    <Navbar className="border-b-2 sticky top-0 z-50 w-full">
       <div>
         <img
           src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
