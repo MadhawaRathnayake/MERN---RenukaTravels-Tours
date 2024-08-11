@@ -1,9 +1,14 @@
-import React from 'react'
+import React from "react";
+import SubscribeBanner from "../components/homePage/SubscribeBanner";
+import Footer from "../components/Footer";
+import Div01 from "../components/homePage/div01";
 
 export default function HomePage() {
   return (
-    <div>
-      Home
+    <div className="bg-[#fefcfb]">
+      <Div01 />
+      <SubscribeBanner />
+      <Footer />
     </div>
-  )
+  );
 }
