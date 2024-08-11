@@ -7,6 +7,9 @@ export default {
   ],
   theme: {
     extend: {},
+    fontFamily: {
+      'Aclonica': 'Aclonica'
+    },
   },
   plugins: [require('flowbite/plugin'),],
 }
