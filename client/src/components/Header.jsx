@@ -24,7 +24,7 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="py-8 px-2 lg:px-20 flex justify-between items-center mx-auto">
+    <Navbar className="max-w-7xl mx-auto py-8 px-8 flex justify-evenly items-center">
       <div>
         <img
           src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
