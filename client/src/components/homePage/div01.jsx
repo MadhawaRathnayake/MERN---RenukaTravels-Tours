@@ -6,7 +6,7 @@ const Div01 = () => {
     <section className="mt-12 p-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0 pr-4">
-          <h2 className="text-5xl font-bold mb-8 font-Aclonica">
+          <h2 className="text-5xl mb-8 font-Aclonica">
             It’s a Big World Out There,{" "}
             <span className="text-[#F4AC20]">Go Explore </span>
           </h2>
@@ -17,7 +17,7 @@ const Div01 = () => {
             Sri Lankan adventure today!
           </p>
           <div className="py-5">
-            <button className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg">
+            <button className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg hover:bg-[#f49120]">
               <b className="text-xl">Sign Up</b>
             </button>
           </div>
@@ -81,7 +81,7 @@ const Div01 = () => {
           </div>
 
           <div className="flex-1 pt-8 w-1/4">
-            <button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg align-middle">
+            <button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg align-middle hover:bg-[#f49120]">
               <b className="text-xl">Costomiz Your Own Plan</b>
             </button>
           </div>

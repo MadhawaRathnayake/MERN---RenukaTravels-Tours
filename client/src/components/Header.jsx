@@ -24,7 +24,11 @@ export default function Header() {
   };
 
   return (
+<<<<<<< HEAD
     <Navbar className="py-8 flex justify-around items-center mx-auto">
+=======
+    <Navbar className="max-w-7xl mx-auto py-8 px-8 flex justify-between items-center">
+>>>>>>> 4e8f98acf6625c1a2f5031e1bb6f060e701b0ad6
       <div>
         <img
           src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
@@ -33,16 +37,16 @@ export default function Header() {
         />
       </div>
       <div
-        className={`lg:static absolute bg-white lg:min-h-fit min-h-[60vh] left-0 ${navLinksClass} lg:w-auto w-full flex items-center px-5 nav-links`}
+        className={`lg:static absolute bg-white lg:min-h-fit min-h-[60vh] left-0 ${navLinksClass} lg:w-auto w-full flex items-center px-5`}
       >
         <ul className="flex lg:flex-row flex-col lg:items-center lg:gap-[4vw] gap-8">
           <li>
-            <a className="hover:text-[#F4AC20]" href="#">
+            <a className="hover:text-[#F4AC20]" href="/">
               HOME
             </a>
           </li>
           <li>
-            <a className="hover:text-[#F4AC20]" href="#">
+            <a className="hover:text-[#F4AC20]" href="/about">
               ABOUT US
             </a>
           </li>
@@ -75,7 +79,7 @@ export default function Header() {
         <img
           src={menuImage}
           alt="menu.img"
-          className="w-6 cursor-pointer lg:hidden"
+          className=" w-6 lg:w-0 xl:w-0 cursor-pointer lg:hidden"
           onClick={toggleMenuImage}
         />
       </div>
