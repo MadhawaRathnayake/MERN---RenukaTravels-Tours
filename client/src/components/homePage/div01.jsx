@@ -1,9 +1,10 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import homecover from "../../images/home-cover.png";
 
 const Div01 = () => {
   return (
-    <section className="mt-12 p-0">
+    <section className="mt-8 p-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0 pr-4">
           <h2 className="text-5xl mb-8 font-Aclonica">
