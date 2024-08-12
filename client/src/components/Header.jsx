@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Navbar } from "flowbite-react";
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
@@ -24,11 +25,7 @@ export default function Header() {
   };
 
   return (
-<<<<<<< HEAD
-    <Navbar className="py-8 flex justify-around items-center mx-auto">
-=======
     <Navbar className="max-w-7xl mx-auto py-8 px-8 flex justify-between items-center">
->>>>>>> 4e8f98acf6625c1a2f5031e1bb6f060e701b0ad6
       <div>
         <img
           src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
