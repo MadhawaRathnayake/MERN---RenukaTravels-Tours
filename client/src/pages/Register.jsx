@@ -1,19 +1,36 @@
-import React from 'react';
+import React, { useState } from "react";
 import { Button, Label, TextInput } from "flowbite-react";
-import { Link } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { AiFillGoogleCircle } from 'react-icons/ai';
-import signupImg from '../images/Signup.png';
-import signupImg2 from '../images/signip1.png';
+import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { AiFillGoogleCircle } from "react-icons/ai";
+import signupImg from "../images/Signup.png";
+import signupImg2 from "../images/signip1.png";
 
 export default function Register() {
-  const handleChange = () => {
-    // handle change logic
+  const [formData, setFormData] = useState({});
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.id]: e.target.value,
+    });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // handle submit logic
+    try {
+      const res = await fetch("http://localhost:3000/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+      const data = await res.json();
+      console.log(data);
+    } catch (err) {
+      console.error("Error during sign up:", err);
+    }
   };
 
   const handleGoogleClick = () => {
@@ -29,7 +46,6 @@ export default function Register() {
       />
 
       <div className="section flex flex-col md:flex-row items-center p-6 max-w-4xl mx-auto gap-8 bg-white shadow-md rounded-lg relative z-10 mt-40 md:mt-20">
-
         {/* Left */}
         <motion.div
           className="flex-1 text-center md:text-left"
@@ -38,12 +54,20 @@ export default function Register() {
           transition={{ duration: 0.6 }}
         >
           <h1 className="text-center text-xl mx-3 font-semibold bg-gradient-to-r from-blue-500 to-blue-700 bg-clip-text text-transparent dark:from-green-400 dark:to-blue-500">
-            Sign up now to start crafting your personalized Sri Lankan adventure today!
+            Sign up now to start crafting your personalized Sri Lankan adventure
+            today!
           </h1>
 
           <div className="flex justify-center md:justify-start">
-            <Link to="/" className="text-6xl font-bold text-gray-800 flex items-center">
-              <img className="mt-6 h-56 w-auto md:h-72 lg:h-96" src={signupImg2} alt="Signup Visual" />
+            <Link
+              to="/"
+              className="text-6xl font-bold text-gray-800 flex items-center"
+            >
+              <img
+                className="mt-6 h-56 w-auto md:h-72 lg:h-96"
+                src={signupImg2}
+                alt="Signup Visual"
+              />
             </Link>
           </div>
         </motion.div>
@@ -55,9 +79,13 @@ export default function Register() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
         >
-          <form className="flex flex-col gap-4 p-6 bg-custom-orange rounded-lg" onSubmit={handleSubmit}>
+          <form
+            className="flex flex-col gap-4 p-6 bg-custom-orange rounded-lg"
+            onSubmit={handleSubmit}
+          >
             <p className="text-sm mt-2 text-gray-600 text-center">
-              You can sign up with your email and password or with your Google account!
+              You can sign up with your email and password or with your Google
+              account!
             </p>
             <div>
               <Label value="Your Username" className="text-gray-700" />
@@ -70,7 +98,10 @@ export default function Register() {
               />
             </div>
             <div>
-              <Label value="Your Email" className="text-gray-700 dark:text-gray-300" />
+              <Label
+                value="Your Email"
+                className="text-gray-700 dark:text-gray-300"
+              />
               <TextInput
                 type="email"
                 placeholder="name@example.com"
@@ -80,7 +111,10 @@ export default function Register() {
               />
             </div>
             <div>
-              <Label value="Your Password" className="text-gray-700 dark:text-gray-300" />
+              <Label
+                value="Your Password"
+                className="text-gray-700 dark:text-gray-300"
+              />
               <TextInput
                 type="password"
                 placeholder="**********"
@@ -97,12 +131,12 @@ export default function Register() {
               Register
             </Button>
             <Button
-              type='button'
+              type="button"
               gradientDuoTone="purpleToPink"
               outline
               onClick={handleGoogleClick}
             >
-              <AiFillGoogleCircle className="w-6 h-6 mr-2 text-blue-500"/>
+              <AiFillGoogleCircle className="w-6 h-6 mr-2 text-blue-500" />
               Continue With Google
             </Button>
           </form>
