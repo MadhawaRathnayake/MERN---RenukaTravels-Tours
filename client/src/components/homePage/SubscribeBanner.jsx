@@ -1,10 +1,11 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import maleTourist from "../../images/male-tourist.png";
 
 const SubscribeBanner = () => {
   return (
     <section className="bg-blue-100 mt-12 p-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col lg:flex-row items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8  flex flex-col lg:flex-row items-center">
         <div className="lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0">
           <div className="mb-4">
             <span className="bg-[#F4AC20] text-white font-bold px-3 py-1 rounded">
@@ -30,9 +31,10 @@ const SubscribeBanner = () => {
             obcaecati beatae iure facilis, veritatis possimus.
           </p>
         </div>
-        <div className="lg:w-1/2">
-          <img src={maleTourist} alt="Male Tourist" className="w-full" />
-        </div>
+        <div className="hidden lg:block lg:w-1/2">
+  <img src={maleTourist} alt="Male Tourist" className="h-[75vh] ml-40" />
+</div>
+
       </div>
     </section>
   );

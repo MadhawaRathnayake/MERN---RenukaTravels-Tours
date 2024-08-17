@@ -11,6 +11,7 @@ import Hotels from "./pages/Hotels";
 import Vehicles from "./pages/Vehicles";
 import Tours from "./pages/Tours";
 import Header from "./components/Header";
+import Footer from "./components/Footer";
 
 export default function App() {
   return (
@@ -31,6 +32,8 @@ export default function App() {
         <Route path="/vehicles" element={<Vehicles />}></Route>
         <Route path="/tours" element={<Tours />}></Route>
       </Routes>
+      <Footer/>
     </BrowserRouter>
+   
   );
 }
