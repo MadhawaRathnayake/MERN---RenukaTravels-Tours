@@ -69,10 +69,12 @@ export default function Header() {
           </li>
         </ul>
       </div>
-      <div className="flex items-center gap-6">
-        <button className="bg-[#F4AC20] text-white font-bold px-8 py-2 rounded-lg hover:bg-[#f49120]">
-          Register
-        </button>
+      <div className="flex items-center gap-6 " >
+      <Link to="/register">
+  <button className="bg-[#F4AC20] text-white font-bold px-8 py-2 rounded-lg hover:bg-[#f49120]">
+    Register
+  </button>
+</Link>
         <img
           src={menuImage}
           alt="menu.img"
