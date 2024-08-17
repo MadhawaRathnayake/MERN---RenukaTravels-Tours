@@ -10,7 +10,6 @@ export default function HomePage() {
       <Div01 />
       <Div02 />
       <SubscribeBanner />
-      
     </div>
   );
 }
