@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import maleTourist from "../../images/male-tourist.png";
 
@@ -30,9 +31,10 @@ const SubscribeBanner = () => {
             obcaecati beatae iure facilis, veritatis possimus.
           </p>
         </div>
-        <div className="lg:w-1/2">
-          <img src={maleTourist} alt="Male Tourist" className=" h-[75vh] ml-40" />
-        </div>
+        <div className="hidden lg:block lg:w-1/2">
+  <img src={maleTourist} alt="Male Tourist" className="h-[75vh] ml-40" />
+</div>
+
       </div>
     </section>
   );
