@@ -12,7 +12,6 @@ export default function HomePage() {
       <Div02 />
       <Div03/>
       <SubscribeBanner />
-      <Footer />
     </div>
   );
 }

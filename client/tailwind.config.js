@@ -1,15 +1,27 @@
+/* eslint-disable no-undef */
+// eslint-disable-next-line no-undef
+const flowbite = require("flowbite-react/tailwind", );
+
 /** @type {import('tailwindcss').Config} */
+
 export default {
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
-    'node_modules/flowbite-react/**/*.{js,jsx,ts,tsx}',
+    flowbite.content(),
+    
   ],
   theme: {
-    extend: {},
-    fontFamily: {
-      'Aclonica': 'Aclonica'
+    extend: {
+      colors: {
+        'custom-orange': '#F4AC20',
+      },
     },
   },
-  plugins: [require('flowbite/plugin'),],
+  plugins: [
+    flowbite.plugin(),
+   
+    
+
+  ],
 }
