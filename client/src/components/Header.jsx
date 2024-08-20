@@ -63,7 +63,7 @@ export default function Header() {
             </a>
           </li>
           <li>
-            <a className="hover:text-[#F4AC20]" href="#">
+            <a className="hover:text-[#F4AC20]" href="/signin">
               LOG IN
             </a>
           </li>
