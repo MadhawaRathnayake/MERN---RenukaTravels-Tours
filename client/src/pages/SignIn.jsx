@@ -5,12 +5,16 @@ import { motion } from "framer-motion";
 import { AiFillGoogleCircle } from "react-icons/ai";
 import signupImg from "../images/Signup.png";
 import signupImg2 from "../images/signip1.png";
+import { useDispatch, useSelector } from "react-redux";
+import { signInSuccess,signInStart,signInFailure } from "../redux/user/userSlice";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const [errorMessage, setErrorMessage] = useState(null);
-  const [loading, setLoading] = useState(false);
+  
+  const dispatch = useDispatch();
   const navigate = useNavigate();
+  const {loading, error: errorMessage} = useSelector(state => state.user);
+  
 
   const handleChange = (e) => {
     setFormData({
@@ -22,9 +26,10 @@ export default function SignIn() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!formData.email || !formData.password) {
-      return setErrorMessage('Please fill out all required fields');
+      return dispatch(signInFailure('Please fill all the fields'));
     } 
     try {
+      dispatch(signInStart());
       const res = await fetch("/api/auth/signin", { 
         method: "POST",
         headers: {
@@ -34,17 +39,17 @@ export default function SignIn() {
       });
       const data = await res.json();
       if (data.success === false) {
-        return setErrorMessage(data.message);
+        dispatch(signInFailure(data.message));
       }
-      setLoading(false);
+      
 
       if (res.ok) {
+        dispatch(signInSuccess(data))
         navigate('/');
       }
       
     } catch (error) {
-      setErrorMessage(error.message);
-      setLoading(false);
+      dispatch(signInFailure(error.message));
     }
   };
   
