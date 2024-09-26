@@ -2,9 +2,9 @@ import React, { useState } from "react";
 import {Alert, Button, Label, TextInput, Spinner } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { AiFillGoogleCircle } from "react-icons/ai";
 import signupImg from "../images/Signup.png";
 import signupImg2 from "../images/signip1.png";
+import OAuth from "../components/OAuth";
 
 export default function Register() {
   const [formData, setFormData] = useState({});
@@ -154,15 +154,7 @@ export default function Register() {
                 "Sign Up"
               )}
             </Button>
-            <Button
-              type="button"
-              gradientDuoTone="purpleToPink"
-              outline
-              onClick={handleGoogleClick}
-            >
-              <AiFillGoogleCircle className="w-6 h-6 mr-2 text-blue-500" />
-              Continue With Google
-            </Button>
+            <OAuth />
           </form>
           <div className="flex gap-2 text-sm mt-5 text-gray-600 dark:text-gray-300">
             <span>Have an account already?</span>
