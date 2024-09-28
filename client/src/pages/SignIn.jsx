@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import {Alert, Button, Label, TextInput, Spinner } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { AiFillGoogleCircle } from "react-icons/ai";
+
 import signupImg from "../images/Signup.png";
 import signupImg2 from "../images/signip1.png";
 import { useDispatch, useSelector } from "react-redux";
 import { signInSuccess,signInStart,signInFailure } from "../redux/user/userSlice";
+import OAuth from "../components/OAuth";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
@@ -54,10 +55,6 @@ export default function SignIn() {
   };
   
   
-
-  const handleGoogleClick = () => {
-    // handle Google click logic
-  };
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 overflow-hidden relative">
@@ -150,15 +147,7 @@ export default function SignIn() {
                 "Sign In"
               )}
             </Button>
-            <Button
-              type="button"
-              gradientDuoTone="purpleToPink"
-              outline
-              onClick={handleGoogleClick}
-            >
-              <AiFillGoogleCircle className="w-6 h-6 mr-2 text-blue-500" />
-              Continue With Google
-            </Button>
+            <OAuth />
           </form>
           <div className="flex gap-2 text-sm mt-5 text-gray-600 dark:text-gray-300">
             <span>Don't have an account?</span>
