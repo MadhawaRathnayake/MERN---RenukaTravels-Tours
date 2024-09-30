@@ -270,10 +270,17 @@ export default function DashProfile() {
           placeholder='password' onChange={handleChange}
         />
 
-        <Button type='submit' gradientDuoTone='purpleToBlue' outline 
-        disabled={loading || imageFileUploading}>
-          {loading ? 'Loading...' : 'Update'}
-        </Button>
+<Button
+  type="submit"
+  style={{
+    background: 'linear-gradient(to right, #FFA400, #FF4400)', // Custom orange gradient
+  }}
+  outline
+  disabled={loading || imageFileUploading}
+>
+  {loading ? 'Loading...' : 'Update'}
+</Button>
+
        
 
 
