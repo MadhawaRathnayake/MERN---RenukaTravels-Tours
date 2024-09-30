@@ -1,13 +1,16 @@
 import React, { useState } from "react";
-import { Button, Label, TextInput } from "flowbite-react";
-import { Link } from "react-router-dom";
+import {Alert, Button, Label, TextInput, Spinner } from "flowbite-react";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { AiFillGoogleCircle } from "react-icons/ai";
 import signupImg from "../images/Signup.png";
 import signupImg2 from "../images/signip1.png";
+import OAuth from "../components/OAuth";
 
 export default function Register() {
   const [formData, setFormData] = useState({});
+  const [errorMessage, setErrorMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({
@@ -18,8 +21,11 @@ export default function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!formData.username || !formData.email || !formData.password) {
+      return setErrorMessage('Please fill out all required fields');
+    } 
     try {
-      const res = await fetch("http://localhost:3000/api/auth/signup", {
+      const res = await fetch("/api/auth/signup", { 
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -27,11 +33,22 @@ export default function Register() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
-      console.log(data);
-    } catch (err) {
-      console.error("Error during sign up:", err);
+      if (data.success === false) {
+        return setErrorMessage(data.message);
+      }
+      setLoading(false);
+
+      if (res.ok) {
+        navigate('/signin');
+      }
+      
+    } catch (error) {
+      setErrorMessage(error.message);
+      setLoading(false);
     }
   };
+  
+  
 
   const handleGoogleClick = () => {
     // handle Google click logic
@@ -128,24 +145,28 @@ export default function Register() {
               type="submit"
               className="bg-blue-500 text-white border border-white"
             >
-              Register
+               {loading ? (
+                <>
+                  <Spinner size="sm" />
+                  <span className="pl-3">Loading....</span>
+                </>
+              ) : (
+                "Sign Up"
+              )}
             </Button>
-            <Button
-              type="button"
-              gradientDuoTone="purpleToPink"
-              outline
-              onClick={handleGoogleClick}
-            >
-              <AiFillGoogleCircle className="w-6 h-6 mr-2 text-blue-500" />
-              Continue With Google
-            </Button>
+            <OAuth />
           </form>
           <div className="flex gap-2 text-sm mt-5 text-gray-600 dark:text-gray-300">
             <span>Have an account already?</span>
-            <Link to="/sign-in" className="text-blue-500 dark:text-blue-400">
+            <Link to="/signin" className="text-blue-500 dark:text-blue-400">
               Sign In
             </Link>
           </div>
+          {errorMessage && (
+            <Alert className="mt-5" color="failure">
+              {errorMessage}
+            </Alert>
+          )}
         </motion.div>
       </div>
     </div>
