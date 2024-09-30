@@ -94,6 +94,16 @@ export default function DashSidebar() {
               Tours
             </Sidebar.Item>
           )}
+          {!currentUser.isAdmin && (
+            <Sidebar.Item
+              as={Link}
+              to='/dashboard?tab=travel-plans'
+              active={tab === 'travel-plans'}
+              icon={() => <FaMapMarkerAlt className="text-orange-400" />}  // Icon for Travel Plans
+            >
+              My Travel Plans
+            </Sidebar.Item>
+          )}
 
           {currentUser.isAdmin && (
             <Sidebar.Item

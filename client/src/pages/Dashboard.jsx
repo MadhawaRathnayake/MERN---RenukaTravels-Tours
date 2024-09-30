@@ -7,6 +7,11 @@ import DashProfile from '../components/DashProfile';
 import DashHotels from '../components/DashHotels';
 import DashUsers from '../components/DashUsers';
 import DashboardComp from '../components/DashboardComp';
+import DashDestinations from '../components/DashDestinations';
+import DashTours from '../components/DashTours';
+import DashVehicles from '../components/DashVehicles';
+import DashBookings from '../components/DashBookings';
+import DashSubscribers from '../components/DashSubscribers';
 
 
 function Dashboard() {
@@ -40,6 +45,18 @@ if(tabFromUrl)
      
       {/*Dashboard*/}
       {tab==='dash' && <DashboardComp/>}
+      {/*Destinations*/}
+      {tab==='destinations' && <DashDestinations/>}
+      {/*Tours*/}
+      
+      {tab==='tours' && <DashTours/>}
+        {/*Vehicless*/}
+        {tab==='vehicles' && <DashVehicles/>}
+      {/*Bookings*/}
+      {tab==='bookings' && <DashBookings/>}
+      {/*Subscribers*/}
+      {tab==='subscribers' && <DashSubscribers/>}
+
 
     </div>
   )
