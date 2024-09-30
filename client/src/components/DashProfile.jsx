@@ -12,7 +12,7 @@ import { updateStart,updateSuccess,updateFailure,deleteUserFailure,
  } from '../redux/user/userSlice';
 import { useDispatch } from 'react-redux';
 import { HiOutlineExclamationCircle} from 'react-icons/hi';
-import { Link } from 'react-router-dom'; 
+
 
 
 export default function DashProfile() {
@@ -274,19 +274,7 @@ export default function DashProfile() {
         disabled={loading || imageFileUploading}>
           {loading ? 'Loading...' : 'Update'}
         </Button>
-        {
-  currentUser.isAdmin && (
-    <Link to={'/create-post'}>
-    <button 
-      type='button'
-      className='w-full bg-gradient-to-r from-orange-400 to-yellow-400 text-white py-2 px-4 rounded-lg shadow-lg hover:from-orange-500 hover:to-yellow-500 transition duration-300'
-    >
-      Create a Post
-    </button>
-  </Link>
-  
-  )
-}
+       
 
 
 
