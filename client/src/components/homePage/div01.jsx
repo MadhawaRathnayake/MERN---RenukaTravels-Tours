@@ -82,9 +82,10 @@ const Div01 = () => {
           </div>
 
           <div className="flex-1 pt-8 w-1/4">
-            <button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg align-middle hover:bg-[#f49120]">
-              <b className="text-xl">Costomiz Your Own Plan</b>
+            <a href="/mappage"><button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg align-middle hover:bg-[#f49120]">
+              <b className="text-xl">Costomize Your Own Plan</b>
             </button>
+            </a>
           </div>
         </div>
       </div>
