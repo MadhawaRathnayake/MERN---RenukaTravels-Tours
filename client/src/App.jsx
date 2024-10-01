@@ -23,11 +23,13 @@ export default function App() {
         <Route path="/about" element={<About />}></Route>
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />}></Route>
+          <Route path="/map" element={<MapPage />}></Route>
+          <Route path="/mappage" element={<MapPage />}></Route>
         </Route>
         <Route path="/signin" element={<SignIn />}></Route>
-        <Route path="/mappage" element={<MapPage />}></Route>
+       
         <Route path="/register" element={<Register />}></Route>
-        <Route path="/map" element={<MapPage />}></Route>
+        
         <Route
           path="/destinationdetails"
           element={<DestinationDetails />}

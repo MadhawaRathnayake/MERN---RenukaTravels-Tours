@@ -1,4 +1,4 @@
-import React from "react";
+//import React from "react";
 import CustomMap from "../components/mapPage/Map";
 import MapSelectionBox from "../components/mapPage/MapSelectionBox";
 

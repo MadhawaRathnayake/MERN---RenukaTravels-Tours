@@ -1,6 +1,8 @@
+/* eslint-disable no-undef */
+/* eslint-disable no-unused-vars */
 "use client";
 
-import { useRef, useState } from "react";
+import { useState } from "react";
 import {
   APIProvider,
   Map,
@@ -37,12 +39,12 @@ export default function CustomMap() {
   }
 
   return (
-    <APIProvider apiKey="">
+    <APIProvider apiKey="AIzaSyAnd-TL7xmjmRo0Q8I-l_-mlvlOubR-M4w">
       <div style={{ height: "80vh", width: "80%" }}>
         <Map
           zoom={8}
           center={position}
-          mapId=""
+          mapId="68ffe748c87f0136"
           fullscreenControl={false}
           zoomControl={false}
           streetViewControl={false}
