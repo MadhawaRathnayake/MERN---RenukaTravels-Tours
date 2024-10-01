@@ -12,7 +12,7 @@ import Vehicles from "./pages/Vehicles";
 import Tours from "./pages/Tours";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
-import PrivateRoute from './components/PrivateRoute';
+import PrivateRoute from "./components/PrivateRoute";
 
 export default function App() {
   return (
@@ -22,10 +22,10 @@ export default function App() {
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/about" element={<About />}></Route>
         <Route element={<PrivateRoute />}>
-            
-        <Route path="/dashboard" element={<Dashboard />}></Route>
-          </Route>
+          <Route path="/dashboard" element={<Dashboard />}></Route>
+        </Route>
         <Route path="/signin" element={<SignIn />}></Route>
+        <Route path="/mappage" element={<MapPage />}></Route>
         <Route path="/register" element={<Register />}></Route>
         <Route path="/map" element={<MapPage />}></Route>
         <Route
@@ -36,8 +36,7 @@ export default function App() {
         <Route path="/vehicles" element={<Vehicles />}></Route>
         <Route path="/tours" element={<Tours />}></Route>
       </Routes>
-      <Footer/>
+      <Footer />
     </BrowserRouter>
-   
   );
 }
