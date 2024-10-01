@@ -37,12 +37,12 @@ export default function CustomMap() {
   }
 
   return (
-    <APIProvider apiKey="">
+    <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
       <div style={{ height: "80vh", width: "80%" }}>
         <Map
           zoom={8}
           center={position}
-          mapId=""
+          mapId={import.meta.env.VITE_MAP_ID}
           fullscreenControl={false}
           zoomControl={false}
           streetViewControl={false}
@@ -51,4 +51,3 @@ export default function CustomMap() {
     </APIProvider>
   );
 }
-console.log(import.meta.env.VITE_GOOGLE_MAP_API_KEY);
