@@ -10,7 +10,6 @@ export default function HomePage() {
     <div className="bg-[#fefcfb]">
       <Div01 />
       <Div02 />
-      <Div03/>
       <SubscribeBanner />
     </div>
   );
