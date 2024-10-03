@@ -37,6 +37,9 @@ export default function CustomMap() {
   }
 
   return (
+
+    
+
     <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
       <div style={{ height: "80vh", width: "80%" }}>
         <Map
