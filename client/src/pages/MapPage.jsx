@@ -1,4 +1,4 @@
-//import React from "react";
+import React from "react";
 import MapComp from "../components/mapPage/MapComp";
 
 export default function MapPage() {
