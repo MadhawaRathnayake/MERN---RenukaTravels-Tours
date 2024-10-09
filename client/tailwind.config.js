@@ -16,6 +16,7 @@ export default {
       colors: {
         'custom-orange': '#F4AC20',
       },
+      
     },
   },
   plugins: [
