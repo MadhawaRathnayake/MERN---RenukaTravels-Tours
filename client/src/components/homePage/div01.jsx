@@ -5,7 +5,7 @@ import homecover from "../../images/home-cover.png";
 const Div01 = () => {
   return (
     <section className="mt-8 p-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 flex flex-col lg:flex-row items-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row lg:items-center md:items-center sm:items-center items-center">
         <div className="lg:w-1/2 text-center lg:text-left mb-8 lg:mb-0 pr-4">
           <h2 className="text-5xl mb-8 font-Aclonica">
             It’s a Big World Out There,{" "}
@@ -23,14 +23,14 @@ const Div01 = () => {
             </button>
           </div>
         </div>
-        <div className="lg:w-1/2 rounded-md">
-          <img src={homecover} alt="cover.img" className="w-full" />
+        <div className="lg:w-1/2 lg:h-full md:h-full rounded-md md:flex md:justify-center md:visible lg:visible h-0 invisible">
+          <img src={homecover} alt="cover.img" className="lg:w-full md:w-1/2" />
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6  items-center ">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:py-6 items-center">
         <div className="bg-white shadow-lg rounded-2xl flex flex-col lg:flex-row items-stretch">
-          <div className="w-3/4 flex">
+          <div className="w-full lg:w-3/4 flex flex-col md:flex-row md:justify-around">
             <div className="flex-1 p-6">
               <h3 className="pb-2">Start From</h3>
               <select
@@ -81,10 +81,11 @@ const Div01 = () => {
             </div>
           </div>
 
-          <div className="flex-1 pt-8 w-1/4">
-            <a href="/mappage"><button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg align-middle hover:bg-[#f49120]">
-              <b className="text-xl">Costomize Your Own Plan</b>
-            </button>
+          <div className="flex-1 lg:pt-8 lg:w-1/4 md:w-full md:flex md:justify-center md:pb-8 w-full flex justify-center pb-4">
+            <a href="/mappage">
+              <button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg hover:bg-[#f49120]">
+                <b className="text-xl">Customize Your Own Plan</b>
+              </button>
             </a>
           </div>
         </div>
