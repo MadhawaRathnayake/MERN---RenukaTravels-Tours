@@ -26,7 +26,7 @@ function Dashboard() {
   }, [location.search]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row lg:flex-row lg:items-center md:items-center sm:items-center items-center">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row lg:flex-row">
       <div className="md:w-56">
         {/*Sidebar*/}
         <DashSidebar />
