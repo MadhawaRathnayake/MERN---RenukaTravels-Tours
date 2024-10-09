@@ -1,9 +1,6 @@
-import React from 'react'
+import React from "react";
+import Booking from "./Booking";
 
 export default function About() {
-  return (
-    <div>
-      About
-    </div>
-  )
+  return <div></div>;
 }
