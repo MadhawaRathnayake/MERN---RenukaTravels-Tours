@@ -15,6 +15,7 @@ import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import CreateDestination from "./pages/CreateDestination";
+import HotelDetails from "./components/HotelDetails";
 
 export default function App() {
   return (
@@ -29,12 +30,15 @@ export default function App() {
           <Route path="/mappage" element={<MapPage />}></Route>
         </Route>
         <Route element={<OnlyAdminPrivateRoute />}>
-          <Route path="/create-destination" element={<CreateDestination />}></Route>
+          <Route
+            path="/create-destination"
+            element={<CreateDestination />}
+          ></Route>
         </Route>
         <Route path="/signin" element={<SignIn />}></Route>
-       
+
         <Route path="/register" element={<Register />}></Route>
-        
+
         <Route
           path="/destinationdetails"
           element={<DestinationDetails />}
@@ -42,6 +46,7 @@ export default function App() {
         <Route path="/hotels" element={<Hotels />}></Route>
         <Route path="/vehicles" element={<Vehicles />}></Route>
         <Route path="/tours" element={<Tours />}></Route>
+        <Route path="/hotels/:id" element={<HotelDetails />} />
       </Routes>
       <Footer />
     </BrowserRouter>

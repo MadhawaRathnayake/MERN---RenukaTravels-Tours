@@ -3,10 +3,11 @@ import mongoose from "mongoose";
 import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
+import hotelRoutes from "./routes/hotel.route.js";
 import destRoutes from "./routes/destination.route.js";
 import cors from "cors";
-import path from 'path';
-import cookieParser from 'cookie-parser';
+import path from "path";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 
@@ -18,7 +19,7 @@ mongoose
   .catch((err) => {
     console.error("Failed to connect to MongoDB:", err);
   });
- const __dirname = path.resolve();
+const __dirname = path.resolve();
 
 const app = express();
 
@@ -28,12 +29,13 @@ app.use(cookieParser());
 
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/hotels", hotelRoutes);
 app.use("/api/destination", destRoutes);
 
-app.use(express.static(path.join(__dirname, '/client/dist')));
+app.use(express.static(path.join(__dirname, "/client/dist")));
 
-app.get('*', (req, res)=> {
-  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
 
 app.use((err, req, res, next) => {

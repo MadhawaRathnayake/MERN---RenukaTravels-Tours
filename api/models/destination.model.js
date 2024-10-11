@@ -1,32 +1,22 @@
 import mongoose from "mongoose";
 
-const detinationSchema = new mongoose.Schema(
-  {
-    userId: {
-      type: String,
-      required: true,
-    },
-    content: {
-      type: String,
-      required: true,
-    },
-    title: {
-      type: String,
-      required: true,
-      unique:true,
-    },
-    image:{
-      type:String,
-      default:"https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_640.png"
-    },
-    isAdmin:{
-      type:Boolean,
-      default:false,
-     },
+const destinationSchema = new mongoose.Schema({
+  destinationName: {
+    type: String,
+    required: true,
+    unique: true,
   },
-  { timestamps: true }
-);
+  coverPhoto: {
+    type: String,
+    default:
+      "https://cdn.pixabay.com/photo/2016/11/18/21/23/earth-1837411_640.jpg", // Default cover photo
+  },
+  description: {
+    type: String,
+    required: true,
+  },
+});
 
-const User = mongoose.model('User', userSchema);
+const Destination = mongoose.model("Destination", destinationSchema);
 
-export default User;
+export default Destination;
