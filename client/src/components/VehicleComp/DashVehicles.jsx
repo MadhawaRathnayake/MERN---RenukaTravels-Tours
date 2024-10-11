@@ -109,7 +109,7 @@ export default function DashVehicles() {
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
-                    <Link className="font-medium text-gray-900 dark:text-white" to={`/vehicle/${vehicle.slug}`}>
+                    <Link className="font-medium text-gray-900 dark:text-white" to={`/vehicles`}>
                       {vehicle.title}
                     </Link>
                   </Table.Cell>
