@@ -9,9 +9,10 @@ import DashUsers from '../components/DashUsers';
 import DashboardComp from '../components/DashboardComp';
 import DashDestinations from '../components/DashDestinations';
 import DashTours from '../components/DashTours';
-import DashVehicles from '../components/DashVehicles';
+import DashVehicles from '../components/VehicleComp/DashVehicles';
 import DashBookings from '../components/DashBookings';
 import DashSubscribers from '../components/DashSubscribers';
+import DashCreateVehicle from '../components/VehicleComp/DashCreateVehicle';
 
 
 function Dashboard() {
@@ -52,6 +53,7 @@ if(tabFromUrl)
       {tab==='tours' && <DashTours/>}
         {/*Vehicless*/}
         {tab==='vehicles' && <DashVehicles/>}
+        {tab==='createvehicle' && <DashCreateVehicle/>}
       {/*Bookings*/}
       {tab==='bookings' && <DashBookings/>}
       {/*Subscribers*/}
