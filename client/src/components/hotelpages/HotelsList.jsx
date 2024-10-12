@@ -5,7 +5,7 @@ function HotelsList() {
   const [hotels, setHotels] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/hotels")
+    fetch(`/api/hotels`)
       .then((response) => response.json())
       .then((data) => setHotels(data))
       .catch((error) => console.error("Failed to fetch hotels:", error));

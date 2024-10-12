@@ -70,7 +70,7 @@ export default function Header() {
             </a>
           </li>
           <li>
-            <a className="hover:text-[#F4AC20]" href="#">
+            <a className="hover:text-[#F4AC20]" href="/destinations/sri-lanka">
               DESTINATIONS
             </a>
           </li>
