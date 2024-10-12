@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Alert, Button, TextInput, Modal, FileInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 import {
@@ -11,16 +11,39 @@ import "react-quill/dist/quill.snow.css";
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-export default function CreateDestination() {
+export default function UpdateDestination() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
+  const { destId } = useParams();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    try {
+      const fetchDestinations = async () => {
+        const res = await fetch(`/api/destination/get-dest?destId=${destId}`);
+        const data = await res.json();
+        if (!res.ok) {
+          console.log(data.message);
+          setPublishError(data.message);
+          return;
+        }
+        if (res.ok) {
+          setPublishError(null);
+          setFormData(data.destinations[0]);
+        }
+      };
+
+      fetchDestinations();
+    } catch (error) {
+      console.log(error.message);
+    }
+  }, [destId]);
 
   const handleUpdloadImage = async () => {
     try {
@@ -63,8 +86,8 @@ export default function CreateDestination() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch("/api/destination/create-dest", {
-        method: "POST",
+        const res = await fetch(`/api/destination/update-dest/${formData._id}`, {
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
@@ -88,7 +111,7 @@ export default function CreateDestination() {
   return (
     <div className="max-w-3xl mx-auto px-4">
       <h1 className="text-center text-3xl my-7 font-semibold">
-        Create a new Destination
+        Update the Destination
       </h1>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         <div className="justify-between">
@@ -101,6 +124,7 @@ export default function CreateDestination() {
             onChange={(e) =>
               setFormData({ ...formData, destinationName: e.target.value })
             }
+            value={formData.destinationName}
           />
         </div>
         <div className="flex gap-4 items-center justify-between border-4 p-3">
@@ -144,9 +168,10 @@ export default function CreateDestination() {
           onChange={(value) => {
             setFormData({ ...formData, description: value });
           }}
+          value={formData.description}
         />
         <Button type="submit" color="warning">
-          Add Destination
+          Update Destination
         </Button>
         {publishError && (
           <Alert className="mt-5" color="failure">

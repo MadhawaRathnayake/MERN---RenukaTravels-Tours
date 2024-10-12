@@ -1,21 +1,32 @@
 import mongoose from "mongoose";
 
-const destinationSchema = new mongoose.Schema({
-  destinationName: {
-    type: String,
-    required: true,
-    unique: true,
+const destinationSchema = new mongoose.Schema(
+  {
+    userId: {
+      type: String,
+      required: true,
+    },
+    destinationName: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    destImage: {
+      type: String,
+      default: "", // Default cover photo
+    },
+    description: {
+      type: String,
+      required: true,
+    },
+    slug: {
+      type: String,
+      required: true,
+      unique: true,
+    },
   },
-  coverPhoto: {
-    type: String,
-    default:
-      "https://cdn.pixabay.com/photo/2016/11/18/21/23/earth-1837411_640.jpg", // Default cover photo
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-});
+  { timestamps: true }
+);
 
 const Destination = mongoose.model("Destination", destinationSchema);
 
