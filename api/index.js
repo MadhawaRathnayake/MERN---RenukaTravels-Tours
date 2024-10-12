@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import userRoutes from "./routes/user.route.js";
 import authRoutes from "./routes/auth.route.js";
 import hotelRoutes from "./routes/hotel.route.js";
+import vehicleRoutes from "./routes/vehicle.route.js";
 import destRoutes from "./routes/destination.route.js";
 import cors from "cors";
 import path from "path";
@@ -34,6 +35,7 @@ app.use(cookieParser());
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/hotels", hotelRoutes);
+app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/destination", destRoutes);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));

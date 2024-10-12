@@ -1,16 +1,18 @@
 //import React from 'react'
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import DashSidebar from "../components/DashSidebar";
-import DashProfile from "../components/DashProfile";
-import DashHotels from "../components/DashHotels";
-import DashUsers from "../components/DashUsers";
-import DashboardComp from "../components/DashboardComp";
-import DashDestinations from "../components/DashDestinations";
-import DashTours from "../components/DashTours";
-import DashVehicles from "../components/DashVehicles";
-import DashBookings from "../components/DashBookings";
-import DashSubscribers from "../components/DashSubscribers";
+import { useEffect, useState } from 'react';
+import {useLocation} from 'react-router-dom';
+import DashSidebar from '../components/DashSidebar';
+import DashProfile from '../components/DashProfile';
+import DashHotels from '../components/DashHotels';
+import DashUsers from '../components/DashUsers';
+import DashboardComp from '../components/DashboardComp';
+import DashDestinations from '../components/DashDestinations';
+import DashTours from '../components/DashTours';
+import DashVehicles from '../components/VehicleComp/DashVehicles';
+import DashBookings from '../components/DashBookings';
+import DashSubscribers from '../components/DashSubscribers';
+import DashCreateVehicle from '../components/VehicleComp/DashCreateVehicle';
+
 
 function Dashboard() {
   const location = useLocation();
@@ -43,7 +45,10 @@ function Dashboard() {
       {/*Destinations*/}
       {tab === "destinations" && <DashDestinations />}
       {/*Tours*/}
-
+      {tab==='tours' && <DashTours/>}
+        {/*Vehicless*/}
+        {tab==='vehicles' && <DashVehicles/>}
+        {tab==='createvehicle' && <DashCreateVehicle/>}
       {tab === "tours" && <DashTours />}
       {/*Vehicless*/}
       {tab === "vehicles" && <DashVehicles />}
