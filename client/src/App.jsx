@@ -16,6 +16,7 @@ import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import CreateDestination from "./pages/CreateDestination";
 import HotelDetails from "./components/HotelDetails";
+import UpdateDestination from "./pages/UpdateDestination";
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/about" element={<About />}></Route>
+        <Route path="/destinations/:destSlug" element={<DestinationDetails />}></Route>
         <Route element={<PrivateRoute />}>
           <Route path="/dashboard" element={<Dashboard />}></Route>
           <Route path="/map" element={<MapPage />}></Route>
@@ -34,15 +36,13 @@ export default function App() {
             path="/create-destination"
             element={<CreateDestination />}
           ></Route>
+          <Route
+            path="/update-destination/:destId"
+            element={<UpdateDestination />}
+          ></Route>
         </Route>
         <Route path="/signin" element={<SignIn />}></Route>
-
         <Route path="/register" element={<Register />}></Route>
-
-        <Route
-          path="/destinationdetails"
-          element={<DestinationDetails />}
-        ></Route>
         <Route path="/hotels" element={<Hotels />}></Route>
         <Route path="/vehicles" element={<Vehicles />}></Route>
         <Route path="/tours" element={<Tours />}></Route>
