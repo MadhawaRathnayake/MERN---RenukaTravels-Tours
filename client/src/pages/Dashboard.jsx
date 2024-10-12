@@ -50,8 +50,7 @@ function Dashboard() {
         {tab==='vehicles' && <DashVehicles/>}
         {tab==='createvehicle' && <DashCreateVehicle/>}
       {tab === "tours" && <DashTours />}
-      {/*Vehicless*/}
-      {tab === "vehicles" && <DashVehicles />}
+      
       {/*Bookings*/}
       {tab === "bookings" && <DashBookings />}
       {/*Subscribers*/}
