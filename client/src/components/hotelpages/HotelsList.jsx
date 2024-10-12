@@ -26,7 +26,7 @@ function HotelsList() {
           >
             <img
               className="w-full h-48 object-cover"
-              src={hotel.hotelImage}
+              src={hotel.hotelImageURL}
               alt={hotel.name}
             />
             <div className="px-6 py-4">
@@ -42,7 +42,7 @@ function HotelsList() {
                   className="bg-[#F4AC20] hover:bg-[#e2b04a] text-white font-bold py-2 rounded text-center block"
                   style={{ width: "128px", padding: "0.5rem 1rem" }}
                 >
-                  Add to Plan
+                  View Details
                 </Link>
               </div>
             </div>
