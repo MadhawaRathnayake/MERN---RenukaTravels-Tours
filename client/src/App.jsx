@@ -15,7 +15,8 @@ import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
 import CreateDestination from "./pages/CreateDestination";
-import HotelDetails from "./components/HotelDetails";
+import HotelDetails from "./components/hotelpages/HotelDetails";
+import InputHotel from "./components/hotelpages/InputHotel";
 
 export default function App() {
   return (
@@ -47,6 +48,7 @@ export default function App() {
         <Route path="/vehicles" element={<Vehicles />}></Route>
         <Route path="/tours" element={<Tours />}></Route>
         <Route path="/hotels/:id" element={<HotelDetails />} />
+        <Route path="/add-hotel" element={<InputHotel />} />
       </Routes>
       <Footer />
     </BrowserRouter>
