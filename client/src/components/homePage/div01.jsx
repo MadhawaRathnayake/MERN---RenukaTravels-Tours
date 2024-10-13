@@ -34,7 +34,7 @@ const Div01 = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:py-6 items-center">
-        <div className="bg-white shadow-lg rounded-2xl flex flex-col lg:flex-row items-stretch">
+        <div className="bg-white shadow-lg rounded-2xl flex flex-col lg:flex-row items-stretch pr-4">
           <div className="w-full lg:w-3/4 flex flex-col md:flex-row md:justify-around">
             <div className="flex-1 p-6">
               <h3 className="pb-2">Start From</h3>
