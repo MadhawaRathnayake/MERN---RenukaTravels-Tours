@@ -7,14 +7,15 @@ export default function DestinationDetails() {
   const { destSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
-  const [destination, setdestination] = useState(null);
+  const [destination, setDestination] = useState(null);
   const [destinationNames, setDestinationNames] = useState([]);
-  console.log(destination);
+  const [hotels, setHotels] = useState([]);
+  const [hotelLoading, setHotelLoading] = useState(true);
+  const [hotelError, setHotelError] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    console.log(destSlug);
     const fetchDestinations = async () => {
       try {
         setLoading(true);
@@ -25,11 +26,9 @@ export default function DestinationDetails() {
           setLoading(false);
           return;
         }
-        if (res.ok) {
-          setdestination(data.destinations[0]);
-          setLoading(false);
-          setError(false);
-        }
+        setDestination(data.destinations[0]);
+        setLoading(false);
+        setError(false);
       } catch (error) {
         setError(true);
         setLoading(false);
@@ -46,7 +45,7 @@ export default function DestinationDetails() {
         if (res.ok) {
           const names = data.destinations.map((destination) => ({
             name: destination.destinationName,
-            slug: destination.slug, // Assuming each destination has a 'slug' field
+            slug: destination.slug,
           }));
           setDestinationNames(names);
         } else {
@@ -56,12 +55,35 @@ export default function DestinationDetails() {
         console.log(error.message);
       }
     };
-
     fetchDestinationNames();
   }, []);
 
+  useEffect(() => {
+    if (destination && destination.destinationName) {
+      const fetchHotels = async () => {
+        try {
+          setHotelLoading(true);
+          // Fetch hotels by city corresponding to the destination name
+          const res = await fetch(`/api/hotels/hotels?city=${destination.destinationName}`);
+          const data = await res.json();
+          if (!res.ok) {
+            setHotelError(true);
+            setHotelLoading(false);
+            return;
+          }
+          setHotels(data); // Assuming data is an array of hotels
+          setHotelLoading(false);
+        } catch (error) {
+          setHotelError(true);
+          setHotelLoading(false);
+        }
+      };
+      fetchHotels();
+    }
+  }, [destination]);
+  
   const handleNavigate = (slug) => {
-    navigate(`/destinations/${slug}`); // Navigating to the destination's page
+    navigate(`/destinations/${slug}`);
   };
 
   if (loading)
@@ -80,9 +102,7 @@ export default function DestinationDetails() {
           height: "400px",
         }}
       >
-        {/* Overlay for readability */}
         <div className="absolute inset-0 bg-black opacity-20"></div>
-
         <h1 className="text-3xl font-semibold font-serif mt-72 relative text-white z-10">
           {destination && destination.destinationName}
         </h1>
@@ -102,15 +122,62 @@ export default function DestinationDetails() {
           <img src={destination.destImage} alt="" />
         </div>
       </div>
-      <h3 className="text-teal-500 font-semibold">Other Destinations :</h3>
+
+      {/* Conditional rendering for the hotels section */}
+      {destination && destination.destinationName !== "Sri Lanka" && (
+        <>
+          <button
+            className="bg-[#F4AC20] text-white font-semibold py-2 px-4 rounded"
+          >
+            Hotels in {destination.destinationName}
+          </button>
+
+          <div className="py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {hotelLoading ? (
+              <Spinner size="lg" />
+            ) : hotelError ? (
+              <p>Failed to load hotels. Please try again later.</p>
+            ) : hotels.length > 0 ? (
+              hotels.map((hotel) => (
+                <div key={hotel._id} className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white">
+                  <img className="w-full h-48 object-cover" src={hotel.hotelImageURL} alt={hotel.name} />
+                  <div className="px-6 py-4">
+                    <div className="flex justify-between items-center mb-4">
+                      <div className="font-bold text-xl">{hotel.name}</div>
+                      <span className="text-[#F4AC20] text-xl flex items-center">⭐ {hotel.rating}</span>
+                    </div>
+                    <div className="flex justify-center">
+                      <button
+                        onClick={() => navigate(`/hotels/${hotel._id}`)}
+                        className="bg-[#F4AC20] hover:bg-[#e2b04a] text-white font-bold py-2 rounded"
+                        style={{ width: "128px", padding: "0.5rem 1rem" }}
+                      >
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>No hotels available for this destination.</p>
+            )}
+          </div>
+        </>
+      )}
+
+      <button
+        className="bg-[#F4AC20] text-white font-semibold py-2 px-4 rounded"
+      >
+        Other Destinations
+      </button>
+
       <div className="max-w-full overflow-x-auto">
-        {/* Horizontal scrollable container */}
         <div className="flex space-x-4 py-4">
           {destinationNames.length > 0 ? (
             destinationNames.map((destination, index) => (
               <button
                 key={index}
-                onClick={() => handleNavigate(destination.slug)} // Add onClick handler to navigate
+                onClick={() => handleNavigate(destination.slug)}
                 className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 whitespace-nowrap"
               >
                 {destination.name}

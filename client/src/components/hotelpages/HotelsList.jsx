@@ -83,7 +83,7 @@ function HotelsList() {
   };
 
   return (
-    <div className="px-4 py-5 sm:p-6">
+    <div className="ml-32 max-w-7xl px-4 py-5 sm:p-6">
       <div className="mb-6">
         <span className="bg-[#F4AC20] text-white font-bold px-3 py-1 rounded">
           HOTELS
