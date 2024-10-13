@@ -66,7 +66,9 @@ function HotelDetails() {
                 ></p>
                 <div className="text-lg font-semibold flex items-center">
                   <span className="mr-2">Rating:</span>
-                  <span className="text-[#F4AC20]">{`${hotel.rating}/5`}</span>
+                  <span className="text-[#F4AC20] text-xl flex items-center">
+                    ⭐ {hotel.rating}
+                  </span>
                 </div>
               </div>
             </div>
