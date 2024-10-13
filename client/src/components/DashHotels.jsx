@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { Table, Button, Modal } from "flowbite-react";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 import HotelForm from "./hotelpages/InputHotel"; // Ensure this path is correct
 
 const HotelTable = () => {
   const [hotels, setHotels] = useState([]);
-  const [selectedHotel, setSelectedHotel] = useState(null); // This will store the hotel object for editing or null
+  const [selectedHotel, setSelectedHotel] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     fetchHotels();
@@ -21,26 +24,63 @@ const HotelTable = () => {
   };
 
   const toggleForm = () => {
-    // This toggles the form's visibility and clears any selected hotel if the form is being hidden
-    if (selectedHotel) {
-      setSelectedHotel(null);
-    } else {
-      setSelectedHotel({});
-    }
-  };
-
-  const handleEditClick = (hotel) => {
-    setSelectedHotel(hotel);
+    setSelectedHotel(selectedHotel ? null : {});
   };
 
   return (
-    <div className="container mx-auto mt-10">
-      <button
-        className="mb-4 bg-[#F4AC20] hover:bg-[#f4ad20e7] text-white font-bold py-2 px-4 rounded"
-        onClick={toggleForm}
-      >
-        {selectedHotel ? "Hide Form" : "Add a Hotel"}
-      </button>
+    <section className="container mx-auto mt-10 p-4">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-2xl font-bold text-gray-800">Hotels Management</h2>
+        <Button
+          className="bg-[#F4AC20] text-white py-1 px-4 rounded-lg hover:bg-[#f49120]"
+          onClick={toggleForm}
+        >
+          {selectedHotel ? "Hide Form" : "Add a Hotel"}
+        </Button>
+      </div>
+
+      {!selectedHotel && (
+        <Table hoverable={true} className="w-full">
+          <Table.Head>
+            <Table.HeadCell>Hotel Name</Table.HeadCell>
+            <Table.HeadCell>City</Table.HeadCell>
+            <Table.HeadCell>Edit</Table.HeadCell>
+            <Table.HeadCell>Delete</Table.HeadCell>
+          </Table.Head>
+          <Table.Body>
+            {hotels.map((hotel) => (
+              <Table.Row key={hotel._id} className="bg-white">
+                <Table.Cell>{hotel.name}</Table.Cell>
+                <Table.Cell>{hotel.city}</Table.Cell>
+                <Table.Cell>
+                  <Button
+                    color=""
+                    style={{ color: "teal" }} // Placeholder for color
+                    size="xs"
+                    onClick={() => setSelectedHotel(hotel)}
+                  >
+                    Edit
+                  </Button>
+                </Table.Cell>
+                <Table.Cell>
+                  <Button
+                    color=""
+                    style={{ color: "red" }} // Placeholder for color
+                    size="xs"
+                    onClick={() => {
+                      setShowModal(true);
+                      setSelectedHotel(hotel);
+                    }}
+                  >
+                    Delete
+                  </Button>
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
+      )}
+
       {selectedHotel && (
         <HotelForm
           onSave={() => {
@@ -50,40 +90,38 @@ const HotelTable = () => {
           initialValues={selectedHotel}
         />
       )}
-      {!selectedHotel && (
-        <table className="table-auto w-full">
-          <thead>
-            <tr className="bg-gray-100">
-              <th className="px-4 py-2">Hotel Name</th>
-              <th className="px-4 py-2">City</th>
-              <th className="px-4 py-2">Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {hotels.map((hotel) => (
-              <tr key={hotel._id}>
-                <td className="border px-4 py-2">{hotel.name}</td>
-                <td className="border px-4 py-2">{hotel.city}</td>
-                <td className="border px-64 py-2 gap-4">
-                  <button
-                    className="bg-[#6bb53d] hover:bg-green-700 text-white font-bold py-1 px-2 rounded"
-                    onClick={() => handleEditClick(hotel)}
-                  >
-                    Update
-                  </button>
-                  <button
-                    className="bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 rounded ml-2"
-                    onClick={() => deleteHotel(hotel._id)}
-                  >
-                    Delete
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
-    </div>
+
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-red-500 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg font-semibold text-gray-700">
+              Are you sure you want to delete this hotel?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="failure"
+                onClick={() => {
+                  deleteHotel(selectedHotel._id);
+                  setShowModal(false);
+                  setSelectedHotel(null); // Clear selection after deleting
+                }}
+              >
+                Yes, Delete
+              </Button>
+              <Button color="gray" onClick={() => setShowModal(false)}>
+                Cancel
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+    </section>
   );
 };
 
