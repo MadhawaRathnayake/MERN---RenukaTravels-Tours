@@ -7,7 +7,7 @@ import "react-quill/dist/quill.snow.css";
 export default function HotelForm({ onSave, initialValues = null }) {
   const [hotelName, setHotelName] = useState("");
   const [city, setCity] = useState("");
-  const [rating, setRating] = useState(3);
+  const [rating, setRating] = useState(4);
   const [description, setDescription] = useState("");
   const [coverImageURL, setCoverImageURL] = useState(null);
   const [hotelImageURL, setHotelImageURL] = useState(null);
@@ -18,7 +18,7 @@ export default function HotelForm({ onSave, initialValues = null }) {
     if (initialValues && Object.keys(initialValues).length !== 0) {
       setHotelName(initialValues.name || "");
       setCity(initialValues.city || "");
-      setRating(initialValues.rating || 3);
+      setRating(initialValues.rating || 4);
       setDescription(initialValues.description || "");
       setCoverImageURL(initialValues.coverImageURL || null);
       setHotelImageURL(initialValues.hotelImageURL || null);
@@ -31,7 +31,7 @@ export default function HotelForm({ onSave, initialValues = null }) {
   const resetForm = () => {
     setHotelName("");
     setCity("");
-    setRating(3);
+    setRating(4);
     setDescription("");
     setCoverImageURL(null);
     setHotelImageURL(null);
@@ -101,7 +101,7 @@ export default function HotelForm({ onSave, initialValues = null }) {
             type="number"
             id="rating"
             value={rating}
-            onChange={(e) => setRating(parseInt(e.target.value))}
+            onChange={(e) => setRating(parseFloat(e.target.value))}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
             placeholder="Rating (1-5)"
             min="1"
