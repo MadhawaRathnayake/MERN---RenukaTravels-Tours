@@ -4,33 +4,29 @@ const hotelSchema = new mongoose.Schema(
   {
     name: {
       type: String,
-      required: [true, "Hotel name is required"],
-      trim: true,
-      minlength: [3, "Hotel name must be at least 3 characters long"],
+      required: true,
     },
 
     city: {
       type: String,
-      required: [true, "City is required"],
-      trim: true,
+      required: true,
     },
 
     rating: {
       type: Number,
-      min: [1, "Rating must be at least 1"],
-      max: [5, "Rating cannot exceed 5"],
+      min: 1,
+      max: 5,
       default: 3,
     },
     description: {
       type: String,
-      trim: true,
     },
 
-    coverPhoto: {
+    coverImageURL: {
       type: String,
     },
 
-    hotelImage: {
+    hotelImageURL: {
       type: String,
     },
   },

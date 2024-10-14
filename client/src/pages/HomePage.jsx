@@ -1,5 +1,5 @@
 //import React from "react";
-import HotelsList from "../components/HotelsList";
+import HotelsList from "../components/hotelpages/HotelsList";
 import SubscribeBanner from "../components/homePage/SubscribeBanner";
 //import Footer from "../components/Footer";
 import Div01 from "../components/homePage/div01";
