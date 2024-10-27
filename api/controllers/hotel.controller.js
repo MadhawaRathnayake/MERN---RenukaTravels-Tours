@@ -21,6 +21,19 @@ export const getHotels = async (req, res) => {
   }
 };
 
+// Get hotels by city (GET)
+export const getHotelsByCity = async (req, res) => {
+  const { city } = req.query; // Extract city from query
+  try {
+    // Find hotels that match the provided city
+    const hotels = await Hotel.find({ city: city }); // Adjust this according to your model
+    res.status(200).send(hotels); // Send the filtered hotels
+  } catch (error) {
+    res.status(500).send(error);
+  }
+};
+
+
 // Get a single hotel by ID (GET)
 export const getHotelById = async (req, res) => {
   try {

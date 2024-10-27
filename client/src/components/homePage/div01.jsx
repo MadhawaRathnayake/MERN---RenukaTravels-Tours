@@ -1,8 +1,11 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import homecover from "../../images/home-cover.png";
+import { useSelector } from "react-redux";
 
 const Div01 = () => {
+  const { currentUser } = useSelector((state) => state.user);
+
   return (
     <section className="mt-8 p-0">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:flex-row lg:items-center md:items-center sm:items-center items-center">
@@ -17,11 +20,13 @@ const Div01 = () => {
             budget with ease. Sign up now to start crafting your personalized
             Sri Lankan adventure today!
           </p>
-          <div className="py-5">
-            <button className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg hover:bg-[#f49120]">
-              <b className="text-xl">Sign Up</b>
-            </button>
-          </div>
+          {!currentUser && (
+            <div className="py-5">
+              <button className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg hover:bg-[#f49120]">
+                <b className="text-xl">Sign Up</b>
+              </button>
+            </div>
+          )}
         </div>
         <div className="lg:w-1/2 lg:h-full md:h-full rounded-md md:flex md:justify-center md:visible lg:visible h-0 invisible">
           <img src={homecover} alt="cover.img" className="lg:w-full md:w-1/2" />
@@ -29,7 +34,7 @@ const Div01 = () => {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 lg:py-6 items-center">
-        <div className="bg-white shadow-lg rounded-2xl flex flex-col lg:flex-row items-stretch">
+        <div className="bg-white shadow-lg rounded-2xl flex flex-col lg:flex-row items-stretch pr-4">
           <div className="w-full lg:w-3/4 flex flex-col md:flex-row md:justify-around">
             <div className="flex-1 p-6">
               <h3 className="pb-2">Start From</h3>
