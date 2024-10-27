@@ -27,14 +27,18 @@ const SubscribeBanner = () => {
             </button>
           </div>
           <p className="text-gray-700 text-lg">
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Vero
-            obcaecati beatae iure facilis, veritatis possimus.
+            Stay updated with the latest travel tips, destination guides, and
+            exclusive offers. Subscribe to our newsletter and start planning
+            your next adventure today!
           </p>
         </div>
         <div className="hidden lg:block lg:w-1/2">
-  <img src={maleTourist} alt="Male Tourist" className="h-[75vh] ml-40" />
-</div>
-
+          <img
+            src={maleTourist}
+            alt="Male Tourist"
+            className="h-[75vh] ml-40"
+          />
+        </div>
       </div>
     </section>
   );
