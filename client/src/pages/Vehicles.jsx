@@ -127,12 +127,13 @@ const VehicleSelectionPage = () => {
       {selectedVehicle && (
         <div className="flex flex-col md:flex-row items-center p-4 border border-[#F4AC20] rounded-lg">
           <div className="flex-1 p-4 md:p-32 pr-4">
-            <h2 className="text-xl md:text-2xl font-bold">{selectedVehicle.title}</h2>
-            <p className="my-4">{selectedVehicle.content}</p>
-            <button className="mt-4 bg-[#F4AC20] text-white px-4 py-2 rounded hover:bg-white hover:text-[#F4AC20] border border-[#F4AC20] transition-all">
-              Select
-            </button>
-          </div>
+  <h2 className="text-xl md:text-2xl font-bold">{selectedVehicle.title}</h2>
+  <p className="my-4" dangerouslySetInnerHTML={{ __html: selectedVehicle.content }} />
+  <button className="mt-4 bg-[#F4AC20] text-white px-4 py-2 rounded hover:bg-white hover:text-[#F4AC20] border border-[#F4AC20] transition-all">
+    Select
+  </button>
+</div>
+
           <img
             src={selectedVehicle.image}
             alt={selectedVehicle.title}

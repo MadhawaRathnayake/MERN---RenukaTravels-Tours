@@ -18,7 +18,8 @@ import CreateDestination from "./pages/CreateDestination";
 import UpdateDestination from "./pages/UpdateDestination";
 import HotelDetails from "./components/hotelpages/HotelDetails";
 import InputHotel from "./components/hotelpages/InputHotel";
-
+import ContactUs from "./pages/ContactUs";
+import UpdateVehicle from "./components/VehicleComp/UpdateVehicle";
 export default function App() {
   return (
     <BrowserRouter>
@@ -44,6 +45,10 @@ export default function App() {
             path="/update-destination/:destId"
             element={<UpdateDestination />}
           ></Route>
+          <Route
+            path="/update-vehicle/:vehicleId"
+            element={<UpdateVehicle />}
+          ></Route>
         </Route>
         <Route path="/signin" element={<SignIn />}></Route>
         <Route path="/register" element={<Register />}></Route>
@@ -52,6 +57,7 @@ export default function App() {
         <Route path="/tours" element={<Tours />}></Route>
         <Route path="/hotels/:id" element={<HotelDetails />} />
         <Route path="/add-hotel" element={<InputHotel />} />
+        <Route path="/contact" element={<ContactUs />} />
       </Routes>
       <Footer />
     </BrowserRouter>
