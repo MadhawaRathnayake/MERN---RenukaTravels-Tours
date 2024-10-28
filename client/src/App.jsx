@@ -18,7 +18,7 @@ import CreateDestination from "./pages/CreateDestination";
 import UpdateDestination from "./pages/UpdateDestination";
 import HotelDetails from "./components/hotelpages/HotelDetails";
 import InputHotel from "./components/hotelpages/InputHotel";
-
+import ContactUs from "./pages/ContactUs";
 export default function App() {
   return (
     <BrowserRouter>
@@ -52,6 +52,7 @@ export default function App() {
         <Route path="/tours" element={<Tours />}></Route>
         <Route path="/hotels/:id" element={<HotelDetails />} />
         <Route path="/add-hotel" element={<InputHotel />} />
+        <Route path="/contact" element={<ContactUs />} />
       </Routes>
       <Footer />
     </BrowserRouter>
