@@ -93,6 +93,7 @@ export default function DashVehicles() {
               <Table.HeadCell>Vehicle Image</Table.HeadCell>
               <Table.HeadCell>Vehicle Title</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
+              <Table.HeadCell>Edit</Table.HeadCell>
               
             </Table.Head>
             {userVehicles.map((vehicle) => (
@@ -121,6 +122,14 @@ export default function DashVehicles() {
                       Delete
                     </span>
                   </Table.Cell>
+                  <Table.Cell>
+                      <Link
+                        className="text-teal-500 hover:underline"
+                        to={`/update-vehicle/${vehicle._id}`}
+                      >
+                        <span>Edit</span>
+                      </Link>
+                    </Table.Cell>
                   
                 </Table.Row>
               </Table.Body>
