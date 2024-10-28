@@ -19,6 +19,7 @@ import UpdateDestination from "./pages/UpdateDestination";
 import HotelDetails from "./components/hotelpages/HotelDetails";
 import InputHotel from "./components/hotelpages/InputHotel";
 import ContactUs from "./pages/ContactUs";
+import UpdateVehicle from "./components/VehicleComp/UpdateVehicle";
 export default function App() {
   return (
     <BrowserRouter>
@@ -43,6 +44,10 @@ export default function App() {
           <Route
             path="/update-destination/:destId"
             element={<UpdateDestination />}
+          ></Route>
+          <Route
+            path="/update-vehicle/:vehicleId"
+            element={<UpdateVehicle />}
           ></Route>
         </Route>
         <Route path="/signin" element={<SignIn />}></Route>
