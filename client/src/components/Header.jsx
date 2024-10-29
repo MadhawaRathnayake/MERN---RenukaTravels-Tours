@@ -6,26 +6,25 @@ import { useSelector, useDispatch } from "react-redux";
 import { signoutSuccess } from "../redux/user/userSlice";
 
 export default function Header() {
-
   const dispatch = useDispatch();
-  
+
   const handleSignout = async () => {
     try {
-        const res = await fetch('/api/user/signout', {
-            method: 'POST',
-        });
-        const data = await res.json();
-        if (!res.ok) {
-            console.log(data.message);
-        } else {
-            dispatch(signoutSuccess());
-        }
+      const res = await fetch("/api/user/signout", {
+        method: "POST",
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
     } catch (error) {
-        console.log(error.message);
+      console.log(error.message);
     }
-}
+  };
 
-  const {currentUser} = useSelector((state) => state.user);
+  const { currentUser } = useSelector((state) => state.user);
   const [menuImage, setMenuImage] = useState(
     "https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/menu.png?alt=media&token=0a69998f-9053-4d38-8da9-17078f45b263"
   );
@@ -75,7 +74,7 @@ export default function Header() {
             </a>
           </li>
           <li>
-            <a className="hover:text-[#F4AC20]" href="#">
+            <a className="hover:text-[#F4AC20]" href="/tours">
               FEATURED TOURS
             </a>
           </li>
@@ -85,56 +84,47 @@ export default function Header() {
             </a>
           </li>
           {!currentUser && (
-    <li>
-      <a className="hover:text-[#F4AC20]" href="/signin">
-        LOG IN
-      </a>
-    </li>
-  )}
+            <li>
+              <a className="hover:text-[#F4AC20]" href="/signin">
+                LOG IN
+              </a>
+            </li>
+          )}
         </ul>
       </div>
 
-     
-      <div className="flex items-center gap-6 " >
-      {currentUser ? (
-                    <Dropdown
-                        arrowIcon={false}
-                        inline
-                        label={
-                            <Avatar
-                                alt="user"
-                                img={currentUser.profilePicture}
-                                rounded
-                            />
-                        }
-                    >
-                        <Dropdown.Header>
-                            <span className="block text-sm">
-                                @{currentUser.username}
-                            </span>
-                            <span className="block text-sm font-medium truncate">
-                                {currentUser.email}
-                            </span>
-                        </Dropdown.Header>
-                        <Link to={'/dashboard?tab=dash'}>
-                            <Dropdown.Item>Dashboard</Dropdown.Item>
-                        </Link>
-                        <Link to={'/dashboard?tab=profile'}>
-                            <Dropdown.Item>Profile</Dropdown.Item>
-                        </Link>
-                        <Dropdown.Divider />
-                        <Dropdown.Item onClick={handleSignout}>
-                            Sign Out
-                        </Dropdown.Item>
-                    </Dropdown>
-                ) : (
-                  <Link to="/register">
-                  <button className="bg-[#F4AC20] text-white font-bold px-8 py-2 rounded-lg hover:bg-[#f49120]">
-                    Register
-                  </button>
-                </Link>
-                )}
-     
+      <div className="flex items-center gap-6 ">
+        {currentUser ? (
+          <Dropdown
+            arrowIcon={false}
+            inline
+            label={
+              <Avatar alt="user" img={currentUser.profilePicture} rounded />
+            }
+          >
+            <Dropdown.Header>
+              <span className="block text-sm">@{currentUser.username}</span>
+              <span className="block text-sm font-medium truncate">
+                {currentUser.email}
+              </span>
+            </Dropdown.Header>
+            <Link to={"/dashboard?tab=dash"}>
+              <Dropdown.Item>Dashboard</Dropdown.Item>
+            </Link>
+            <Link to={"/dashboard?tab=profile"}>
+              <Dropdown.Item>Profile</Dropdown.Item>
+            </Link>
+            <Dropdown.Divider />
+            <Dropdown.Item onClick={handleSignout}>Sign Out</Dropdown.Item>
+          </Dropdown>
+        ) : (
+          <Link to="/register">
+            <button className="bg-[#F4AC20] text-white font-bold px-8 py-2 rounded-lg hover:bg-[#f49120]">
+              Register
+            </button>
+          </Link>
+        )}
+
         <img
           src={menuImage}
           alt="menu.img"
