@@ -20,6 +20,7 @@ import HotelDetails from "./components/hotelpages/HotelDetails";
 import InputHotel from "./components/hotelpages/InputHotel";
 import ContactUs from "./pages/ContactUs";
 import UpdateVehicle from "./components/VehicleComp/UpdateVehicle";
+import Gallery from "./pages/Gallery";
 export default function App() {
   return (
     <BrowserRouter>
@@ -27,6 +28,7 @@ export default function App() {
       <Routes>
         <Route path="/" element={<HomePage />}></Route>
         <Route path="/about" element={<About />}></Route>
+        <Route path="/gallery" element={<Gallery />}></Route>
         <Route
           path="/destinations/:destSlug"
           element={<DestinationDetails />}
