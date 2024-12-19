@@ -46,7 +46,7 @@ export default function Header() {
   };
 
   return (
-    <Navbar className="max-w-7xl mx-auto py-8 px-8 flex justify-between items-center">
+    <Navbar className="max-w-7xl mx-auto py-8 px-8 flex justify-between items-center bg-[#fefcfb]">
       <div>
         <img
           src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
@@ -101,6 +101,7 @@ export default function Header() {
             label={
               <Avatar alt="user" img={currentUser.profilePicture} rounded />
             }
+            className="z-50"
           >
             <Dropdown.Header>
               <span className="block text-sm">@{currentUser.username}</span>

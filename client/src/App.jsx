@@ -21,12 +21,14 @@ import InputHotel from "./components/hotelpages/InputHotel";
 import ContactUs from "./pages/ContactUs";
 import UpdateVehicle from "./components/VehicleComp/UpdateVehicle";
 import Gallery from "./pages/Gallery";
+import NewHomePage from "./pages/NewHomePage";
 export default function App() {
   return (
     <BrowserRouter>
       <Header />
       <Routes>
-        <Route path="/" element={<HomePage />}></Route>
+        <Route path="/" element={<NewHomePage />}></Route>
+        <Route path="/Home" element={<HomePage />}></Route>
         <Route path="/about" element={<About />}></Route>
         <Route path="/gallery" element={<Gallery />}></Route>
         <Route path="/tours" element={<Tours />}></Route>

@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
-import homecover from "../../images/home-cover.png";
+import homecover from "../../images/home-div01.png";
 import { useSelector } from "react-redux";
 
 const Div01 = () => {
