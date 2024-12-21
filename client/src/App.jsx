@@ -1,5 +1,6 @@
 //import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import "./index.css";
 import Dashboard from "./pages/Dashboard";
 import SignIn from "./pages/SignIn";
 import About from "./pages/About";
@@ -22,10 +23,12 @@ import ContactUs from "./pages/ContactUs";
 import UpdateVehicle from "./components/VehicleComp/UpdateVehicle";
 import Gallery from "./pages/Gallery";
 import NewHomePage from "./pages/NewHomePage";
+import NavigationBar from "./components/NavigationBar";
 export default function App() {
   return (
+    <div className="body-color">
     <BrowserRouter>
-      <Header />
+      <NavigationBar />
       <Routes>
         <Route path="/" element={<NewHomePage />}></Route>
         <Route path="/Home" element={<HomePage />}></Route>
@@ -66,5 +69,6 @@ export default function App() {
       </Routes>
       <Footer />
     </BrowserRouter>
+    </div>
   );
 }

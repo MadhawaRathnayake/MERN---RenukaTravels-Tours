@@ -7,14 +7,10 @@ import Section02 from "../components/homePage/section02.jsx";
 export default function NewHomePage() {
   return (
     <section>
-      <div className="bg-[#fefcfb]">
-        {/* Above div for applying background color for whole page, following on provide the container */}
         <div className="basic-struture">
           <Section01 />
         </div>
-      </div>
       <div className="bg-blue-50 my-12 p-0">
-        {/* Above div for applying background color for whole page, following on provide the container */}
         <div className="basic-struture">
           <Section02 />
         </div>

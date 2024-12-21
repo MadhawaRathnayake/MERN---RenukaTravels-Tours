@@ -55,7 +55,7 @@ export default function Header() {
         />
       </div>
       <div
-        className={`lg:static absolute bg-white lg:min-h-fit min-h-[60vh] left-0 ${navLinksClass} lg:w-auto w-full flex items-center px-5`}
+        className={`lg:static absolute lg:min-h-fit min-h-[60vh] left-0 ${navLinksClass} lg:w-auto w-full flex items-center px-5`}
       >
         <ul className="flex lg:flex-row flex-col lg:items-center lg:gap-[4vw] gap-8">
           <li>

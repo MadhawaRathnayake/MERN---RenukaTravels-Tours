@@ -76,8 +76,8 @@ export default function Section01() {
         </div>
 
         {/* right */}
-        <div className="hidden sm:block md:py-4">
-          <div className="lg:h-full md:h-full rounded-md md:flex md:justify-center md:visible lg:visible h-0 invisible">
+        <div className=" md:py-4">
+          <div className="lg:h-full md:h-full rounded-md md:flex md:justify-center md:visible lg:visible h-1/5 m-6 md:m-0">
             <img
               src={homecover}
               alt="cover.img"
