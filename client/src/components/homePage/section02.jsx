@@ -40,7 +40,7 @@ export default function Section02() {
                 10+
               </h2>
               <div className="w-24 text-gray-400 text-center">
-                Experience of Experience
+                Years of Experience
               </div>
             </div>
             <div className="md:pr-16">
