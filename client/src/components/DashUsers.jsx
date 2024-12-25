@@ -78,7 +78,7 @@ export default function DashUsers() {
   
 
   return (
-    <div className="lg:mr-32 lg:ml-10 w-full table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 
+    <div className="lg:mr-28 w-full table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 
       scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
       {currentUser.isAdmin && users.length > 0 ? (
         <>
