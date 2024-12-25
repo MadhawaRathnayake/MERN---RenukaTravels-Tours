@@ -9,6 +9,7 @@ import {
 } from "@vis.gl/react-google-maps";
 import { HiArrowNarrowRight } from "react-icons/hi";
 import { Datepicker, TextInput, Timeline, Button } from "flowbite-react";
+import VehicleSection from "./VehicleSection";
 
 export default function MapComp() {
   const [formData, setFormData] = useState({});
@@ -323,12 +324,14 @@ export default function MapComp() {
             </Timeline>
           </div>
         </div>
+
         <div id="Third-Row-Timeline-Activities" className="">
           Hotel Details
         </div>
         <div id="Third-Row-Timeline-Activities" className="">
           Vehicle Details
         </div>
+
       </form>
     </section>
   );
