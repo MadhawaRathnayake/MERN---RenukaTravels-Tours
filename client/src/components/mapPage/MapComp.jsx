@@ -293,9 +293,7 @@ export default function MapComp() {
                 <Timeline.Point />
                 <Timeline.Content>
                   <Timeline.Time>Day one</Timeline.Time>
-                  <Timeline.Title>
-                    Activity 1
-                  </Timeline.Title>
+                  <Timeline.Title>Activity 1</Timeline.Title>
                   <Timeline.Body>
                     Get access to over 20+ pages including a dashboard layout,
                     charts, kanban board, calendar, and pre-order E-commerce &
@@ -311,9 +309,7 @@ export default function MapComp() {
                 <Timeline.Point />
                 <Timeline.Content>
                   <Timeline.Time>Day one</Timeline.Time>
-                  <Timeline.Title>
-                    Activity 1
-                  </Timeline.Title>
+                  <Timeline.Title>Activity 1</Timeline.Title>
                   <Timeline.Body>
                     Get access to over 20+ pages including a dashboard layout,
                     charts, kanban board, calendar, and pre-order E-commerce &
@@ -328,8 +324,14 @@ export default function MapComp() {
             </Timeline>
           </div>
         </div>
-        <div id="Third-Row-Timeline-Activities" className="">Hotel Details</div>
-        <div id="Third-Row-Timeline-Activities" className=""><VehicleSection/></div>
+
+        <div id="Third-Row-Timeline-Activities" className="">
+          Hotel Details
+        </div>
+        <div id="Third-Row-Timeline-Activities" className="">
+          Vehicle Details
+        </div>
+
       </form>
     </section>
   );

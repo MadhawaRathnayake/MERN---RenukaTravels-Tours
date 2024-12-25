@@ -7,7 +7,7 @@ import Div02 from "../components/homePage/div02";
 
 export default function HomePage() {
   return (
-    <div className="bg-[#fefcfb]">
+    <div>
       <Div01 />
       <Div02 />
       <HotelsList />
