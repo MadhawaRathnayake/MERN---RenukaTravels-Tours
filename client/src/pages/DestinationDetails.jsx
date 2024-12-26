@@ -2,6 +2,7 @@ import { Spinner } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function DestinationDetails() {
   const { destSlug } = useParams();
@@ -64,7 +65,9 @@ export default function DestinationDetails() {
         try {
           setHotelLoading(true);
           // Fetch hotels by city corresponding to the destination name
-          const res = await fetch(`/api/hotels/hotels?city=${destination.destinationName}`);
+          const res = await fetch(
+            `/api/hotels/hotels?city=${destination.destinationName}`
+          );
           const data = await res.json();
           if (!res.ok) {
             setHotelError(true);
@@ -81,7 +84,7 @@ export default function DestinationDetails() {
       fetchHotels();
     }
   }, [destination]);
-  
+
   const handleNavigate = (slug) => {
     navigate(`/destinations/${slug}`);
   };
@@ -96,29 +99,29 @@ export default function DestinationDetails() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       <div
-        className="w-full flex flex-col lg:items-center md:items-center sm:items-center items-center bg-cover bg-center relative"
+        className="w-full flex flex-col items-center justify-center bg-cover bg-center relative"
         style={{
           backgroundImage: `url("https://firebasestorage.googleapis.com/v0/b/renuka-travels.appspot.com/o/Destinations-Cover-Image.jpg?alt=media&token=0062a4f0-eabd-4e8e-9f9f-9e6332953d60")`,
           height: "400px",
         }}
       >
         <div className="absolute inset-0 bg-black opacity-20"></div>
-        <h1 className="text-3xl font-semibold font-serif mt-72 relative text-white z-10">
+        <h1 className="text-3xl font-semibold  mt-72 relative text-white z-10">
           {destination && destination.destinationName}
         </h1>
       </div>
 
       <div className="w-full flex my-12">
         <div className="w-1/2">
-          <h1 className="text-3xl mb-8 font-serif font-semibold">
+          <h1 className="text-3xl mb-8 font-semibold">
             {destination && destination.destinationName}
           </h1>
           <div
-            className="flex flex-col lg:items-center md:items-center sm:items-center items-center mx-10 text-lg"
+            className="flex flex-col items-center mx-10 text-lg"
             dangerouslySetInnerHTML={{ __html: destination.description }}
           ></div>
         </div>
-        <div className="w-1/2 flex flex-col lg:items-center md:items-center sm:items-center items-center justify-center">
+        <div className="w-1/2 flex flex-col items-center justify-center">
           <img src={destination.destImage} alt="" />
         </div>
       </div>
@@ -126,9 +129,7 @@ export default function DestinationDetails() {
       {/* Conditional rendering for the hotels section */}
       {destination && destination.destinationName !== "Sri Lanka" && (
         <>
-          <button
-            className="bg-[#F4AC20] text-white font-semibold py-2 px-4 rounded"
-          >
+          <button className="bg-[#F4AC20] text-white font-semibold py-2 px-4 rounded">
             Hotels in {destination.destinationName}
           </button>
 
@@ -139,12 +140,21 @@ export default function DestinationDetails() {
               <p>Failed to load hotels. Please try again later.</p>
             ) : hotels.length > 0 ? (
               hotels.map((hotel) => (
-                <div key={hotel._id} className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white">
-                  <img className="w-full h-48 object-cover" src={hotel.hotelImageURL} alt={hotel.name} />
+                <div
+                  key={hotel._id}
+                  className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white"
+                >
+                  <img
+                    className="w-full h-48 object-cover"
+                    src={hotel.hotelImageURL}
+                    alt={hotel.name}
+                  />
                   <div className="px-6 py-4">
                     <div className="flex justify-between items-center mb-4">
                       <div className="font-bold text-xl">{hotel.name}</div>
-                      <span className="text-[#F4AC20] text-xl flex items-center">⭐ {hotel.rating}</span>
+                      <span className="text-[#F4AC20] text-xl flex items-center">
+                        ⭐ {hotel.rating}
+                      </span>
                     </div>
                     <div className="flex justify-center">
                       <button
@@ -165,9 +175,7 @@ export default function DestinationDetails() {
         </>
       )}
 
-      <button
-        className="bg-[#F4AC20] text-white font-semibold py-2 px-4 rounded"
-      >
+      <button className="bg-[#F4AC20] text-white font-semibold py-2 px-4 rounded">
         Other Destinations
       </button>
 

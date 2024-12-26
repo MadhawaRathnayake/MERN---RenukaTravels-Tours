@@ -103,12 +103,6 @@ export default function NavigationBar() {
                   Home
                 </Link>
                 <Link
-                  to="/about"
-                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
-                >
-                  About Us
-                </Link>
-                <Link
                   to="/destinations/sri-lanka"
                   className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
                 >
@@ -126,6 +120,12 @@ export default function NavigationBar() {
                 >
                   Gallery
                 </Link>
+                <Link
+                  to="/about"
+                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
+                >
+                  About Us
+                </Link>
               </div>
             </div>
           </div>
@@ -137,7 +137,12 @@ export default function NavigationBar() {
                 arrowIcon={false}
                 inline
                 label={
-                  <Avatar alt="user" img={currentUser.profilePicture} rounded />
+                  <Avatar
+                    alt="user"
+                    img={currentUser.profilePicture}
+                    rounded
+                    className="hover:border-yellow-400 hover:border"
+                  />
                 }
               >
                 <Dropdown.Header>
