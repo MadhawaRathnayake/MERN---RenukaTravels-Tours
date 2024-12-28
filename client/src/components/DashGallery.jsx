@@ -2,30 +2,31 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import GalleryForm from "./GalleryForm";  // Assuming GalleryForm is a component for adding new gallery items
+import GalleryForm from "./galleryPage/GalleryForm"; // Adjust the path as needed
 
 const GalleryTable = () => {
-  const [galleryItems, setGalleryItems] = useState([]);
-  const [selectedGalleryItem, setSelectedGalleryItem] = useState(null);
+  const [galleries, setGalleries] = useState([]);
+  const [selectedGallery, setSelectedGallery] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showForm, setShowForm] = useState(false);  // State for toggling the form
+  const [showForm, setShowForm] = useState(false); // State to toggle the form visibility
 
   useEffect(() => {
-    fetchGalleryItems();
+    fetchGalleries();
   }, []);
 
-  const fetchGalleryItems = async () => {
+  const fetchGalleries = async () => {
     const response = await axios.get("/api/gallery");
-    setGalleryItems(response.data);
+    setGalleries(response.data);
   };
 
-  const deleteGalleryItem = async (id) => {
+  const deleteGallery = async (id) => {
     await axios.delete(`/api/gallery/${id}`);
-    fetchGalleryItems();
+    fetchGalleries();
   };
 
   const toggleForm = () => {
-    setShowForm(!showForm);  // Toggle form visibility
+    setShowForm(!showForm);
+    setSelectedGallery(null); // Reset selectedGallery when toggling form
   };
 
   return (
@@ -36,49 +37,62 @@ const GalleryTable = () => {
           className="bg-[#F4AC20] text-white py-1 px-4 rounded-lg hover:bg-[#f49120]"
           onClick={toggleForm}
         >
-          {showForm ? "Hide Form" : "Add New Gallery Item"}
+          {showForm ? "Hide Form" : "Add a Gallery"}
         </Button>
       </div>
 
-      {showForm && <GalleryForm onSave={fetchGalleryItems} />}  {/* Conditionally render the form */}
+      {/* Show Table if not showing form */}
+      {!showForm && (
+        <Table hoverable={true} className="w-full">
+          <Table.Head>
+            <Table.HeadCell>Date</Table.HeadCell>
+            <Table.HeadCell>Image</Table.HeadCell>
+            <Table.HeadCell>City</Table.HeadCell>
+            <Table.HeadCell>Delete</Table.HeadCell>
+          </Table.Head>
+          <Table.Body>
+            {galleries.map((gallery) => (
+              <Table.Row key={gallery._id} className="bg-white">
+                <Table.Cell>
+                  {/* Assuming gallery.date is in the correct format, adjust as necessary */}
+                  {new Date(gallery.updatedAt).toLocaleDateString()}
+                </Table.Cell>
+                <Table.Cell>
+                  <img
+                    src={gallery.imageURL} // Assuming the image URL is stored in gallery.imageURL
+                    alt={gallery.name}
+                    className="w-16 h-12 object-cover rounded-md"
+                  />
+                </Table.Cell>
+                <Table.Cell>{gallery.city}</Table.Cell>
+                <Table.Cell>
+                  <span onClick={() => {
+                      setShowModal(true);
+                      setSelectedGallery(gallery);
+                    }} className="font-medium text-red-500 hover:underline cursor-pointer">
+                      Delete
 
-      <Table hoverable={true} className="w-full">
-        <Table.Head>
-          <Table.HeadCell>Date</Table.HeadCell>
-          <Table.HeadCell>Image</Table.HeadCell>
-          <Table.HeadCell>Name</Table.HeadCell>
-          <Table.HeadCell>Delete</Table.HeadCell>
-        </Table.Head>
-        <Table.Body>
-          {galleryItems.map((item) => (
-            <Table.Row key={item._id} className="bg-white">
-              <Table.Cell>{new Date(item.createdAt).toLocaleDateString()}</Table.Cell>  {/* Display formatted date */}
-              <Table.Cell>
-                <img
-                  src={item.imageURL}
-                  alt={item.name}
-                  className="w-20 h-12 object-cover"
-                />
-              </Table.Cell>
-              <Table.Cell>{item.name}</Table.Cell>
-              <Table.Cell>
-                <Button
-                  color=""
-                  style={{ color: "red" }}
-                  size="xs"
-                  onClick={() => {
-                    setShowModal(true);
-                    setSelectedGalleryItem(item);
-                  }}
-                >
-                  Delete
-                </Button>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
-      </Table>
+                  </span>
+                  
+                </Table.Cell>
+              </Table.Row>
+            ))}
+          </Table.Body>
+        </Table>
+      )}
 
+      {/* Show Form if showForm is true */}
+      {showForm && (
+        <GalleryForm
+          onSave={() => {
+            toggleForm();
+            fetchGalleries();
+          }}
+          initialValues={selectedGallery}
+        />
+      )}
+
+      {/* Modal for Delete Confirmation */}
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
         <Modal.Body>
           <div className="text-center">
@@ -90,9 +104,9 @@ const GalleryTable = () => {
               <Button
                 color="failure"
                 onClick={() => {
-                  deleteGalleryItem(selectedGalleryItem._id);
+                  deleteGallery(selectedGallery._id);
                   setShowModal(false);
-                  setSelectedGalleryItem(null); // Clear selection after deleting
+                  setSelectedGallery(null); // Clear selection after deleting
                 }}
               >
                 Yes, Delete
