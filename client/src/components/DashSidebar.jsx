@@ -1,7 +1,7 @@
 import { Sidebar } from 'flowbite-react';
 import { HiArrowSmRight, HiChartPie, HiOutlineUserGroup, HiUser } from 'react-icons/hi';
-import { FaHotel, FaMapMarkerAlt, FaPlaneDeparture } from 'react-icons/fa';
-import { MdDirectionsCar, MdAssignment, MdSubscriptions } from 'react-icons/md'; // New imports for vehicles, bookings, and subscribers
+import { FaHotel, FaMapMarkerAlt, FaPlaneDeparture, FaImages } from 'react-icons/fa'; // Added FaImages for Gallery
+import { MdDirectionsCar, MdAssignment, MdSubscriptions } from 'react-icons/md';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { signoutSuccess } from '../redux/user/userSlice';
@@ -46,7 +46,7 @@ export default function DashSidebar() {
               as={Link}
               to='/dashboard?tab=dash'
               active={tab === 'dash' || !tab}
-              icon={() => <HiChartPie className="text-orange-400" />} // Orange color
+              icon={() => <HiChartPie className="text-orange-400" />}
             >
               Dashboard
             </Sidebar.Item>
@@ -56,7 +56,7 @@ export default function DashSidebar() {
             as={Link}
             to='/dashboard?tab=profile'
             active={tab === 'profile'}
-            icon={() => <HiUser className="text-orange-400" />} // Orange color
+            icon={() => <HiUser className="text-orange-400" />}
             label={currentUser.isAdmin ? 'Admin' : 'User'}
           >
             Profile
@@ -67,7 +67,7 @@ export default function DashSidebar() {
               as={Link}
               to='/dashboard?tab=hotels'
               active={tab === 'hotels'}
-              icon={() => <FaHotel className="text-orange-400" />}  // Icon for Hotels
+              icon={() => <FaHotel className="text-orange-400" />}
             >
               Hotels
             </Sidebar.Item>
@@ -78,7 +78,7 @@ export default function DashSidebar() {
               as={Link}
               to='/dashboard?tab=destinations'
               active={tab === 'destinations'}
-              icon={() => <FaMapMarkerAlt className="text-orange-400" />}  // Icon for Destinations
+              icon={() => <FaMapMarkerAlt className="text-orange-400" />}
             >
               Destinations
             </Sidebar.Item>
@@ -89,17 +89,29 @@ export default function DashSidebar() {
               as={Link}
               to='/dashboard?tab=tours'
               active={tab === 'tours'}
-              icon={() => <FaPlaneDeparture className="text-orange-400" />}  // Icon for Tours
+              icon={() => <FaPlaneDeparture className="text-orange-400" />}
             >
               Tours
             </Sidebar.Item>
           )}
+
+          {currentUser.isAdmin && (
+            <Sidebar.Item
+              as={Link}
+              to='/dashboard?tab=gallery'
+              active={tab === 'gallery'}
+              icon={() => <FaImages className="text-orange-400" />}
+            >
+              Gallery
+            </Sidebar.Item>
+          )}
+
           {!currentUser.isAdmin && (
             <Sidebar.Item
               as={Link}
               to='/dashboard?tab=travel-plans'
               active={tab === 'travel-plans'}
-              icon={() => <FaMapMarkerAlt className="text-orange-400" />}  // Icon for Travel Plans
+              icon={() => <FaMapMarkerAlt className="text-orange-400" />}
             >
               My Travel Plans
             </Sidebar.Item>
@@ -110,7 +122,7 @@ export default function DashSidebar() {
               as={Link}
               to='/dashboard?tab=vehicles'
               active={tab === 'vehicles'}
-              icon={() => <MdDirectionsCar className="text-orange-400" />} // Icon for Vehicles
+              icon={() => <MdDirectionsCar className="text-orange-400" />}
             >
               Vehicles
             </Sidebar.Item>
@@ -121,7 +133,7 @@ export default function DashSidebar() {
               as={Link}
               to='/dashboard?tab=bookings'
               active={tab === 'bookings'}
-              icon={() => <MdAssignment className="text-orange-400" />} // Icon for Bookings
+              icon={() => <MdAssignment className="text-orange-400" />}
             >
               Bookings
             </Sidebar.Item>
@@ -132,7 +144,7 @@ export default function DashSidebar() {
               as={Link}
               to='/dashboard?tab=subscribers'
               active={tab === 'subscribers'}
-              icon={() => <MdSubscriptions className="text-orange-400" />} // Icon for Subscribers
+              icon={() => <MdSubscriptions className="text-orange-400" />}
             >
               Subscribers
             </Sidebar.Item>
@@ -143,14 +155,14 @@ export default function DashSidebar() {
               as={Link}
               to='/dashboard?tab=users'
               active={tab === 'users'}
-              icon={() => <HiOutlineUserGroup className="text-orange-400" />} // Icon for Users
+              icon={() => <HiOutlineUserGroup className="text-orange-400" />}
             >
               Users
             </Sidebar.Item>
           )}
 
           <Sidebar.Item
-            icon={() => <HiArrowSmRight className="text-orange-400" />} // Orange color for Sign Out
+            icon={() => <HiArrowSmRight className="text-orange-400" />}
             className='cursor-pointer'
             onClick={handleSignout}
           >

@@ -1,11 +1,132 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { Search, ZoomIn } from "lucide-react";
 
 export default function Gallery() {
-  return (
-    <section className="mt-8 p-0">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col lg:items-center md:items-center sm:items-center items-center justify-center">
-        <div className="p-72">No Images available right now!</div>
+  const [images, setImages] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [selectedImage, setSelectedImage] = useState(null);
+
+  useEffect(() => {
+    const fetchGallery = async () => {
+      try {
+        const response = await fetch("/api/gallery");
+        const data = await response.json();
+        // Pre-assign sizes to create a balanced layout
+        const processedData = data.map((img, index) => ({
+          ...img,
+          size: getOptimizedTileSize(index, data.length)
+        }));
+        setImages(processedData);
+      } catch (error) {
+        console.error("Failed to fetch gallery items:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchGallery();
+  }, []);
+
+  // Improved tile sizing function that adapts to remaining images
+  const getOptimizedTileSize = (index, totalImages) => {
+    // Make sure we don't create large tiles near the end
+    if (totalImages - index <= 3) return "";
+    
+    const pattern = index % 8;
+    
+    switch(pattern) {
+      case 0:
+        return totalImages - index >= 4 ? "col-span-2 row-span-2" : "";
+      case 3:
+        return totalImages - index >= 3 ? "col-span-2" : "";
+      case 6:
+        return totalImages - index >= 2 ? "row-span-2" : "";
+      default:
+        return "";
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="mt-8 p-4">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {[...Array(8)].map((_, i) => (
+              <div
+                key={i}
+                className="h-64 w-full rounded-lg bg-gray-200 animate-pulse"
+              />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (images.length === 0) {
+    return (
+      <div className="min-h-[50vh] flex flex-col items-center justify-center p-8 text-center">
+        <Search className="w-16 h-16 text-gray-400 mb-4" />
+        <h3 className="text-xl font-semibold text-gray-700">No Images Found</h3>
+        <p className="text-gray-500 mt-2">Check back later for new additions!</p>
       </div>
+    );
+  }
+
+  return (
+    <section className="mt-8 p-4">
+      <div className="max-w-7xl mx-auto">
+        {/* SOLUTION 1: Using minmax for row height */}
+        <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[minmax(200px,auto)] gap-4">
+          {/* 
+            // OR SOLUTION 2: Using fixed height but with refined pattern
+            <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[200px] gap-4">
+          */}
+          {images.map((image, index) => (
+            <div
+              key={index}
+              className={`relative group rounded-lg overflow-hidden 
+                ${image.size}
+                transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl 
+                cursor-pointer bg-gray-100`}
+              onClick={() => setSelectedImage(image)}
+            >
+              <img
+                src={image.imageURL}
+                alt={`Gallery image ${index + 1}`}
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-30 transition-all duration-300 flex items-center justify-center">
+                <ZoomIn className="text-white opacity-0 group-hover:opacity-100 transform scale-50 group-hover:scale-100 transition-all duration-300" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-90 z-50 flex items-center justify-center p-4"
+          onClick={() => setSelectedImage(null)}
+        >
+          <div className="relative max-w-5xl w-full h-full flex items-center justify-center">
+            <img
+              src={selectedImage.imageURL}
+              alt="Selected image"
+              className="max-h-full max-w-full object-contain rounded-lg"
+            />
+            <button
+              className="absolute top-4 right-4 text-white hover:text-gray-300"
+              onClick={(e) => {
+                e.stopPropagation();
+                setSelectedImage(null);
+              }}
+            >
+              <span className="text-3xl">&times;</span>
+            </button>
+          </div>
+        </div>
+      )}
     </section>
   );
 }
