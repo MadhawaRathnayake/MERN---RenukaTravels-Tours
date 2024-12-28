@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.route.js";
 import hotelRoutes from "./routes/hotel.route.js";
 import vehicleRoutes from "./routes/vehicle.route.js";
 import destRoutes from "./routes/destination.route.js";
+import galleryRoutes from "./routes/gallery.route.js";
 import cors from "cors";
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -37,6 +38,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/hotels", hotelRoutes);
 app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/destination", destRoutes);
+app.use("/api/gallery", galleryRoutes);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
 
