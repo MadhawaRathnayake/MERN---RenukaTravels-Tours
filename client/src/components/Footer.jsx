@@ -4,7 +4,11 @@ const Footer = () => {
   const year = new Date().getFullYear();
 
   return (
+<<<<<<< HEAD
     <footer className="bg-gray-100 py-12 px-8 max-w-auto mx-auto">
+=======
+    <footer className="bg-[#fefcfb] py-12 px-8 max-w-7xl mx-auto">
+>>>>>>> 3de9b07740021572828acf15d1876e4759fbead9
       <div className="container mx-auto px-4">
         <div className="flex flex-wrap -mx-4 text-center lg:text-left">
           {/* Logo and Social Media */}

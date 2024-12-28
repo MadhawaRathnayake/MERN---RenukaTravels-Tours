@@ -1,0 +1,251 @@
+/* eslint-disable no-unused-vars */
+import { Navbar, Dropdown, Avatar } from "flowbite-react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { signoutSuccess } from "../redux/user/userSlice";
+import "../index.css";
+
+export default function NavigationBar() {
+  const dispatch = useDispatch();
+
+  const handleSignout = async () => {
+    try {
+      const res = await fetch("/api/user/signout", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        dispatch(signoutSuccess());
+      }
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const { currentUser } = useSelector((state) => state.user);
+
+  const [menuOpen, setMenuOpen] = useState(false);
+
+  const toggleMenu = () => {
+    setMenuOpen((prev) => !prev);
+  };
+
+  return (
+    <nav className="shadow-lg lg:py-3">
+      <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
+        <div className="relative flex h-16 items-center justify-between">
+          {/* Mobile menu button */}
+          <div className="absolute inset-y-0 left-0 flex items-center sm:hidden">
+            <button
+              type="button"
+              onClick={toggleMenu}
+              className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 yellow-bg-hover hover:shadow-lg hover:text-white"
+              aria-controls="mobile-menu"
+              aria-expanded={menuOpen}
+            >
+              <span className="sr-only">Open main menu</span>
+              {/* Icon when menu is closed */}
+              <svg
+                className={`${menuOpen ? "hidden" : "block"} size-6`}
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5"
+                />
+              </svg>
+              {/* Icon when menu is open */}
+              <svg
+                className={`${menuOpen ? "block" : "hidden"} size-6`}
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                aria-hidden="true"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Logo and Links */}
+          <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
+            <div className="flex shrink-0 items-center">
+              <Link to="/">
+                <img
+                  className="h-8 w-auto"
+                  src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
+                  alt="Company Logo"
+                />
+              </Link>
+            </div>
+
+            <div
+              className={`hidden sm:ml-6 sm:block ${menuOpen ? "" : "hidden"}`}
+            >
+              {" "}
+              {/* Show links based on menu state */}
+              <div className="flex lg:space-x-4">
+                <Link
+                  to="/"
+                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
+                >
+                  Home
+                </Link>
+                <Link
+                  to="/destinations/sri-lanka"
+                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
+                >
+                  Destinations
+                </Link>
+                <Link
+                  to="/tours"
+                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
+                >
+                  Featured Tours
+                </Link>
+                <Link
+                  to="/gallery"
+                  className="rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
+                >
+                  Gallery
+                </Link>
+                <Link
+                  to="/about"
+                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
+                >
+                  About Us
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          {/* User Profile Dropdown */}
+          <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
+            {currentUser ? (
+              <Dropdown
+                arrowIcon={false}
+                inline
+                label={
+                  <Avatar
+                    alt="user"
+                    img={currentUser.profilePicture}
+                    rounded
+                    className="hover:border-yellow-400 hover:border"
+                  />
+                }
+              >
+                <Dropdown.Header>
+                  <span className="block text-sm">@{currentUser.username}</span>
+                  <span className="block text-sm font-medium truncate">
+                    {currentUser.email}
+                  </span>
+                </Dropdown.Header>
+                <Link to={"/dashboard?tab=dash"}>
+                  <Dropdown.Item>Dashboard</Dropdown.Item>
+                </Link>
+                <Link to={"/dashboard?tab=profile"}>
+                  <Dropdown.Item>Profile</Dropdown.Item>
+                </Link>
+                <Dropdown.Divider />
+                <Dropdown.Item onClick={handleSignout}>Sign Out</Dropdown.Item>
+              </Dropdown>
+            ) : (
+              <div>
+                <Link to="/signin">
+                  <button className="hidden md:inline-flex yellow-text-hover font-medium mr-4">
+                    Log In
+                  </button>
+                </Link>
+
+                <Link to="/register">
+                  <button className="yellow-bg shadow-lg text-white font-bold px-4 py-2 rounded-lg yellow-bg-bold-hover">
+                    Register
+                  </button>
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Menu */}
+      {menuOpen && (
+        <div className={`sm:hidden`} id="mobile-menu">
+          <div className={`space-y-1 px-2 pb-3 pt-2`}>
+            <Link
+              to="/"
+              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+            >
+              Home
+            </Link>
+            <Link
+              to="/about"
+              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+            >
+              About Us
+            </Link>
+            <Link
+              to="/destinations/sri-lanka"
+              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+            >
+              Destinations
+            </Link>
+            <Link
+              to="/tours"
+              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+            >
+              Featured Tours
+            </Link>
+            <Link
+              to="/gallery"
+              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+            >
+              Gallery
+            </Link>
+            {!currentUser && (
+              <Link
+                to="/signin"
+                className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+              >
+                Log In
+              </Link>
+            )}
+            {currentUser && (
+              <>
+                <Link
+                  to="/dashboard?tab=dash"
+                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+                >
+                  Dashboard
+                </Link>
+                <Link
+                  to="/dashboard?tab=profile"
+                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+                >
+                  Profile
+                </Link>
+                <Link
+                  onClick={handleSignout}
+                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+                >
+                  Log Out
+                </Link>
+              </>
+            )}
+          </div>
+        </div>
+      )}
+    </nav>
+  );
+}
