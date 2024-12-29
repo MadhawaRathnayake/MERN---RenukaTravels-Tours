@@ -3,6 +3,8 @@ import "../index.css";
 
 import Section01 from "../components/homePage/section01.jsx";
 import Section02 from "../components/homePage/section02.jsx";
+import Section03 from "../components/homePage/section03.jsx";
+
 
 export default function NewHomePage() {
   return (
@@ -16,9 +18,9 @@ export default function NewHomePage() {
           <Section02 />
         </div>
       </div>
-      {/* <div className="basic-struture">
+      <div className="basic-struture">
           <Section03 />
-      </div> */}
+      </div>
       {/* <div className="basic-struture">
           <Section04 />
       </div> */}

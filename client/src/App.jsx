@@ -29,7 +29,7 @@ export default function App() {
       <NavigationBar />
       <Routes>
         <Route path="/" element={<NewHomePage />}></Route>
-        <Route path="/Home" element={<HomePage />}></Route>
+        <Route path="/Home" element={<NewHomePage />}></Route>
         <Route path="/about" element={<About />}></Route>
         <Route path="/gallery" element={<Gallery />}></Route>
         <Route path="/tours" element={<Tours />}></Route>
