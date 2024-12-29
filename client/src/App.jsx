@@ -57,6 +57,7 @@ export default function App() {
             path="/update-vehicle/:vehicleId"
             element={<UpdateVehicle />}
           ></Route>
+          
         </Route>
         <Route path="/signin" element={<SignIn />}></Route>
         <Route path="/register" element={<Register />}></Route>

@@ -7,7 +7,8 @@ import DashHotels from '../components/DashHotels';
 import DashUsers from '../components/DashUsers';
 import DashboardComp from '../components/DashboardComp';
 import DashDestinations from '../components/DashDestinations';
-import DashTours from '../components/DashTours';
+import DashTours from '../components/featuredTours/DashTours';
+import DashCreateTours from '../components/featuredTours/DashCreateTour';
 import DashVehicles from '../components/VehicleComp/DashVehicles';
 import DashBookings from '../components/DashBookings';
 import DashSubscribers from '../components/DashSubscribers';
@@ -46,10 +47,12 @@ function Dashboard() {
       {tab === "destinations" && <DashDestinations />}
       {/*Tours*/}
       {tab==='tours' && <DashTours/>}
+      {tab==='createtour' && <DashCreateTours/>}
+
         {/*Vehicless*/}
         {tab==='vehicles' && <DashVehicles/>}
         {tab==='createvehicle' && <DashCreateVehicle/>}
-      {tab === "tours" && <DashTours />}
+      
       
       {/*Bookings*/}
       {tab === "bookings" && <DashBookings />}

@@ -16,5 +16,6 @@ export default function NewHomePage() {
         </div>
       </div>
     </section>
+    
   );
 }
