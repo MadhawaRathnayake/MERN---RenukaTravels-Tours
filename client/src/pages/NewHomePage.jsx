@@ -1,4 +1,4 @@
-import React from "react";
+
 import "../index.css";
 
 import Section01 from "../components/homePage/section01.jsx";
