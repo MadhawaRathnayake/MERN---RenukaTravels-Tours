@@ -7,7 +7,7 @@ import { app } from "../../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate, useParams } from "react-router-dom";
-import { useSelector } from "react-redux";
+
 
 export default function UpdateTour() {
   const [file, setFile] = useState(null);
@@ -17,28 +17,36 @@ export default function UpdateTour() {
   const [destinations, setDestinations] = useState([]);
   const [publishError, setPublishError] = useState(null);
   const { tourId } = useParams();
-  const { currentUser } = useSelector((state) => state.user);
+  
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log("Tour ID:", tourId);
+    if (!tourId) {
+      setPublishError("Invalid Tour ID");
+      return;
+    }
+
     const fetchTour = async () => {
       try {
         const res = await fetch(`/api/tours/getTour/${tourId}`);
         const data = await res.json();
+        //console.log("API Response:", data);
         if (!res.ok) {
           setPublishError(data.message);
           return;
         }
         setPublishError(null);
-        setFormData(data.tour);
+        setFormData(data);
+        //console.log(" Response:",formData); 
       } catch (error) {
         setPublishError("Failed to fetch tour");
       }
     };
-
-    const fetchDestinations = async () => {
+    
+      const fetchDestinations = async () => {
       try {
-        const res = await fetch("/api/destinations");
+        const res = await fetch("/api/destination/get-dest");
         const data = await res.json();
         if (res.ok) {
           setDestinations(data.destinations);
@@ -53,6 +61,10 @@ export default function UpdateTour() {
     fetchTour();
     fetchDestinations();
   }, [tourId]);
+
+  // useEffect(() => {
+  //   console.log("Updated formData:", formData);
+  // }, [formData]);
 
   const handleUploadImage = async () => {
     try {
@@ -91,8 +103,9 @@ export default function UpdateTour() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting formData:", formData);
     try {
-      const res = await fetch(`/api/tours/updateTour/${formData._id}/${currentUser._id}`, {
+      const res = await fetch(`/api/tours/update-tour/${formData._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -100,6 +113,7 @@ export default function UpdateTour() {
         body: JSON.stringify(formData),
       });
       const data = await res.json();
+      console.log("API Response:", data);
       if (!res.ok) {
         setPublishError(data.message);
         return;
@@ -107,9 +121,11 @@ export default function UpdateTour() {
       setPublishError(null);
       navigate(`/tours`);
     } catch (error) {
+      console.error("Submit Error:", error);
       setPublishError("Something went wrong");
     }
   };
+  
 
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
@@ -123,7 +139,7 @@ export default function UpdateTour() {
           required
           className="flex-1"
           onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-          value={formData.title}
+          value={formData.title || ""}
         />
         <TextInput
           type="number"
@@ -132,11 +148,11 @@ export default function UpdateTour() {
           min="1"
           className="flex-1"
           onChange={(e) => setFormData({ ...formData, days: parseInt(e.target.value, 10) })}
-          value={formData.days}
+          value={formData.days || ""}
         />
         <Select
           id="destinations"
-          required
+          
           multiple
           style={{ borderColor: "#F4AC20" }}
           onChange={(e) => {
@@ -146,7 +162,7 @@ export default function UpdateTour() {
             );
             setFormData({ ...formData, destinations: selectedOptions });
           }}
-          value={formData.destinations}
+          value={formData.destinations || []}
         >
           {destinations.map((dest) => (
             <option key={dest._id} value={dest._id}>
@@ -162,7 +178,7 @@ export default function UpdateTour() {
             size="sm"
             outline
             onClick={handleUploadImage}
-            disabled={imageUploadProgress}
+            disabled={!!imageUploadProgress}
           >
             {imageUploadProgress ? (
               <div className="w-16 h-16">
@@ -182,7 +198,7 @@ export default function UpdateTour() {
         )}
         <ReactQuill
           theme="snow"
-          value={formData.desc}
+          value={formData.desc || ""}
           placeholder="Write tour description..."
           className="h-72 mb-12"
           required

@@ -34,13 +34,14 @@ export const create = async (req, res, next) => {
 };
 
 // Get a single tour by ID
-export const getSingleTour = async (req, res, next) => {
+export const getTour = async (req, res, next) => {
     try {
         const tour = await Tour.findById(req.params.tourId)
             .populate('destinations', 'name location');
 
         if (!tour) {
             return next(errorHandler(404, "Tour not found"));
+           
         }
 
         res.status(200).json(tour);
