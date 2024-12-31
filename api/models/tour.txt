@@ -1,15 +1,40 @@
+import mongoose from "mongoose";
+const { Schema } = mongoose;
+
+const dayDestinationSchema = new Schema({
+  day: { type: Number, required: false  },
+  destinations: [
+    { type: Schema.Types.ObjectId, ref: "Destination", required: false  }
+  ]
+});
+
+const tourSchema = new Schema(
+  {
+    title: { type: String, required: true, unique: true },
+    itinerary: [dayDestinationSchema], // Array to store destinations by day
+    days: { type: Number, required: true },
+    photo: { type: String, required: false },
+    desc: { type: String, required: true }
+  },
+  { timestamps: true }
+);
+
+export default mongoose.model("Tour", tourSchema);
+
+
+
+
 import { errorHandler } from '../utils/error.js';
 import Tour from '../models/tour.model.js';
 
 // Create a new tour
 export const create = async (req, res, next) => {
     // Validate required fields based on schema
-    if (!req.body.title || !req.body.desc || !req.body.days || 
-        !req.body.destinations || !req.body.photo) {
+    if (!req.body.title || !req.body.desc || !req.body.days || !req.body.itinerary) {
         return next(errorHandler(400, "Please provide all required fields"));
     }
 
-    // Create URL-friendly slug from title
+    // Create URL-friendly slug from title (if required)
     const slug = req.body.title
         .split(' ')
         .join('-')
@@ -21,7 +46,7 @@ export const create = async (req, res, next) => {
         title: req.body.title,
         desc: req.body.desc,
         days: req.body.days,
-        destinations: req.body.destinations,
+        itinerary: req.body.itinerary,
         photo: req.body.photo
     });
 
@@ -37,7 +62,7 @@ export const create = async (req, res, next) => {
 export const getSingleTour = async (req, res, next) => {
     try {
         const tour = await Tour.findById(req.params.tourId)
-            .populate('destinations', 'name location');
+            .populate('itinerary.destinations', 'name location');
 
         if (!tour) {
             return next(errorHandler(404, "Tour not found"));
@@ -66,12 +91,12 @@ export const getTours = async (req, res, next) => {
                 ],
             }),
             ...(req.query.destination && { 
-                destinations: { $in: [req.query.destination] } 
+                "itinerary.destinations": { $in: [req.query.destination] } 
             }),
             ...(req.query.minDays && { days: { $gte: parseInt(req.query.minDays) } }),
             ...(req.query.maxDays && { days: { $lte: parseInt(req.query.maxDays) } }),
         })
-            .populate('destinations', 'name location')
+            .populate('itinerary.destinations', 'name location')
             .sort({ updatedAt: sortDirection })
             .skip(startIndex)
             .limit(limit);
@@ -117,11 +142,11 @@ export const updateTour = async (req, res, next) => {
                     desc: req.body.desc,
                     photo: req.body.photo,
                     days: req.body.days,
-                    destinations: req.body.destinations,
+                    itinerary: req.body.itinerary,
                 }
             },
             { new: true }
-        ).populate('destinations', 'name location');
+        ).populate('itinerary.destinations', 'name location');
 
         res.status(200).json(updatedTour);
     } catch (error) {

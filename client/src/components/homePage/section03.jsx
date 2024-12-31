@@ -1,6 +1,6 @@
 import { Container, Row, Col } from 'reactstrap';
 import Subtitle from '../shared/Subtitle';
-import '../../styles/section3.css';
+import './section3.css';
 import FeaturedTourList from '../homePage/FeaturedTourList';
 
 export default function Section03() {

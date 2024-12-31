@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Alert, Button, TextInput, Modal, FileInput } from "flowbite-react";
+import  { useState } from "react";
+import { Alert, Button, TextInput,  FileInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 import {
   getDownloadURL,

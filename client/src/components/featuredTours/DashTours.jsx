@@ -53,7 +53,7 @@ export default function DashTours() {
   const handleDeleteTour = async () => {
     setShowModal(false);
     try {
-      const res = await fetch(`/api/to urs/deletetour/${tourIdToDelete}/${currentUser._id}`, {
+      const res = await fetch(`/api/tours/deletetour/${tourIdToDelete}/${currentUser._id}`, {
         method: 'DELETE',
       });
       const data = await res.json();
