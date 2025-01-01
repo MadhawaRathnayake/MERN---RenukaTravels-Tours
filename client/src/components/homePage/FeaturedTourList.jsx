@@ -22,7 +22,7 @@ const FeaturedTourList = () => {
 
     fetchTours();
   }, []);
-console.log(userTours);
+//console.log(userTours);
   return (
     <Row>
       {userTours?.map((tour) => (
@@ -31,6 +31,7 @@ console.log(userTours);
         </Col>
       ))}
     </Row>
+    
   );
 };
 

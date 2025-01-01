@@ -119,7 +119,7 @@ export default function UpdateTour() {
         return;
       }
       setPublishError(null);
-      navigate(`/tours`);
+      navigate(`/dashboard?tab=tours`);
     } catch (error) {
       console.error("Submit Error:", error);
       setPublishError("Something went wrong");

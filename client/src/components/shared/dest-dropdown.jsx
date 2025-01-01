@@ -59,7 +59,6 @@ function SearchBar() {
         ]}
         placeholder="Select a destination"
         isClearable
-        isMulti
         className="w-full"
         classNamePrefix="select"
         styles={customStyles}

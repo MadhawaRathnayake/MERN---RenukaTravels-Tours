@@ -4,14 +4,12 @@ import {
   Map,
 } from "@vis.gl/react-google-maps";
 
-import { Datepicker, TextInput} from "flowbite-react";
 import SearchBar from "../shared/dest-dropdown";
 import TimelineComponent from "./timeline";
 import Directions from "./Directions";
-
+import Waypoint from "../shared/waypoint"; // Import the updated Waypoint component
 
 export default function MapComp() {
-  const [formData, setFormData] = useState({});
   const [zoom, setZoom] = useState(7.9);
   const [days, setDays] = useState(1);
   const position = { lat: 7.87, lng: 80.77 };
@@ -39,26 +37,6 @@ export default function MapComp() {
     window.addEventListener("resize", updateHeight);
     return () => window.removeEventListener("resize", updateHeight);
   }, []);
-
-  const renderWaypoints = () => {
-    const waypoints = [];
-    for (let i = 0; i < days; i++) {
-      waypoints.push(
-        <div key={`waypoint-${i}`} className="mb-4">
-          <label
-            htmlFor={`waypoint-${i}`}
-            className="block text-sm font-medium text-gray-700 mb-2"
-          >
-            Day {i + 1}:
-          </label>
-          <SearchBar id={`waypoint-${i}`} />
-        </div>
-      );
-    }
-    return waypoints;
-  };
-
- 
 
   return (
     <section className="w-full">
@@ -98,7 +76,7 @@ export default function MapComp() {
                   </label>
                   <SearchBar id="start" />
                 </div>
-                {renderWaypoints()}
+                <Waypoint days={days} />
                 <div>
                   <label
                     htmlFor="end"
@@ -112,21 +90,20 @@ export default function MapComp() {
             </div>
           </div>
 
-          
           <div className="w-1/2 flex justify-center">
             <div style={{ height: mapHeight, width: "80%" }}>
               <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
-              <Map
-                zoom={zoom}
-                center={position}
-                mapId={import.meta.env.VITE_MAP_ID}
-                fullscreenControl={false}
-                streetViewControl={false}
-                zoomControl={false}
-                gestureHandling="none"
+                <Map
+                  zoom={zoom}
+                  center={position}
+                  mapId={import.meta.env.VITE_MAP_ID}
+                  fullscreenControl={false}
+                  streetViewControl={false}
+                  zoomControl={false}
+                  gestureHandling="none"
                 >
-                <Directions />
-             </Map>
+                  <Directions />
+                </Map>
               </APIProvider>
             </div>
           </div>
