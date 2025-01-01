@@ -22,7 +22,8 @@
     "express": "^4.19.2",
     "flowbite-react": "^0.10.1",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.5.2"
+    "mongoose": "^8.5.2",
+    "prop-types": "^15.8.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

@@ -1,5 +1,5 @@
 import React from "react";
-import MapComp from "../components/mapPage/MapComp";
+import MapComp from "../components/mapPage/NewMapComp";
 
 
 export default function MapPage() {
