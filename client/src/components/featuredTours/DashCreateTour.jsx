@@ -1,33 +1,34 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { FileInput, TextInput, Button, Alert, Select } from "flowbite-react";
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+import { TextInput, Button, Alert, FileInput } from "flowbite-react";
+import { CircularProgressbar } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
 import {
   getDownloadURL,
   getStorage,
   ref,
   uploadBytesResumable,
 } from "firebase/storage";
-import { CircularProgressbar } from "react-circular-progressbar";
-import "react-circular-progressbar/dist/styles.css";
 import { app } from "../../firebase";
-
+import Waypoint from "../shared/waypoint";
+import ReactQuill from "react-quill";
 export default function CreateTour() {
-  const [file, setFile] = useState(null);
+  const [file, setFile] = useState(null);  
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
   const [destinations, setDestinations] = useState([]);
+
   const [formData, setFormData] = useState({
     title: "",
     desc: "",
-    days: "",
+    days: 1,
     destinations: [],
     photo: "",
   });
+ 
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
-
+  // Fetch destinations on component mount
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
@@ -46,9 +47,17 @@ export default function CreateTour() {
     fetchDestinations();
   }, []);
 
+  // Handle waypoint changes
+  const handleWaypointChange = (day, value) => {
+    const updatedDestinations = [...formData.destinations];
+    updatedDestinations[day - 1] = value; // Assign destination to the correct day
+    setFormData((prev) => ({ ...prev, destinations: updatedDestinations }));
+  };
+
+  // Image upload functionality
   const handleUploadImage = async () => {
     if (!file) {
-      setImageUploadError("Please select an image");
+      setImageUploadError("Please select an image.");
       return;
     }
 
@@ -67,7 +76,7 @@ export default function CreateTour() {
           setImageUploadProgress(Math.round(progress));
         },
         () => {
-          setImageUploadError("Image upload failed");
+          setImageUploadError("Image upload failed.");
           setImageUploadProgress(null);
         },
         async () => {
@@ -77,18 +86,19 @@ export default function CreateTour() {
         }
       );
     } catch (error) {
-      setImageUploadError("Image upload failed");
+      setImageUploadError("Image upload failed.");
       setImageUploadProgress(null);
       console.error(error);
     }
   };
 
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     const { title, desc, days, destinations, photo } = formData;
 
-    if (!title || !desc || !days || !destinations.length || !photo) {
-      setPublishError("Please fill in all required fields");
+    if (!title || !desc || !days || destinations.length < days || !photo) {
+      setPublishError("Please fill in all required fields and upload an image.");
       return;
     }
 
@@ -101,13 +111,13 @@ export default function CreateTour() {
       const data = await res.json();
 
       if (!res.ok) {
-        setPublishError(data.message || "Failed to create tour");
+        setPublishError(data.message || "Failed to create tour.");
       } else {
         setPublishError(null);
         navigate("/tours");
       }
     } catch (error) {
-      setPublishError("Something went wrong");
+      setPublishError("Something went wrong.");
       console.error(error);
     }
   };
@@ -137,28 +147,11 @@ export default function CreateTour() {
             setFormData({ ...formData, days: parseInt(e.target.value, 10) })
           }
         />
-        <Select
-          id="destinations"
-          required
-          multiple
-          style={{ borderColor: "#F4AC20" }}
-          onChange={(e) => {
-            const selectedOptions = Array.from(
-              e.target.selectedOptions,
-              (option) => option.value
-            );
-            setFormData({ ...formData, destinations: selectedOptions });
-          }}
-        >
-          <option value="" disabled>
-            Select Destinations
-          </option>
-          {destinations.map((dest) => (
-            <option key={dest._id} value={dest._id}>
-              {dest.destinationName}
-            </option>
-          ))}
-        </Select>
+        <Waypoint
+          days={formData.days}
+          destinations={destinations}
+          onChange={handleWaypointChange}
+        />
         <div className="flex gap-4 items-center justify-between border-4 border-dotted p-3 border-[#F4AC20]">
           <FileInput
             type="file"
@@ -183,9 +176,7 @@ export default function CreateTour() {
             )}
           </Button>
         </div>
-        {imageUploadError && (
-          <Alert color="failure">{imageUploadError}</Alert>
-        )}
+        {imageUploadError &&( <Alert color="failure">{imageUploadError}</Alert>)}
         {formData.photo && (
           <img
             src={formData.photo}
@@ -194,9 +185,10 @@ export default function CreateTour() {
           />
         )}
         <ReactQuill
-          theme="snow"
+          type="snow"
           placeholder="Write tour description..."
           className="h-72 mb-12"
+          required
           onChange={(value) => setFormData({ ...formData, desc: value })}
         />
         <Button type="submit" className="bg-[#F4AC20] text-white">

@@ -1,7 +1,7 @@
 import Select from "react-select";
 import { useEffect, useState } from "react";
 
-function SearchBar() {
+function SearchBar({ id , onChange }) {
   const [destinations, setDestinations] = useState([]);
 
   useEffect(() => {
@@ -46,33 +46,31 @@ function SearchBar() {
   };
 
   return (
-    <div className="mb-4">
-     
-      <Select
-        id="waypoint1"
-        options={[
-          { value: "", label: "None" },
-          ...destinations.map((dest) => ({
-            value: dest._id,
-            label: dest.destinationName,
-          }))
-        ]}
-        placeholder="Select a destination"
-        isClearable
-        className="w-full"
-        classNamePrefix="select"
-        styles={customStyles}
-        theme={(theme) => ({
-          ...theme,
-          colors: {
-            ...theme.colors,
-            primary: '#3B82F6', // blue-500
-            primary25: '#FEF3C7', // yellow-100
-            neutral20: '#FCD34D', // yellow-300
-          },
-        })}
-      />
-    </div>
+    <Select
+    id={id}
+    options={[
+      { value: "", label: "None" },
+      ...destinations.map((dest) => ({
+        value: dest._id,
+        label: dest.destinationName,
+      })),
+    ]}
+    placeholder="Select a destination"
+    isClearable
+    className="w-full"
+    classNamePrefix="select"
+    styles={customStyles}
+    theme={(theme) => ({
+      ...theme,
+      colors: {
+        ...theme.colors,
+        primary: "#3B82F6",
+        primary25: "#FEF3C7",
+        neutral20: "#FCD34D",
+      },
+    })}
+    onChange={(selected) => onChange(selected ? selected.value : null)} // Call onChange with selected value
+  />
   );
 }
 
