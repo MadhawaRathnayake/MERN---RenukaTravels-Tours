@@ -119,7 +119,7 @@ export default function DashTours() {
                     {tour.days} days
                   </Table.Cell>
                   <Table.Cell>
-                    {tour.destinations.map((dest, index) => (
+                    {tour.destinations.map((dest) => (
                       <span key={dest._id} className="inline-block bg-gray-100 rounded-full px-2 py-1 text-xs font-semibold text-gray-700 mr-1">
                         {dest.name}
                       </span>
@@ -165,7 +165,7 @@ export default function DashTours() {
             </h3>
             <div className='flex justify-center gap-5'>
               <Button color='failure' onClick={handleDeleteTour}>
-                Yes, I'm Sure
+                Yes, Im Sure
               </Button>
               <Button color='gray' onClick={() => setShowModal(false)}>
                 No, Cancel

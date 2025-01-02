@@ -11,7 +11,7 @@ const Tours = () => {
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [totalTours, setTotalTours] = useState(0);
+  
 
   // Fetch tours data
   useEffect(() => {
@@ -23,7 +23,7 @@ const Tours = () => {
         
         if (res.ok) {
           setTours(data.tours);
-          setTotalTours(data.totalTours || 0);
+          
           const pages = Math.ceil((data.totalTours || 0) / 8); // Assuming 8 items per page
           setPageCount(pages);
         } else {
