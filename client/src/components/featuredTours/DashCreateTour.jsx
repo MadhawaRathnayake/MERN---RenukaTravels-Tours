@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { TextInput, Button, Alert, FileInput } from "flowbite-react";
 import { CircularProgressbar } from "react-circular-progressbar";
@@ -16,7 +16,7 @@ export default function CreateTour() {
   const [file, setFile] = useState(null);  
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
-  const [destinations, setDestinations] = useState([]);
+  
 
   const [formData, setFormData] = useState({
     title: "",
@@ -28,24 +28,7 @@ export default function CreateTour() {
  
   const [publishError, setPublishError] = useState(null);
   const navigate = useNavigate();
-  // Fetch destinations on component mount
-  useEffect(() => {
-    const fetchDestinations = async () => {
-      try {
-        const res = await fetch("/api/destination/get-dest");
-        const data = await res.json();
-        if (res.ok) {
-          setDestinations(data.destinations);
-        } else {
-          console.error("Failed to load destinations:", data.message);
-        }
-      } catch (error) {
-        console.error("Error fetching destinations:", error);
-      }
-    };
 
-    fetchDestinations();
-  }, []);
 
   // Handle waypoint changes
   const handleWaypointChange = (day, value) => {
@@ -149,7 +132,6 @@ export default function CreateTour() {
         />
         <Waypoint
           days={formData.days}
-          destinations={destinations}
           onChange={handleWaypointChange}
         />
         <div className="flex gap-4 items-center justify-between border-4 border-dotted p-3 border-[#F4AC20]">
