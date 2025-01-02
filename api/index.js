@@ -8,6 +8,7 @@ import vehicleRoutes from "./routes/vehicle.route.js";
 import destRoutes from "./routes/destination.route.js";
 import tourRoutes from "./routes/tour.route.js";
 
+import galleryRoutes from "./routes/gallery.route.js";
 import cors from "cors";
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -41,6 +42,7 @@ app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/destination", destRoutes);
 app.use("/api/tours", tourRoutes);
 
+app.use("/api/gallery", galleryRoutes);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
 
