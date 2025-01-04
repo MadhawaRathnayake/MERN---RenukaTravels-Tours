@@ -15,6 +15,7 @@ import UpdateTour from "./components/featuredTours/UpdateTours";
 import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
+import CreateDestination from "./pages/CreateDestination";
 import UpdateDestination from "./pages/UpdateDestination";
 import HotelDetails from "./components/hotelpages/HotelDetails";
 import InputHotel from "./components/hotelpages/InputHotel";
