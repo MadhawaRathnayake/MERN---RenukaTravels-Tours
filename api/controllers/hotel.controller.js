@@ -12,14 +12,48 @@ export const createHotel = async (req, res) => {
 };
 
 // Get all hotels (GET)
-export const getHotels = async (req, res) => {
+export const getHotels = async (req, res, next) => {
   try {
-    const hotels = await Hotel.find();
-    res.status(200).send(hotels); // 200 for success
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const sortDirection = req.query.order === 'asc' ? 1 : -1;
+
+    // Fetch hotels based on query parameters
+    const hotels = await Hotel.find({
+      ...(req.query.city && { city: req.query.city }),
+      ...(req.query.name && { name: { $regex: req.query.name, $options: 'i' } }),
+      ...(req.query.rating && { rating: { $gte: parseInt(req.query.rating) } }),
+      ...(req.query.searchTerm && {
+        $or: [
+          { name: { $regex: req.query.searchTerm, $options: 'i' } },
+          { description: { $regex: req.query.searchTerm, $options: 'i' } },
+        ],
+      }),
+    })
+      .sort({ updatedAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+
+    // Total number of hotels
+    const totalHotels = await Hotel.countDocuments();
+
+    // Number of hotels created in the last month
+    const now = new Date();
+    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    const lastMonthHotels = await Hotel.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+
+    res.status(200).json({
+      hotels,
+      totalHotels,
+      lastMonthHotels,
+    });
   } catch (error) {
-    res.status(500).send(error);
+    next(error);
   }
 };
+
 
 // Get hotels by city (GET)
 export const getHotelsByCity = async (req, res) => {

@@ -29,41 +29,59 @@ export const create = async (req, res, next) => {
     }
 
     // Get vehicles with filtering and pagination
-export const getVehicles = async (req, res, next) => {
-    try {
-        const startIndex = parseInt(req.query.startIndex) || 0;
-        const limit = parseInt(req.query.limit) || 9;
-        const sortDirection = req.query.order === 'asc' ? 1 : -1;
-
-        const vehicles = await Vehicle.find({
-            ...(req.query.userId && { userId: req.query.userId }),
-            ...(req.query.slug && { slug: req.query.slug }),
-            ...(req.query.vehicleId && { _id: req.query.vehicleId }),
-            ...(req.query.searchTerm && {
-                $or: [
-                    { title: { $regex: req.query.searchTerm, $options: 'i' } },
-                    { content: { $regex: req.query.searchTerm, $options: 'i' } },
-                ],
-            }),
-        })
-            .sort({ updatedAt: sortDirection })
-            .skip(startIndex)
-            .limit(limit);
-
-        const totalVehicles = await Vehicle.countDocuments();
-        const now = new Date();
-        const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
-        const lastMonthVehicles = await Vehicle.countDocuments({ createdAt: { $gte: oneMonthAgo } });
-
-        res.status(200).json({
-            vehicles,
-            totalVehicles,
-            lastMonthVehicles,
-        });
-    } catch (error) {
-        next(error);
-    }
-};
+    export const getVehicles = async (req, res, next) => {
+        try {
+            const startIndex = parseInt(req.query.startIndex) || 0;
+            const limit = parseInt(req.query.limit) || 9;
+            const sortDirection = req.query.order === 'asc' ? 1 : -1;
+    
+            const vehicles = await Vehicle.find({
+                ...(req.query.userId && { userId: req.query.userId }),
+                ...(req.query.slug && { slug: req.query.slug }),
+                ...(req.query.vehicleId && { _id: req.query.vehicleId }),
+                ...(req.query.searchTerm && {
+                    $or: [
+                        { title: { $regex: req.query.searchTerm, $options: 'i' } },
+                        { content: { $regex: req.query.searchTerm, $options: 'i' } },
+                    ],
+                }),
+            })
+                .sort({ updatedAt: sortDirection })
+                .skip(startIndex)
+                .limit(limit);
+    
+            const totalVehicles = await Vehicle.countDocuments();
+            const now = new Date();
+            const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+            const lastMonthVehicles = await Vehicle.countDocuments({ createdAt: { $gte: oneMonthAgo } });
+    
+            // Aggregate daily vehicle stats
+            const dailyVehicleStats = await Vehicle.aggregate([
+                {
+                    $match: { createdAt: { $gte: oneMonthAgo } },
+                },
+                {
+                    $group: {
+                        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+                        count: { $sum: 1 },
+                    },
+                },
+                { $sort: { _id: 1 } },
+            ]);
+    
+            console.log("Daily Vehicle Stats:", dailyVehicleStats);  // Debug log
+    
+            res.status(200).json({
+                vehicles,
+                totalVehicles,
+                lastMonthVehicles,
+                dailyVehicleStats,  // Send the daily vehicle stats to the frontend
+            });
+        } catch (error) {
+            next(error);
+        }
+    };
+    
 
 // Delete a vehicle
 export const deleteVehicle = async (req, res, next) => {

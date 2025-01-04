@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import HotelForm from "./hotelpages/InputHotel"; 
+import HotelForm from "./hotelpages/InputHotel"; // Ensure this path is correct
 
 const HotelTable = () => {
   const [hotels, setHotels] = useState([]);
@@ -13,10 +13,15 @@ const HotelTable = () => {
     fetchHotels();
   }, []);
 
-  const fetchHotels = async () => {
+ const fetchHotels = async () => {
+  try {
     const response = await axios.get("/api/hotels");
-    setHotels(response.data);
-  };
+    setHotels(response.data.hotels); // Access the `hotels` array
+  } catch (error) {
+    console.error("Error fetching hotels:", error);
+  }
+};
+
 
   const deleteHotel = async (id) => {
     await axios.delete(`/api/hotels/${id}`);
