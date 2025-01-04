@@ -37,7 +37,7 @@ const GalleryTable = () => {
           className="bg-[#F4AC20] text-white py-1 px-4 rounded-lg hover:bg-[#f49120]"
           onClick={toggleForm}
         >
-          {showForm ? "Hide Form" : "Add a Gallery"}
+          {showForm ? "Hide Form" : "Add an image"}
         </Button>
       </div>
 
