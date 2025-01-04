@@ -13,15 +13,14 @@ const HotelTable = () => {
     fetchHotels();
   }, []);
 
- const fetchHotels = async () => {
-  try {
-    const response = await axios.get("/api/hotels");
-    setHotels(response.data.hotels); // Access the `hotels` array
-  } catch (error) {
-    console.error("Error fetching hotels:", error);
-  }
-};
-
+  const fetchHotels = async () => {
+    try {
+      const response = await axios.get("/api/hotels");
+      setHotels(response.data.hotels); // Access the `hotels` array
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+    }
+  };
 
   const deleteHotel = async (id) => {
     await axios.delete(`/api/hotels/${id}`);
@@ -35,7 +34,9 @@ const HotelTable = () => {
   return (
     <section className="container mx-auto mt-10 p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Hotels Management</h2>
+        <h2 className="text-3xl font-semibold text-gray-900 ">
+          <span className="text-[#F4AC20]">HOTEL</span> DETAILS
+        </h2>
         <Button
           className="bg-[#F4AC20] text-white py-1 px-4 rounded-lg hover:bg-[#f49120]"
           onClick={toggleForm}
