@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { Alert, Button, TextInput, Modal, FileInput } from "flowbite-react";
+import  { useState, useEffect } from "react";
+import { Alert, Button, TextInput,  FileInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 import {
   getDownloadURL,
@@ -64,7 +64,7 @@ export default function UpdateDestination() {
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
           setImageUploadProgress(progress.toFixed(0));
         },
-        (error) => {
+        () => {
           setImageUploadError("Image uploading failed!");
           setImageUploadProgress(null);
         },
@@ -101,7 +101,7 @@ export default function UpdateDestination() {
 
       if (res.ok) {
         setPublishError(null);
-        navigate(`/destinations/${data.slug}`);
+        navigate(`/destination/${data.slug}`);
       }
     } catch (error) {
       setPublishError("Something went wrong");
