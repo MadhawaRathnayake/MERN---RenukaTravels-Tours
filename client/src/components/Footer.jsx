@@ -32,9 +32,9 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Explore More */}
           <div className="w-full lg:w-1/4 px-4 mb-8 lg:mb-0">
-            <h5 className="text-lg font-bold text-gray-800 mb-4">Quick Links</h5>
+            <h5 className="text-lg font-bold text-gray-800 mb-4">Explore More</h5>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -67,16 +67,15 @@ const Footer = () => {
           <div className="w-full lg:w-1/4 px-4 mb-8 lg:mb-0">
             <h5 className="text-lg font-bold text-gray-800 mb-4">Contact</h5>
             <ul className="space-y-2 text-gray-600">
-              <li>Address: Sri Lanka</li>
               <li>
-      <span>Email: </span>
-      <a
-        href="mailto:renukatoursandtravels1@gmail.com"
-        className=" hover:underline"
-      >
-        renukatoursandtravels1@gmail.com
-      </a>
-    </li>
+                <span>Email: </span>
+                <a
+                  href="mailto:renukatoursandtravels1@gmail.com"
+                  className="hover:underline"
+                >
+                  renukatoursandtravels1@gmail.com
+                </a>
+              </li>
               <li>Phone: +94 77 926 4693</li>
             </ul>
           </div>
