@@ -11,12 +11,7 @@ export default function Gallery() {
       try {
         const response = await fetch("/api/gallery");
         const data = await response.json();
-        // Pre-assign sizes to create a balanced layout
-        const processedData = data.map((img, index) => ({
-          ...img,
-          size: getOptimizedTileSize(index, data.length)
-        }));
-        setImages(processedData);
+        setImages(data);
       } catch (error) {
         console.error("Failed to fetch gallery items:", error);
       } finally {
@@ -26,31 +21,12 @@ export default function Gallery() {
     fetchGallery();
   }, []);
 
-  // Improved tile sizing function that adapts to remaining images
-  const getOptimizedTileSize = (index, totalImages) => {
-    // Make sure we don't create large tiles near the end
-    if (totalImages - index <= 3) return "";
-    
-    const pattern = index % 8;
-    
-    switch(pattern) {
-      case 0:
-        return totalImages - index >= 4 ? "col-span-2 row-span-2" : "";
-      case 3:
-        return totalImages - index >= 3 ? "col-span-2" : "";
-      case 6:
-        return totalImages - index >= 2 ? "row-span-2" : "";
-      default:
-        return "";
-    }
-  };
-
   if (loading) {
     return (
       <section className="mt-8 p-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {[...Array(8)].map((_, i) => (
+          <div className="grid grid-cols-3 gap-4">
+            {[...Array(9)].map((_, i) => (
               <div
                 key={i}
                 className="h-64 w-full rounded-lg bg-gray-200 animate-pulse"
@@ -75,19 +51,22 @@ export default function Gallery() {
   return (
     <section className="mt-8 p-4">
       <div className="max-w-7xl mx-auto">
-        {/* SOLUTION 1: Using minmax for row height */}
-        <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[minmax(200px,auto)] gap-4">
-          {/* 
-            // OR SOLUTION 2: Using fixed height but with refined pattern
-            <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-[200px] gap-4">
-          */}
+        {/* Masonry Layout with 3 Columns */}
+        <div
+          className="grid grid-cols-3 gap-4"
+          style={{
+            gridAutoRows: "15px", // Increased base row height
+          }}
+        >
           {images.map((image, index) => (
             <div
               key={index}
-              className={`relative group rounded-lg overflow-hidden 
-                ${image.size}
-                transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl 
-                cursor-pointer bg-gray-100`}
+              className="relative group rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer bg-gray-100"
+              style={{
+                gridRowEnd: `span ${Math.ceil(
+                  Math.random() * 12 + 5 // Increased random multiplier
+                )}`,
+              }}
               onClick={() => setSelectedImage(image)}
             >
               <img
