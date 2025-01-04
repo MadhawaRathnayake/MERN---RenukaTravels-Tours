@@ -14,9 +14,14 @@ const HotelTable = () => {
   }, []);
 
   const fetchHotels = async () => {
-    const response = await axios.get("/api/hotels");
-    setHotels(response.data);
+    try {
+      const response = await axios.get("/api/hotels");
+      setHotels(response.data.hotels); // Access the `hotels` array
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+    }
   };
+  
 
   const deleteHotel = async (id) => {
     await axios.delete(`/api/hotels/${id}`);

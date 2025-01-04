@@ -35,8 +35,10 @@ export const createDest = async (req, rest, next) => {
 export const getDestinations = async (req, res, next) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 9;
     const sortDirection = req.query.order === "asc" ? 1 : -1;
+
+    // Fetch destinations based on query parameters
     const destinations = await Destination.find({
       ...(req.query.userId && { userId: req.query.userId }),
       ...(req.query.slug && { slug: req.query.slug }),
@@ -52,13 +54,26 @@ export const getDestinations = async (req, res, next) => {
       .skip(startIndex)
       .limit(limit);
 
+    // Total number of destinations
+    const totalDestinations = await Destination.countDocuments();
+
+    // Number of destinations created in the last month
+    const now = new Date();
+    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    const lastMonthDestinations = await Destination.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+
     res.status(200).json({
       destinations,
+      totalDestinations,
+      lastMonthDestinations,
     });
   } catch (error) {
     next(error);
   }
 };
+
 
 export const getDestinationNames = async (req, res, next) => {
     try {

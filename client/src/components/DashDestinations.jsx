@@ -1,3 +1,4 @@
+/* eslint-disable react/no-unescaped-entities */
 import { Modal, Table, Button } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -101,7 +102,7 @@ export default function DashDestinations() {
                 <Table.Body className="divide-y" key={destination._id}>
                   <Table.Row className="bg-white">
                     <Table.Cell>
-                      <Link to={`/destination/${destination.slug}`}>
+                      <Link to={`/destinations/${destination.slug}`}>
                         <img
                           src={destination.destImage}
                           alt={destination.destinationName}
@@ -112,7 +113,7 @@ export default function DashDestinations() {
                     <Table.Cell>
                       <Link
                         className="font-medium text-gray-900"
-                        to={`/destination/${destination.slug}`}
+                        to={`/destinations/${destination.slug}`}
                       >
                         {destination.destinationName}
                       </Link>
