@@ -13,7 +13,6 @@ import Tours from "./pages/Tours";
 import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
-import CreateDestination from "./pages/CreateDestination";
 import UpdateDestination from "./pages/UpdateDestination";
 import HotelDetails from "./components/hotelpages/HotelDetails";
 import InputHotel from "./components/hotelpages/InputHotel";
@@ -42,10 +41,6 @@ export default function App() {
             <Route path="/mappage" element={<MapPage />}></Route>
           </Route>
           <Route element={<OnlyAdminPrivateRoute />}>
-            <Route
-              path="/create-destination"
-              element={<CreateDestination />}
-            ></Route>
             <Route
               path="/update-destination/:destId"
               element={<UpdateDestination />}

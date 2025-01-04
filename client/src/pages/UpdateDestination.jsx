@@ -86,7 +86,7 @@ export default function UpdateDestination() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        const res = await fetch(`/api/destination/update-dest/${formData._id}`, {
+      const res = await fetch(`/api/destination/update-dest/${formData._id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -131,26 +131,51 @@ export default function UpdateDestination() {
           <FileInput
             type="file"
             accept="image/*"
-            onChange={(e) => setFile(e.target.files[0])}
+            onChange={(e) => {
+              const selectedFile = e.target.files[0];
+              if (selectedFile) {
+                setFile(selectedFile);
+                // Start upload process immediately
+                const storage = getStorage(app);
+                const fileName = new Date().getTime() + "-" + selectedFile.name;
+                const storageRef = ref(storage, fileName);
+                const uploadTask = uploadBytesResumable(
+                  storageRef,
+                  selectedFile
+                );
+
+                uploadTask.on(
+                  "state_changed",
+                  (snapshot) => {
+                    const progress =
+                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                    setImageUploadProgress(progress.toFixed(0));
+                  },
+                  (error) => {
+                    setImageUploadError("Image uploading failed!");
+                    setImageUploadProgress(null);
+                  },
+                  () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then(
+                      (downloadURL) => {
+                        setImageUploadProgress(null);
+                        setImageUploadError(null);
+                        setFormData({ ...formData, destImage: downloadURL });
+                      }
+                    );
+                  }
+                );
+              }
+            }}
           />
-          <Button
-            type="button"
-            color="warning"
-            size="sm"
-            onClick={handleUpdloadImage}
-            disabled={imageUploadProgress}
-          >
-            {imageUploadProgress ? (
-              <div className="w-16 h-16">
-                <CircularProgressbar
-                  value={imageUploadProgress}
-                  text={`${imageUploadProgress || 0}%`}
-                />
-              </div>
-            ) : (
-              "Upload Image"
-            )}
-          </Button>
+          {imageUploadProgress && (
+            <div className="w-16 h-16">
+              <CircularProgressbar
+                value={imageUploadProgress}
+                text={`${imageUploadProgress || 0}%`}
+              />
+            </div>
+          )}
         </div>
         {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
         {formData.destImage && (
