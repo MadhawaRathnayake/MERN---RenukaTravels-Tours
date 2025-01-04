@@ -11,6 +11,8 @@ import { FaCar } from "react-icons/fa";
 import { HiOfficeBuilding } from 'react-icons/hi'; // Updated icon for Hotels
 import UserStatsChart from './DashCharts/UserStatsChart';
 import VehicleStatsChart from './DashCharts/VehicleStatsChart';
+import DestinationBarChart from "./DashCharts/DestChart";
+//import HotelChart from "./DashCharts/HotelChart";
 
 
 export default function DashboardComp() {
@@ -112,7 +114,7 @@ useEffect(()=>{
             <h3 className="text-gray-500 text-md uppercase">Total Users</h3>
             <p className="text-2xl">{totalUsers}</p>
         </div>
-        <HiOutlineUserGroup className="bg-teal-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
+        <HiOutlineUserGroup className="bg-orange-400 text-white rounded-full text-5xl p-3 shadow-lg"/>
     </div>
     <UserStatsChart />
     <div className="flex gap-2 text-sm">
@@ -132,7 +134,7 @@ useEffect(()=>{
             <h3 className="text-gray-500 text-md uppercase">Total Vehicles</h3>
             <p className="text-2xl">{totalVehicles}</p>
         </div>
-        <FaCar className="bg-purple-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
+        <FaCar className="bg-orange-400 text-white rounded-full text-5xl p-3 shadow-lg"/>
     </div>
     <VehicleStatsChart />
     <div className="flex gap-2 text-sm">
@@ -150,8 +152,9 @@ useEffect(()=>{
             <h3 className="text-gray-500 text-md uppercase">Total Destinations</h3>
             <p className="text-2xl">{totalDestinations}</p>
         </div>
-        <FiMapPin className="bg-indigo-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
+        <FiMapPin className="bg-orange-400 text-white rounded-full text-5xl p-3 shadow-lg"/>
     </div>
+    <DestinationBarChart />
     <div className="flex gap-2 text-sm">
         <span className="text-green-500 flex items-center">
             <HiArrowNarrowUp/>
@@ -167,7 +170,7 @@ useEffect(()=>{
             <h3 className="text-gray-500 text-md uppercase">Total Tours</h3>
             <p className="text-2xl">{totalDestinations}</p>
         </div>
-        <HiClipboardCheck className="bg-lime-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
+        <HiClipboardCheck className="bg-orange-400 text-white rounded-full text-5xl p-3 shadow-lg"/>
     </div>
     <div className="flex gap-2 text-sm">
         <span className="text-green-500 flex items-center">
@@ -184,8 +187,9 @@ useEffect(()=>{
             <h3 className="text-gray-500 text-md uppercase">Total Hotels</h3>
             <p className="text-2xl">{totalHotels}</p>
         </div>
-        <HiOfficeBuilding className="bg-lime-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
+        <HiOfficeBuilding className="bg-orange-400 text-white rounded-full text-5xl p-3 shadow-lg"/>
     </div>
+    {/* <HotelChart/> */}
     <div className="flex gap-2 text-sm">
         <span className="text-green-500 flex items-center">
             <HiArrowNarrowUp/>
@@ -201,7 +205,7 @@ useEffect(()=>{
             <h3 className="text-gray-500 text-md uppercase">Total Bookings</h3>
             <p className="text-2xl">{lastMonthDestinations}</p>
         </div>
-        <HiOutlineTicket className="bg-lime-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
+        <HiOutlineTicket className="bg-orange-400 text-white rounded-full text-5xl p-3 shadow-lg"/>
     </div>
     <div className="flex gap-2 text-sm">
         <span className="text-green-500 flex items-center">
@@ -215,12 +219,12 @@ useEffect(()=>{
        </div>
 
 
-       <div className="flex flex-wrap gap-4 py-3 mx-auto justify-center">
+       <div className="flex flex-wrap gap-0 py-3 mx-auto justify-center">
         <div className="flex flex-col w-full md:w-auto shadow-md p-2 
         rounded-md dark:bg-gray-800">
             <div className="flex justify-between p-3 text-sm font-semibold">
                 <h1 className="text-center p-2">Recent Users</h1>
-                <Button outline gradientDuoTone='purpleToPink'>
+                <Button outline className="bg-gradient-to-r from-orange-400 to-yellow-500 text-white">
                   <Link to={'/dashboard?tab=users'}>See all</Link>
                 </Button>
             </div>
@@ -257,7 +261,8 @@ useEffect(()=>{
         rounded-md dark:bg-gray-800">
             <div className="flex justify-between p-3 text-sm font-semibold">
                 <h1 className="text-center p-2">Recent Vehicles</h1>
-                <Button outline gradientDuoTone='purpleToPink'>
+                <Button outline className="bg-gradient-to-r from-orange-400 to-yellow-500 text-white">
+
                   <Link to={'/dashboard?tab=vehicles'}>See all</Link>
                 </Button>
             </div>
@@ -295,7 +300,7 @@ useEffect(()=>{
         rounded-md dark:bg-gray-800">
             <div className="flex justify-between p-3 text-sm font-semibold">
                 <h1 className="text-center p-2">Recent Hotels</h1>
-                <Button outline gradientDuoTone='purpleToPink'>
+                <Button outline className="bg-gradient-to-r from-orange-400 to-yellow-500 text-white">
                   <Link to={'/dashboard?tab=hotels'}>See all</Link>
                 </Button>
             </div>
@@ -327,7 +332,7 @@ useEffect(()=>{
         rounded-md dark:bg-gray-800">
             <div className="flex justify-between p-3 text-sm font-semibold">
                 <h1 className="text-center p-2">Recent Destinations</h1>
-                <Button outline gradientDuoTone='purpleToPink'>
+                <Button outline className="bg-gradient-to-r from-orange-400 to-yellow-500 text-white">
                   <Link to={'/dashboard?tab=destinations'}>See all</Link>
                 </Button>
             </div>
