@@ -5,8 +5,8 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import { app } from "../../firebase"; // Correct path to Firebase config
-import { Alert } from "flowbite-react"; // Ensure this package is installed or replace with alternative
+import { app } from "../../firebase";
+import { Alert } from "flowbite-react";
 
 function ImageUploader({ setImageURL, label, id }) {
   const [uploadProgress, setUploadProgress] = useState(null);
@@ -18,7 +18,7 @@ function ImageUploader({ setImageURL, label, id }) {
       uploadImage(file)
         .then((url) => {
           setImageURL(url);
-          console.log(`${label} URL:`, url); // Log to confirm URL is set
+          console.log(`${label} URL:`, url);
           setUploadError(null);
         })
         .catch((error) => {
