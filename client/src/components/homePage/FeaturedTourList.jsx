@@ -1,37 +1,29 @@
-import { Row, Col } from 'reactstrap';
+import React from 'react';
 import TourCard from '../shared/TourCard';
-import { useEffect, useState } from "react";
+import useFetch from '../hooks/useFetch';
+import { BASE_URL } from '../utils/config';
 
 const FeaturedTourList = () => {
-  const [userTours, setUserTours] = useState([]);
+  const { data: tours, loading, error } = useFetch(`${BASE_URL}/tours/gettours`);
 
-  useEffect(() => {
-    const fetchTours = async () => {
-      try {
-        const res = await fetch(`/api/tours/gettours`);
-        const data = await res.json();
-        if (res.ok) {
-          setUserTours(data.tours);
-        } else {
-          console.log(data.message);
-        }
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-
-    fetchTours();
-  }, []);
-//console.log(userTours);
   return (
-    <Row>
-      {userTours?.map((tour) => (
-        <Col lg="3" md="6" sm="6" className="mb-4" key={tour._id}>
+    <div className="flex flex-wrap -mx-2">
+      {loading && (
+        <div className="w-full text-center py-5">
+          <p className="text-lg font-semibold">Loading...</p>
+        </div>
+      )}
+      {error && (
+        <div className="w-full text-center py-5">
+          <p className="text-lg font-semibold text-red-500">{error}</p>
+        </div>
+      )}
+      {!loading && !error && tours?.map((tour) => (
+        <div className="w-full sm:w-1/2 lg:w-1/4 px-2 mb-4" key={tour._id}>
           <TourCard tour={tour} />
-        </Col>
+        </div>
       ))}
-    </Row>
-    
+    </div>
   );
 };
 

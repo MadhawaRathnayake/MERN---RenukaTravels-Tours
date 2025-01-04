@@ -1,73 +1,63 @@
-import '../styles/tour-details.css';
-import {Container, Row, Col} from 'reactstrap'
+import React, { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import tourData from '../assets/data/tours'
-import Booking from '../components/Booking/Booking';
+import useFetch from '../hooks/useFetch';
+import { BASE_URL } from '../utils/config';
 
- 
 const TourDetails = () => {
+  const { id } = useParams();
 
-    const {id} = useParams()
-    const tour = tourData.find(tour =>tour.id ===id)
-    const {photo,title,desc,price,city,distance,maxGroupSize}=tour
-    const loading = false;
-    const error = false; 
-    return (
-        <section>
-        <Container>
-          {
-            loading && <h4 className='text-center pt-5'>Loading.....</h4>
-          }
-          {
-            error && <h4 className='text-center pt-5'>{error}</h4>
-          }
-          {
-            !loading && !error && <Row>
-            <Col lg='8'>
-              <div className="tour__content">
-                <img src={photo} alt="tour" />
-  
+  // Fetch data from database
+  const { data: tour, loading, error } = useFetch(`${BASE_URL}/tours/gettour/${id}`);
+  console.log(tour);
+
+  // Destructure properties from tour object
+  const { title, destinations, days, photo, desc } = tour || {};
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [tour]);
+
+  return (
+    <section className="py-8">
+      <div className="container mx-auto">
+        {loading && <h4 className="text-center pt-5 text-lg font-semibold">Loading.....</h4>}
+        {error && <h4 className="text-center pt-5 text-lg font-semibold text-red-500">{error}</h4>}
+        {!loading && !error && (
+          <div className="flex flex-wrap">
+            <div className="w-full lg:w-8/12">
+              <div className="tour__content bg-white shadow-md rounded-md p-6">
+                {photo && (
+                  <img
+                    src={photo}
+                    alt={title}
+                    className="w-full h-72 object-cover rounded-md mb-6"
+                  />
+                )}
                 <div className="tour__info">
-                  <h2>{title}</h2>
-                  <div className="d-flex align-items-center gap-5">
-                    
-  
-                    <span>
-                      <i className='ri-map-pin-user-fill'></i> {city}
+                  <h2 className="text-2xl font-bold mb-4">{title}</h2>
+                  <div className="flex flex-wrap gap-4 mb-4">
+                    <span className="text-sm font-medium text-gray-600">
+                      <strong>Days:</strong> {days}
+                    </span>
+                    <span className="text-sm font-medium text-gray-600">
+                      <strong>Destinations:</strong> {destinations?.length || 0} places
                     </span>
                   </div>
-                  <div className="tour__extra-details">
-                    <span>
-                      <i className='ri-map-pin-2-line'></i> {city}
-                    </span>
-                    <span>
-                      <i className='ri-money-dollar-circle-line'></i> ${price}
-                    </span>
-                    <span>
-                      <i className='ri-map-pin-time-line'></i> {distance} Km
-                    </span>
-                    <span>
-                      <i className='ri-group-line'></i> {maxGroupSize} people
-                    </span>
-                  </div>
-                  <h5>Description</h5>
-                  <p>{desc}</p>
+                  <h5 className="text-lg font-semibold mb-2">Description</h5>
+                  <p className="text-gray-700">{desc}</p>
                 </div>
-  
-                
               </div>
-            </Col>
-            
-            <Col lg='4'>
-            <Booking tour={tour}  />
-          </Col>
+            </div>
 
-        
-          </Row>
-          }
-        </Container>
-      </section>
-  )
-}
+            {/* Uncomment when Booking component is available */}
+            {/* <div className="w-full lg:w-4/12 mt-6 lg:mt-0">
+              <Booking tour={tour} />
+            </div> */}
+          </div>
+        )}
+      </div>
+    </section>
+  );
+};
 
-export default TourDetails
+export default TourDetails;
