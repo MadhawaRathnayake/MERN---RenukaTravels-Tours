@@ -65,7 +65,7 @@ export default function GalleryForm({ onSave, initialValues = null }) {
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
-            placeholder="Gallery Name"
+            placeholder="Image Name"
             required
           />
           <input
@@ -90,7 +90,7 @@ export default function GalleryForm({ onSave, initialValues = null }) {
           type="submit"
           className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-[#F4AC20] hover:bg-[#ffa53d]"
         >
-          {isUpdate ? "Update Gallery" : "Add Gallery"}
+          {isUpdate ? "Update Gallery" : "Add to Gallery"}
         </button>
       </form>
     </div>

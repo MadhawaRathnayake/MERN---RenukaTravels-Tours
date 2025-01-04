@@ -32,9 +32,9 @@ const Footer = () => {
             </div>
           </div>
 
-          {/* Quick Links */}
+          {/* Explore More */}
           <div className="w-full lg:w-1/4 px-4 mb-8 lg:mb-0">
-            <h5 className="text-lg font-bold text-gray-800 mb-4">Quick Links</h5>
+            <h5 className="text-lg font-bold text-gray-800 mb-4">Explore More</h5>
             <ul className="space-y-2">
               <li>
                 <Link
@@ -46,17 +46,29 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="text-gray-600">
+                <Link
+                  to="/about"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-gray-600"
+                >
                   About
                 </Link>
               </li>
               <li>
-                <Link to="/tours" className="text-gray-600">
+                <Link
+                  to="/tours"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-gray-600"
+                >
                   Tours
                 </Link>
               </li>
               <li>
-                <Link to="/gallery" className="text-gray-600">
+                <Link
+                  to="/gallery"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-gray-600"
+                >
                   Gallery
                 </Link>
               </li>
@@ -67,16 +79,15 @@ const Footer = () => {
           <div className="w-full lg:w-1/4 px-4 mb-8 lg:mb-0">
             <h5 className="text-lg font-bold text-gray-800 mb-4">Contact</h5>
             <ul className="space-y-2 text-gray-600">
-              <li>Address: Sri Lanka</li>
               <li>
-      <span>Email: </span>
-      <a
-        href="mailto:renukatoursandtravels1@gmail.com"
-        className=" hover:underline"
-      >
-        renukatoursandtravels1@gmail.com
-      </a>
-    </li>
+                <span>Email: </span>
+                <a
+                  href="mailto:renukatoursandtravels1@gmail.com"
+                  className="hover:underline"
+                >
+                  renukatoursandtravels1@gmail.com
+                </a>
+              </li>
               <li>Phone: +94 77 926 4693</li>
             </ul>
           </div>
@@ -86,12 +97,20 @@ const Footer = () => {
             <h5 className="text-lg font-bold text-gray-800 mb-4">Legal</h5>
             <ul className="space-y-2">
               <li>
-                <Link to="/terms" className="text-gray-600">
+                <Link
+                  to="/terms"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-gray-600"
+                >
                   Terms of Service
                 </Link>
               </li>
               <li>
-                <Link to="/privacy" className="text-gray-600">
+                <Link
+                  to="/privacy"
+                  onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                  className="text-gray-600"
+                >
                   Privacy Policy
                 </Link>
               </li>
