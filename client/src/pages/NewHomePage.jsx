@@ -1,9 +1,9 @@
-
 import "../index.css";
 
 import Section01 from "../components/homePage/section01.jsx";
 import Section02 from "../components/homePage/section02.jsx";
-import Section03 from "../components/homePage/section03.jsx";
+import Section03 from "../components/homePage/section04.jsx";
+import Section04 from "../components/homePage/section04.jsx";
 
 export default function NewHomePage() {
   return (
@@ -18,12 +18,11 @@ export default function NewHomePage() {
         </div>
       </div>
       <div className="basic-struture">
-          <Section03 />
+        <Section03 />
       </div>
-      {/* <div className="basic-struture">
-          <Section04 />
-      </div> */}
+      <div className="basic-struture">
+        <Section04 />
+      </div>
     </section>
-    
   );
 }
