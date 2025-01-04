@@ -1,146 +1,120 @@
-import { useEffect, useState } from "react";
-import ApexCharts from "react-apexcharts";
+import React, { useEffect, useState } from "react";
+import Chart from "react-apexcharts";
 
-// Define the chart options for the vehicle stats
-const vehicleChartOptions = {
-  chart: {
-    type: "line",
-    height: "50%",
-    fontFamily: "Inter, sans-serif",
-    dropShadow: {
-      enabled: false,
-    },
-    toolbar: {
-      show: false,
-    },
-  },
-  tooltip: {
-    enabled: true,
-    x: {
-      show: false,
-    },
-  },
-  fill: {
-    type: "gradient",
-    gradient: {
-      opacityFrom: 0.7,
-      opacityTo: 0.3,
-      shade: "#0A78D3",
-      gradientToColors: ["#0A78D3"],
-    },
-  },
-  dataLabels: {
-    enabled: false,
-  },
-  stroke: {
-    width: 2,
-  },
-  grid: {
-    show: true,
-    strokeDashArray: 2,
-    padding: {
-      left: 2,
-      right: 2,
-      top: 0,
-    },
-  },
-  series: [
-    {
-      name: "New Vehicles",
-      data: [],
-      color: "#0A78D3",
-    },
-  ],
-  xaxis: {
-    categories: [], // Will be populated dynamically
-    labels: {
-      show: true,
-    },
-    axisBorder: {
-      show: false,
-    },
-    axisTicks: {
-      show: false,
-    },
-  },
-  yaxis: {
-    show: true,
-    labels: {
-      show: true,
-    },
-  },
-};
-
-const VehicleStatsChart = () => {
-  const [vehicleChartData, setVehicleChartData] = useState({
+const UserStatsChart = () => {
+  const [chartData, setChartData] = useState({
     series: [
       {
-        name: "New Vehicles",
+        name: "New vehicles",
         data: [],
       },
     ],
-    options: vehicleChartOptions,
+    options: {
+      chart: {
+        height: "100%",
+        type: "line", // Changed chart type to "line"
+        fontFamily: "Inter, sans-serif",
+        dropShadow: {
+          enabled: true, // Enabled drop shadow for a smoother look
+          blur: 3,
+          left: 0,
+          top: 2,
+        },
+        toolbar: {
+          show: false,
+        },
+      },
+      tooltip: {
+        enabled: true,
+        x: {
+          show: true,
+        },
+        y: {
+          formatter: (value) => `${value} vehicles`, // Added tooltip formatting
+        },
+      },
+      markers: {
+        size: 6, // Added markers at data points
+        colors: ["#1C64F2"],
+        strokeColor: "#fff", // White border around the markers
+        strokeWidth: 2,
+      },
+      dataLabels: {
+        enabled: false,
+      },
+      stroke: {
+        curve: "smooth", // Smooth line
+        width: 3, // Thicker line
+        colors: ["#1C64F2"],
+      },
+      grid: {
+        show: true,
+        borderColor: "#e0e0e0",
+        strokeDashArray: 0,
+        padding: {
+          left: 0,
+          right: 0,
+          top: 0,
+        },
+      },
+      xaxis: {
+        categories: [],
+        labels: {
+          show: true,
+          style: {
+            colors: "#9e9e9e",
+          },
+        },
+        axisBorder: {
+          show: true,
+        },
+        axisTicks: {
+          show: true,
+        },
+      },
+      yaxis: {
+        show: true,
+        labels: {
+          style: {
+            colors: "#9e9e9e",
+          },
+        },
+      },
+    },
   });
 
-  // Fetch daily vehicle stats from the backend API
-  const fetchVehicleStats = async () => {
-    try {
-        const response = await fetch("/api/vehicles/getvehicles");
-        const data = await response.json();
-
-        if (data && data.dailyVehicleStats && data.dailyVehicleStats.length > 0) {
-            let categories = data.dailyVehicleStats.map((stat) => stat._id);  // Date string
-            let counts = data.dailyVehicleStats.map((stat) => stat.count);    // Count of vehicles
-
-            // Filter out categories and counts where the count value is 0.5 or 1.5
-            const filteredData = categories
-              .map((category, index) => ({
-                category,
-                count: counts[index]
-              }))
-              .filter(item => item.count !== 0.5 && item.count !== 1.5);
-
-            // Extract filtered categories and counts
-            categories = filteredData.map(item => item.category);
-            counts = filteredData.map(item => item.count);
-
-            // Ensure only unique integer values for counts
-            counts = [...new Set(counts)];
-
-            setVehicleChartData((prev) => ({
-                ...prev,
-                series: [{ name: "New Vehicles", data: counts }],
-                options: { ...prev.options, xaxis: { categories } },
-            }));
-        } else {
-            console.error("No dailyVehicleStats data or empty array.");
-            // Set default chart data
-            setVehicleChartData((prev) => ({
-                ...prev,
-                series: [{ name: "New Vehicles", data: [0] }],
-                options: { ...prev.options, xaxis: { categories: ["No Data"] } },
-            }));
-        }
-    } catch (error) {
-        console.error("Error fetching vehicle stats:", error);
-    }
-};
-
-  // Fetch the stats on component mount
   useEffect(() => {
     fetchVehicleStats();
   }, []);
 
+  const fetchVehicleStats = async () => {
+    try {
+      const response = await fetch("/api/vehicles/getvehicles");
+      const data = await response.json();
+      console.log("API response data:", data);
+
+      if (data && data.dailyVehicleStats) {
+        const categories = data.dailyVehicleStats.map((stat) => stat._id);
+        const counts = data.dailyVehicleStats.map((stat) => stat.count);
+
+        setChartData((prev) => ({
+          ...prev,
+          series: [{ name: "New vehicles", data: counts }],
+          options: { ...prev.options, xaxis: { categories } },
+        }));
+      } else {
+        console.error("dailyVehicleStats is missing or empty.");
+      }
+    } catch (error) {
+      console.error("Error fetching vehicle stats:", error);
+    }
+  };
+
   return (
-    <div id="vehicle-chart">
-      <ApexCharts
-        options={vehicleChartData.options}
-        series={vehicleChartData.series}
-        type="line"
-        height={350}
-      />
+    <div id="line-chart">
+      <Chart options={chartData.options} series={chartData.series} type="line" height="100%" />
     </div>
   );
 };
 
-export default VehicleStatsChart;
+export default UserStatsChart;
