@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import HotelForm from "./hotelpages/InputHotel"; // Ensure this path is correct
+import HotelForm from "./hotelpages/InputHotel"; 
 
 const HotelTable = () => {
   const [hotels, setHotels] = useState([]);
