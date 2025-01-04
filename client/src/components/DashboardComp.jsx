@@ -170,7 +170,7 @@ useEffect(()=>{
             <h3 className="text-gray-500 text-md uppercase">Total Tours</h3>
             <p className="text-2xl">{totalDestinations}</p>
         </div>
-        <HiClipboardCheck className="bg-indigo-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
+        <HiClipboardCheck className="bg-teal-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
     </div>
     <div className="flex gap-2 text-sm">
         <span className="text-green-500 flex items-center">
@@ -205,7 +205,7 @@ useEffect(()=>{
             <h3 className="text-gray-500 text-md uppercase">Total Bookings</h3>
             <p className="text-2xl">{lastMonthDestinations}</p>
         </div>
-        <HiOutlineTicket className="bg-indigo-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
+        <HiOutlineTicket className="bg-teal-600 text-white rounded-full text-5xl p-3 shadow-lg"/>
     </div>
     <div className="flex gap-2 text-sm">
         <span className="text-green-500 flex items-center">
