@@ -24,6 +24,10 @@ const destinationSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    activities: {
+      type: [String], // Array of strings
+      default: [], // Default to an empty array
+    },
   },
   { timestamps: true }
 );

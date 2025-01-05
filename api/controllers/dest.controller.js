@@ -6,12 +6,12 @@ export const createDest = async (req, rest, next) => {
     return next(
       errorHandler(
         403,
-        "You are not authenticate to make changes to the database"
+        "You are not authenticated to make changes to the database"
       )
     );
   }
   if (!req.body.destinationName || !req.body.description) {
-    return next(errorHandler(400, "Please fill all the required areas"));
+    return next(errorHandler(400, "Please fill all the required fields"));
   }
   const slug = req.body.destinationName
     .split(" ")
@@ -22,6 +22,7 @@ export const createDest = async (req, rest, next) => {
     ...req.body,
     slug,
     userId: req.user.id,
+    activities: req.body.activities || [], // Allow adding activities
   });
 
   try {
@@ -47,6 +48,7 @@ export const getDestinations = async (req, res, next) => {
         $or: [
           { destinationName: { $regex: req.query.searchTerm, $options: "i" } },
           { description: { $regex: req.query.searchTerm, $options: "i" } },
+          { activities: { $regex: req.query.searchTerm, $options: "i" } }, // Search in activities
         ],
       }),
     })
@@ -74,37 +76,36 @@ export const getDestinations = async (req, res, next) => {
   }
 };
 
-
 export const getDestinationNames = async (req, res, next) => {
-    try {
-      const startIndex = parseInt(req.query.startIndex) || 0;
-      const limit = parseInt(req.query.limit) || 10;
-      const sortDirection = req.query.order === "asc" ? 1 : -1;
-  
-      const destinations = await Destination.find({
-        ...(req.query.userId && { userId: req.query.userId }),
-        ...(req.query.slug && { slug: req.query.slug }),
-        ...(req.query.destId && { _id: req.query.destId }),
-        ...(req.query.searchTerm && {
-          $or: [
-            { destinationName: { $regex: req.query.searchTerm, $options: "i" } },
-            { description: { $regex: req.query.searchTerm, $options: "i" } },
-          ],
-        }),
-      })
-        .select('destinationName')  // Select only destinationName field
-        .sort({ updatedAt: sortDirection })
-        .skip(startIndex)
-        .limit(limit);
-  
-      res.status(200).json({
-        destinations,
-      });
-    } catch (error) {
-      next(error);
-    }
-  };
-  
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const sortDirection = req.query.order === "asc" ? 1 : -1;
+
+    const destinations = await Destination.find({
+      ...(req.query.userId && { userId: req.query.userId }),
+      ...(req.query.slug && { slug: req.query.slug }),
+      ...(req.query.destId && { _id: req.query.destId }),
+      ...(req.query.searchTerm && {
+        $or: [
+          { destinationName: { $regex: req.query.searchTerm, $options: "i" } },
+          { description: { $regex: req.query.searchTerm, $options: "i" } },
+          { activities: { $regex: req.query.searchTerm, $options: "i" } }, // Search in activities
+        ],
+      }),
+    })
+      .select("destinationName") // Select only destinationName field
+      .sort({ updatedAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+
+    res.status(200).json({
+      destinations,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const deleteDestination = async (req, res, next) => {
   if (!req.user.isAdmin && req.user.id !== req.params.userId) {
@@ -119,23 +120,24 @@ export const deleteDestination = async (req, res, next) => {
 };
 
 export const UpdateDestination = async (req, res, next) => {
-    if (!req.user.isAdmin) {
-      return next(errorHandler(403, 'You are not allowed to update this destination'));
-    }
-    try {
-      const updatedDestination = await Destination.findByIdAndUpdate(
-        req.params.destId,
-        {
-          $set: {
-            destinationName: req.body.destinationName,
-            description: req.body.description,
-            destImage: req.body.destImage,
-          },
+  if (!req.user.isAdmin) {
+    return next(errorHandler(403, "You are not allowed to update this destination"));
+  }
+  try {
+    const updatedDestination = await Destination.findByIdAndUpdate(
+      req.params.destId,
+      {
+        $set: {
+          destinationName: req.body.destinationName,
+          description: req.body.description,
+          destImage: req.body.destImage,
+          activities: req.body.activities || [], // Update activities
         },
-        { new: true }
-      );
-      res.status(200).json(updatedDestination);
-    } catch (error) {
-      next(error);
-    }
-  };
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedDestination);
+  } catch (error) {
+    next(error);
+  }
+};

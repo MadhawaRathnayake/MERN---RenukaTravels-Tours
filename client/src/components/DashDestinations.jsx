@@ -36,6 +36,8 @@ export default function DashDestinations() {
   const [imageUploadError, setImageUploadError] = useState(null);
   const [formData, setFormData] = useState({});
   const [publishError, setPublishError] = useState(null);
+  const [activities, setActivities] = useState([]);
+  const [activityInput, setActivityInput] = useState("");
 
   const navigate = useNavigate();
 
@@ -101,54 +103,28 @@ export default function DashDestinations() {
     }
   };
 
-  // Create destination functions
-  const handleUpdloadImage = async () => {
-    try {
-      if (!file) {
-        setImageUploadError("Please select an image!");
-        return;
-      }
-      setImageUploadError(null);
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + "-" + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
-        },
-        (error) => {
-          setImageUploadError("Image uploading failed!");
-          setImageUploadProgress(null);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            setFormData({ ...formData, destImage: downloadURL });
-          });
-        }
-      );
-    } catch (error) {
-      setImageUploadError("Image upload Failed!");
-      setImageUploadProgress(null);
-      console.log(error);
+  const handleAddActivity = (e) => {
+    e.preventDefault();
+    if (activityInput.trim() !== "" && !activities.includes(activityInput.trim())) {
+      setActivities([...activities, activityInput.trim()]);
+      setActivityInput("");
     }
+  };
+
+  const handleRemoveActivity = (activityToRemove) => {
+    setActivities(activities.filter((activity) => activity !== activityToRemove));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const updatedFormData = { ...formData, activities };
     try {
       const res = await fetch("/api/destination/create-dest", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(updatedFormData),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -167,7 +143,7 @@ export default function DashDestinations() {
 
   return (
     <section className="w-full">
-      {showAlternateView ? ( // Conditional rendering
+      {showAlternateView ? (
         <div className="max-w-3xl mx-auto px-4">
           <div className="flex justify-between items-center my-7">
             <h1 className="text-left text-3xl font-semibold">
@@ -202,10 +178,8 @@ export default function DashDestinations() {
                   const selectedFile = e.target.files[0];
                   if (selectedFile) {
                     setFile(selectedFile);
-                    // Start upload process immediately
                     const storage = getStorage(app);
-                    const fileName =
-                      new Date().getTime() + "-" + selectedFile.name;
+                    const fileName = new Date().getTime() + "-" + selectedFile.name;
                     const storageRef = ref(storage, fileName);
                     const uploadTask = uploadBytesResumable(
                       storageRef,
@@ -259,6 +233,7 @@ export default function DashDestinations() {
                 className="w-full h-72 object-cover"
               />
             )}
+
             <ReactQuill
               theme="snow"
               placeholder="Description"
@@ -268,6 +243,45 @@ export default function DashDestinations() {
                 setFormData({ ...formData, description: value });
               }}
             />
+
+            <div className="flex flex-col gap-2">
+              <div className="flex gap-2 items-center"> {/* New container for input and button */}
+                <TextInput
+                  type="text"
+                  placeholder="Add an activity (e.g., Hiking, Swimming)"
+                  value={activityInput}
+                  onChange={(e) => setActivityInput(e.target.value)}
+                  onKeyDown={(e) => e.key === "Enter" && handleAddActivity(e)}
+                  className="flex-1" // Make input take available space
+                />
+                <button
+                  type="button"
+                  className="bg-[#ffffff] text-black py-2 px-6 rounded-lg hover:bg-[#f7dcbc] w-40 border-2 border-[#F4AC20]"
+                  onClick={handleAddActivity}
+                >
+                  Add Activities
+                </button>
+              </div>
+
+              <div className="flex flex-wrap gap-2 mt-2">
+                {activities.map((activity, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-200 text-gray-700 px-3 py-1 rounded-full flex items-center gap-2"
+                  >
+                    {activity}
+                    <button
+                      type="button"
+                      className="text-red-500 hover:text-red-700"
+                      onClick={() => handleRemoveActivity(activity)}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             <Button type="submit" color="warning">
               Add Destination
             </Button>
