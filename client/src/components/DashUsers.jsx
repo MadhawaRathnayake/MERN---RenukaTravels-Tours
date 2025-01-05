@@ -1,5 +1,3 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react/no-unescaped-entities */
 import { Button, Modal, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -53,63 +51,58 @@ export default function DashUsers() {
     }
   }
 
-  
-  
-    const handleDeleteUser = async () => {
-      setShowModal(false);
-      try {
-        const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
-          method: 'DELETE',
-        });
-        const data = await res.json();
-        if (!res.ok) {
-          console.log(data.message);
-        } else {
-          setUsers((prev) =>
-            prev.filter((post) => post._id !== userIdToDelete)
-          );
-          setShowModal(false);
-        }
-      } catch (error) {
-        console.log(error.message);
+  const handleDeleteUser = async () => {
+    setShowModal(false);
+    try {
+      const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        console.log(data.message);
+      } else {
+        setUsers((prev) =>
+          prev.filter((post) => post._id !== userIdToDelete)
+        );
+        setShowModal(false);
       }
+    } catch (error) {
+      console.log(error.message);
     }
-    
-  
+  }
 
   return (
     <div className="lg:mr-28 w-full table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 
       scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
+      
+      {/* Topic Heading */}
+      <h2 className="text-3xl font-semibold text-gray-900 mb-5">
+        <span className="text-[#F4AC20]">USER</span> MANAGEMENT
+      </h2>
+
       {currentUser.isAdmin && users.length > 0 ? (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>Date Created</Table.HeadCell>
               <Table.HeadCell>User Image</Table.HeadCell>
-              <Table.HeadCell>Usename</Table.HeadCell>
+              <Table.HeadCell>Username</Table.HeadCell>
               <Table.HeadCell>Email</Table.HeadCell>
               <Table.HeadCell>Admin</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
-              
             </Table.Head>
             {users.map((user) => (
               <Table.Body key={user._id} className="devide-y">
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell>{new Date(user.createdAt).toLocaleDateString()}</Table.Cell>
                   <Table.Cell>
-                    
-                      <img 
-                        src={user.profilePicture}
-                        alt={user.username}
-                        className="w-10 h-10 object-cover bg-gray-500 rounded-full"
-                      />
-                    
+                    <img 
+                      src={user.profilePicture}
+                      alt={user.username}
+                      className="w-10 h-10 object-cover bg-gray-500 rounded-full"
+                    />
                   </Table.Cell>
-                  <Table.Cell>
-                   
-                      {user.username}
-                    
-                  </Table.Cell>
+                  <Table.Cell>{user.username}</Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
                   <Table.Cell>{user.isAdmin ? (<FaCheck className="text-green-500"/>) : (<FaTimes className="text-red-500"/>)}</Table.Cell>
                   <Table.Cell>
@@ -120,7 +113,6 @@ export default function DashUsers() {
                       Delete
                     </span>
                   </Table.Cell>
-                 
                 </Table.Row>
               </Table.Body>
             ))}

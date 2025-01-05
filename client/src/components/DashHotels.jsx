@@ -32,7 +32,7 @@ const HotelTable = () => {
   };
 
   return (
-    <section className="container mx-auto mt-10 p-4">
+    <section className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-3xl font-semibold text-gray-900 ">
           <span className="text-[#F4AC20]">HOTEL</span> DETAILS
