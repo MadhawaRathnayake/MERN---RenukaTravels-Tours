@@ -326,8 +326,8 @@ export default function CustomizeForm() {
           </div>
 
           {/* ***************************************************cards02*************************************************** */}
-          <div className="py-2 rounded-lg shadow-lg  border-2">
-            <div style={{ height: mapHeight, width: "80%" }}>
+          <div className="py-2 rounded-lg shadow-lg flex justify-center border-2">
+            <div style={{ height: mapHeight, width: "97.5%" }}>
               <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
                 <Map
                   zoom={zoom}
