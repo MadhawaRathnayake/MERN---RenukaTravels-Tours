@@ -75,7 +75,7 @@ const DestinationBarChart = () => {
     try {
       const response = await fetch("/api/destination/get-dest"); // Adjust the URL as per your backend
       const data = await response.json();
-      console.log("Fetched destinations:", data);
+      //console.log("Fetched destinations:", data);
 
       if (data && data.destinations) {
         const destinationNames = data.destinations.map((dest) => dest.destinationName);
