@@ -267,11 +267,11 @@ export default function CustomizeForm() {
               </select>
             </div>
             {/* **********tiles********** */}
-            <div className="mt-4 flex flex-wrap gap-2">
+            <div className="mt-4 px-4 flex flex-wrap gap-2">
               {selectedDestinations.map((destination, index) => (
                 <div
                   key={index}
-                  className="flex items-center bg-blue-100 px-3 py-1 rounded-full text-sm text-blue-700 cursor-pointer"
+                  className="flex items-center  px-4 py-2 rounded-md border-2 text-sm text-yellow-400 cursor-pointer"
                   onClick={() => handleTileClick(destination)}
                 >
                   <span>{destination}</span>
@@ -279,7 +279,7 @@ export default function CustomizeForm() {
                     onClick={() => handleRemoveDestination(destination)}
                     className="ml-2 text-red-500"
                   >
-                    &times;
+                    X
                   </button>
                 </div>
               ))}
@@ -327,7 +327,7 @@ export default function CustomizeForm() {
 
           {/* ***************************************************cards02*************************************************** */}
           <div className="py-2 rounded-lg shadow-lg  border-2">
-            {/* <div style={{ height: mapHeight, width: "80%" }}>
+            <div style={{ height: mapHeight, width: "80%" }}>
               <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
                 <Map
                   zoom={zoom}
@@ -338,10 +338,10 @@ export default function CustomizeForm() {
                   zoomControl={false}
                   gestureHandling="none"
                 >
-                  <Directions />
+                  <Directions selectedDestinations={selectedDestinations} />
                 </Map>
               </APIProvider>
-            </div> */}
+            </div>
           </div>
         </div>
 
@@ -494,111 +494,167 @@ export default function CustomizeForm() {
 
 // ***********************************************************************Scripts*********************************************************************** //
 
-// function Directions() {
-//   const map = useMap();
-//   const routesLibrary = useMapsLibrary("routes");
-//   const [directionsService, setDirectionsService] = useState(null);
-//   const [directionsRenderer, setDirectionsRenderer] = useState(null);
-//   const [routes, setRoutes] = useState([]);
-//   const [routeIndex, setRouteIndex] = useState(0);
-//   const [hasRoute, setHasRoute] = useState(false); // To track if route is calculated
+function Directions({ selectedDestinations }) {
+  const map = useMap();
+  const routesLibrary = useMapsLibrary("routes");
+  const [directionsService, setDirectionsService] = useState(null);
+  const [directionsRenderer, setDirectionsRenderer] = useState(null);
+  const [routes, setRoutes] = useState([]);
+  const [routeIndex, setRouteIndex] = useState(0);
+  const [hasRoute, setHasRoute] = useState(false);
+  const [optimizedOrder, setOptimizedOrder] = useState([]);
 
-//   const selected = routes[routeIndex];
-//   const leg = selected ? selected.legs[0] : null;
+  const selected = routes[routeIndex];
+  const leg = selected ? selected.legs[0] : null;
 
-//   // Function to calculate the route
-//   const calculateRoute = (start, waypointsArray, end) => {
-//     if (!directionsService || !directionsRenderer || !start) return;
+  // Function to calculate distance between two points using Google's Distance Matrix Service
+  const calculateDistance = async (origin, destination) => {
+    return new Promise((resolve, reject) => {
+      const service = new routesLibrary.DistanceMatrixService();
+      service.getDistanceMatrix(
+        {
+          origins: [origin],
+          destinations: [destination],
+          travelMode: google.maps.TravelMode.DRIVING,
+        },
+        (response, status) => {
+          if (status === "OK") {
+            resolve(response.rows[0].elements[0].distance.value);
+          } else {
+            reject(new Error("Failed to calculate distance"));
+          }
+        }
+      );
+    });
+  };
 
-//     // Filter out any empty waypoints
-//     const validWaypoints = waypointsArray
-//       .filter((waypoint) => waypoint !== "")
-//       .map((location) => ({ location, stopover: true }));
+  // Function to optimize route using nearest neighbor algorithm
+  const optimizeRoute = async (destinations) => {
+    if (destinations.length <= 2) return destinations;
 
-//     // Determine the destination:
-//     // - Use end if available; otherwise, use the last waypoint
-//     const destination =
-//       end ||
-//       (validWaypoints.length > 0 &&
-//         validWaypoints[validWaypoints.length - 1].location);
+    let unvisited = [...destinations.slice(1, -1)]; // Exclude first and last points
+    let optimizedRoute = [destinations[0]]; // Start with the first destination
+    let currentPoint = destinations[0];
 
-//     if (!destination) return; // If no destination is available, do nothing
+    while (unvisited.length > 0) {
+      let shortestDistance = Infinity;
+      let nearestPoint = null;
+      let nearestIndex = -1;
 
-//     directionsService
-//       .route({
-//         origin: start,
-//         destination: destination,
-//         waypoints: validWaypoints,
-//         travelMode: google.maps.TravelMode.DRIVING,
-//         provideRouteAlternatives: true,
-//       })
-//       .then((response) => {
-//         directionsRenderer.setDirections(response);
-//         setRoutes(response.routes);
-//         setHasRoute(true); // Set hasRoute to true after route is calculated
-//       });
-//   };
+      // Find the nearest unvisited point
+      for (let i = 0; i < unvisited.length; i++) {
+        try {
+          const distance = await calculateDistance(currentPoint, unvisited[i]);
+          if (distance < shortestDistance) {
+            shortestDistance = distance;
+            nearestPoint = unvisited[i];
+            nearestIndex = i;
+          }
+        } catch (error) {
+          console.error("Error calculating distance:", error);
+        }
+      }
 
-//   useEffect(() => {
-//     if (!routesLibrary || !map) return;
-//     setDirectionsService(new routesLibrary.DirectionsService());
-//     setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
-//   }, [routesLibrary, map]);
+      if (nearestPoint) {
+        optimizedRoute.push(nearestPoint);
+        unvisited.splice(nearestIndex, 1);
+        currentPoint = nearestPoint;
+      }
+    }
 
-//   useEffect(() => {
-//     if (!directionsService || !directionsRenderer) return;
+    // Add the last destination back
+    optimizedRoute.push(destinations[destinations.length - 1]);
+    return optimizedRoute;
+  };
 
-//     const onChangeHandler = () => {
-//       const start = document.getElementById("start").value;
-//       const waypoint1 = document.getElementById("waypoint1").value;
-//       const waypoint2 = document.getElementById("waypoint2").value;
-//       const waypoint3 = document.getElementById("waypoint3").value;
-//       const end = document.getElementById("end").value;
+  // Function to calculate the route based on optimized destinations
+  const calculateRoute = async (destinations) => {
+    if (!directionsService || !directionsRenderer || destinations.length < 2)
+      return;
 
-//       // Calculate route as soon as start and any waypoint or end is selected
-//       if (start && (waypoint1 || waypoint2 || waypoint3 || end)) {
-//         calculateRoute(start, [waypoint1, waypoint2, waypoint3], end); // Pass all waypoints to the route calculation
-//       }
-//     };
+    try {
+      // Optimize the route order
+      const optimizedDestinations = await optimizeRoute(destinations);
+      setOptimizedOrder(optimizedDestinations);
 
-//     document
-//       .getElementById("start")
-//       .addEventListener("change", onChangeHandler);
-//     document
-//       .getElementById("waypoint1")
-//       .addEventListener("change", onChangeHandler);
-//     document
-//       .getElementById("waypoint2")
-//       .addEventListener("change", onChangeHandler);
-//     document
-//       .getElementById("waypoint3")
-//       .addEventListener("change", onChangeHandler);
-//     document.getElementById("end").addEventListener("change", onChangeHandler);
+      const origin = optimizedDestinations[0];
+      const destination =
+        optimizedDestinations[optimizedDestinations.length - 1];
+      const waypoints = optimizedDestinations.slice(1, -1).map((location) => ({
+        location,
+        stopover: true,
+      }));
 
-//     // Clean up event listeners on component unmount
-//     return () => {
-//       document
-//         .getElementById("start")
-//         .removeEventListener("change", onChangeHandler);
-//       document
-//         .getElementById("waypoint1")
-//         .removeEventListener("change", onChangeHandler);
-//       document
-//         .getElementById("waypoint2")
-//         .removeEventListener("change", onChangeHandler);
-//       document
-//         .getElementById("waypoint3")
-//         .removeEventListener("change", onChangeHandler);
-//       document
-//         .getElementById("end")
-//         .removeEventListener("change", onChangeHandler);
-//     };
-//   }, [directionsService, directionsRenderer]);
+      const response = await directionsService.route({
+        origin: origin,
+        destination: destination,
+        waypoints: waypoints,
+        travelMode: google.maps.TravelMode.DRIVING,
+        provideRouteAlternatives: true,
+        optimizeWaypoints: true, // Add Google's built-in optimization
+      });
 
-//   useEffect(() => {
-//     if (!directionsRenderer || !hasRoute) return;
-//     directionsRenderer.setRouteIndex(routeIndex);
-//   }, [routeIndex, directionsRenderer, hasRoute]);
+      directionsRenderer.setDirections(response);
+      setRoutes(response.routes);
+      setHasRoute(true);
+    } catch (error) {
+      console.error("Error calculating route:", error);
+      setHasRoute(false);
+    }
+  };
 
-//   if (!hasRoute || !leg) return null; // Don't show directions unless a route is calculated
-// }
+  useEffect(() => {
+    if (!routesLibrary || !map) return;
+    setDirectionsService(new routesLibrary.DirectionsService());
+    setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
+
+    return () => {
+      if (directionsRenderer) {
+        directionsRenderer.setMap(null);
+      }
+    };
+  }, [routesLibrary, map]);
+
+  useEffect(() => {
+    if (!directionsService || !directionsRenderer) return;
+
+    if (selectedDestinations && selectedDestinations.length >= 2) {
+      calculateRoute(selectedDestinations);
+    } else {
+      if (directionsRenderer) {
+        directionsRenderer.setDirections(null);
+      }
+      setHasRoute(false);
+    }
+  }, [selectedDestinations, directionsService, directionsRenderer]);
+
+  useEffect(() => {
+    if (!directionsRenderer || !hasRoute) return;
+    directionsRenderer.setRouteIndex(routeIndex);
+  }, [routeIndex, directionsRenderer, hasRoute]);
+
+  if (!hasRoute || !leg) return null;
+
+  return (
+    <div className="directions-info">
+      <div>Optimized Route Order:</div>
+      <div className="text-sm text-gray-600">
+        {optimizedOrder.map((dest, index) => (
+          <div key={index}>
+            {index + 1}. {dest}
+          </div>
+        ))}
+      </div>
+      <div className="mt-2">Total Distance: {leg.distance.text}</div>
+      <div>Total Duration: {leg.duration.text}</div>
+      {routes.length > 1 && (
+        <button
+          onClick={() => setRouteIndex((i) => (i + 1) % routes.length)}
+          className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+        >
+          Show alternative route ({routeIndex + 1} of {routes.length})
+        </button>
+      )}
+    </div>
+  );
+}
