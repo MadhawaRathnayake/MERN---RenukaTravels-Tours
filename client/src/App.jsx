@@ -21,6 +21,7 @@ import UpdateVehicle from "./components/VehicleComp/UpdateVehicle";
 import Gallery from "./pages/Gallery";
 import NewHomePage from "./pages/NewHomePage";
 import NavigationBar from "./components/NavigationBar";
+import CustomizeForm from "./pages/CustomizeForm";
 export default function App() {
   return (
     <div className="body-color">
@@ -39,6 +40,7 @@ export default function App() {
             <Route path="/dashboard" element={<Dashboard />}></Route>
             <Route path="/map" element={<MapPage />}></Route>
             <Route path="/mappage" element={<MapPage />}></Route>
+            <Route path="/customize" element={<CustomizeForm />}></Route>
           </Route>
           <Route element={<OnlyAdminPrivateRoute />}>
             <Route

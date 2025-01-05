@@ -61,7 +61,11 @@ export const getDestinations = async (req, res, next) => {
 
     // Number of destinations created in the last month
     const now = new Date();
-    const oneMonthAgo = new Date(now.getFullYear(), now.getMonth() - 1, now.getDate());
+    const oneMonthAgo = new Date(
+      now.getFullYear(),
+      now.getMonth() - 1,
+      now.getDate()
+    );
     const lastMonthDestinations = await Destination.countDocuments({
       createdAt: { $gte: oneMonthAgo },
     });
@@ -109,7 +113,9 @@ export const getDestinationNames = async (req, res, next) => {
 
 export const deleteDestination = async (req, res, next) => {
   if (!req.user.isAdmin && req.user.id !== req.params.userId) {
-    return next(errorHandler(403, "You are not allowed to delete this destination"));
+    return next(
+      errorHandler(403, "You are not allowed to delete this destination")
+    );
   }
   try {
     await Destination.findByIdAndDelete(req.params.destId);
@@ -121,7 +127,9 @@ export const deleteDestination = async (req, res, next) => {
 
 export const UpdateDestination = async (req, res, next) => {
   if (!req.user.isAdmin) {
-    return next(errorHandler(403, "You are not allowed to update this destination"));
+    return next(
+      errorHandler(403, "You are not allowed to update this destination")
+    );
   }
   try {
     const updatedDestination = await Destination.findByIdAndUpdate(
@@ -137,6 +145,31 @@ export const UpdateDestination = async (req, res, next) => {
       { new: true }
     );
     res.status(200).json(updatedDestination);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getDestinationDetails = async (req, res, next) => {
+  try {
+    const { slug } = req.query; // Extract the slug from query params
+
+    if (!slug) {
+      return next(errorHandler(400, "Destination slug is required"));
+    }
+
+    // Find the destination by slug
+    const destination = await Destination.findOne({ slug: slug });
+
+    if (!destination) {
+      return next(errorHandler(404, "Destination not found"));
+    }
+
+    // Return the description and activities
+    res.status(200).json({
+      description: destination.description,
+      activities: destination.activities,
+    });
   } catch (error) {
     next(error);
   }
