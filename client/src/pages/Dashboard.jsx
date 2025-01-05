@@ -49,6 +49,7 @@ function Dashboard() {
       
       {/*Bookings*/}
       {tab === "bookings" && <DashBookings />}
+      {tab === "subscribers" && <DashSubscribers />}
       {/* Gallery Tab */}
       {tab === "gallery" && <DashGallery />}{" "}
       {/* Render DashGallery when 'gallery' tab is selected */}
