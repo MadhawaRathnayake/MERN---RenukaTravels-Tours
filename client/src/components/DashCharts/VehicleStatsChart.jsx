@@ -91,7 +91,7 @@ const UserStatsChart = () => {
     try {
       const response = await fetch("/api/vehicles/getvehicles");
       const data = await response.json();
-      console.log("API response data:", data);
+      //console.log("API response data:", data);
 
       if (data && data.dailyVehicleStats) {
         const categories = data.dailyVehicleStats.map((stat) => stat._id);

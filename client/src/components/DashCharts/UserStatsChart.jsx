@@ -77,7 +77,7 @@ const UserStatsChart = () => {
     try {
       const response = await fetch("/api/user/getusers");
       const data = await response.json();
-      console.log("API response data:", data);
+      //console.log("API response data:", data);
 
       if (data && data.dailyUserStats) {
         const categories = data.dailyUserStats.map((stat) => stat._id);
