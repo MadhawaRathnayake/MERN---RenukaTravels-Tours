@@ -294,10 +294,12 @@ export default function DashDestinations() {
         </div>
       ) : (
         <>
+        
           <div className="w-full flex justify-between items-start mr-3.5 pl-16 my-2">
-            <h2 className="text-4xl font-bold text-center text-gray-800">
-              All <span className="text-yellow-400">Destinations</span>
-            </h2>
+            
+            <h2 className="text-3xl font-semibold text-gray-900 ">
+          <span className="text-[#F4AC20]">ALL</span> DESTINATIONS
+        </h2>
             <button
               className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg hover:bg-[#f49120]"
               onClick={() => setShowAlternateView(true)}

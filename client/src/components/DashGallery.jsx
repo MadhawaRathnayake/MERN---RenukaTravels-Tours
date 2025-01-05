@@ -30,9 +30,12 @@ const GalleryTable = () => {
   };
 
   return (
-    <section className="container mx-auto mt-10 p-4">
+    <section className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Gallery Management</h2>
+      <h2 className="text-3xl font-semibold text-gray-900 ">
+          <span className="text-[#F4AC20]">GALLERY</span> MANAGEMENT
+        </h2>
+        
         <Button
           className="bg-[#F4AC20] text-white py-1 px-4 rounded-lg hover:bg-[#f49120]"
           onClick={toggleForm}
