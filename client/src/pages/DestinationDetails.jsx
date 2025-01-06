@@ -2,7 +2,6 @@ import { Spinner } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 export default function DestinationDetails() {
   const { destSlug } = useParams();
