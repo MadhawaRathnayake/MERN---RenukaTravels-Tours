@@ -1,5 +1,5 @@
 "use client";
-
+import SearchBar from "../shared/dest-dropdown";
 import { useEffect, useState } from "react";
 import {
   APIProvider,
@@ -283,6 +283,8 @@ export default function MapComp() {
             </div>
           </div>
         </div>
+
+        
         <div
           id="Third-Row-Timeline-Activities"
           className="mb-8 flex justify-center"
@@ -326,7 +328,7 @@ export default function MapComp() {
         </div>
 
         <div id="Third-Row-Timeline-Activities" className="">
-          Hotel Details
+          <SearchBar/>
         </div>
         <div id="Third-Row-Timeline-Activities" className="">
           Vehicle Details
