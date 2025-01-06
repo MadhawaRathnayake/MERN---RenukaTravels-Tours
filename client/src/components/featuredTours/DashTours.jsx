@@ -4,21 +4,21 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from 'react-icons/hi';
 
-export default function DashVehicles() {
+export default function DashTours() {
   const { currentUser } = useSelector((state) => state.user);
-  const [userVehicles, setUserVehicles] = useState([]);
+  const [userTours, setUserTours] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [vehicleIdToDelete, setVehicleIdToDelete] = useState('');
+  const [tourIdToDelete, setTourIdToDelete] = useState('');
 
   useEffect(() => {
-    const fetchVehicles = async () => {
+    const fetchTours = async () => {
       try {
-        const res = await fetch(`/api/vehicles/getvehicles`);
+        const res = await fetch(`/api/tours/gettours`);
         const data = await res.json();
         if (res.ok) {
-          setUserVehicles(data.vehicles);
-          if (data.vehicles.length < 9) {
+          setUserTours(data.tours);
+          if (data.tours.length < 9) {
             setShowMore(false);
           }
         } else {
@@ -30,18 +30,18 @@ export default function DashVehicles() {
     };
 
     if (currentUser && currentUser.isAdmin) {
-      fetchVehicles();
+      fetchTours();
     }
   }, [currentUser]);
 
   const handleShowMore = async () => {
-    const startIndex = userVehicles.length;
+    const startIndex = userTours.length;
     try {
-      const res = await fetch(`/api/vehicles/getvehicles?startIndex=${startIndex}`);
+      const res = await fetch(`/api/tours/gettours?startIndex=${startIndex}`);
       const data = await res.json();
       if (res.ok) {
-        setUserVehicles((prev) => [...prev, ...data.vehicles]);
-        if (data.vehicles.length < 9) {
+        setUserTours((prev) => [...prev, ...data.tours]);
+        if (data.tours.length < 9) {
           setShowMore(false);
         }
       }
@@ -50,18 +50,18 @@ export default function DashVehicles() {
     }
   }
 
-  const handleDeleteVehicle = async () => {
+  const handleDeleteTour = async () => {
     setShowModal(false);
     try {
-      const res = await fetch(`/api/vehicles/deletevehicle/${vehicleIdToDelete}/${currentUser._id}`, {
+      const res = await fetch(`/api/tours/delete-tour/${tourIdToDelete}/${currentUser._id}`, {
         method: 'DELETE',
       });
       const data = await res.json();
       if (!res.ok) {
         console.log(data.message);
       } else {
-        setUserVehicles((prev) =>
-          prev.filter((vehicle) => vehicle._id !== vehicleIdToDelete)
+        setUserTours((prev) =>
+          prev.filter((tour) => tour._id !== tourIdToDelete)
         );
       }
     } catch (error) {
@@ -76,48 +76,59 @@ export default function DashVehicles() {
       {/* Title and Add Button */}
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-semibold text-gray-900 ">
-          ALL <span className="text-[#F4AC20]">VEHICLES</span>
+          ALL <span className="text-[#F4AC20]">TOURS</span>
         </h2>
-        <Link to="/dashboard?tab=createvehicle">
+        <Link to="/dashboard?tab=createtour">
           <Button style={{ backgroundColor: "#F4AC20", borderColor: "#F4AC20" }}>
-            Add a vehicle
+            Add a tour
           </Button>
         </Link>
       </div>
 
-      {currentUser.isAdmin && userVehicles.length > 0 ? (
+      {currentUser.isAdmin && userTours.length > 0 ? (
         <>
           <Table hoverable className="shadow-md">
             <Table.Head>
               <Table.HeadCell>Date Updated</Table.HeadCell>
-              <Table.HeadCell>Vehicle Image</Table.HeadCell>
-              <Table.HeadCell>Vehicle Title</Table.HeadCell>
+              <Table.HeadCell>Tour Photo</Table.HeadCell>
+              <Table.HeadCell>Tour Title</Table.HeadCell>
+              <Table.HeadCell>Days</Table.HeadCell>
+              <Table.HeadCell>Destinations</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
               <Table.HeadCell>Edit</Table.HeadCell>
-              
             </Table.Head>
-            {userVehicles.map((vehicle) => (
-              <Table.Body key={vehicle._id} className="devide-y">
+            {userTours.map((tour) => (
+              <Table.Body key={tour._id} className="divide-y">
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell>{new Date(vehicle.updatedAt).toLocaleDateString()}</Table.Cell>
+                  <Table.Cell>{new Date(tour.updatedAt).toLocaleDateString()}</Table.Cell>
                   <Table.Cell>
-                    <Link to={`/vehicles`}>
+                    <Link to={`/tour/${tour._id}`}>
                       <img 
-                        src={vehicle.image}
-                        alt={vehicle.title}
+                        src={tour.photo}
+                        alt={tour.title}
                         className="w-20 h-10 object-cover bg-gray-500"
                       />
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
-                    <Link className="font-medium text-gray-900 dark:text-white" to={`/vehicles`}>
-                      {vehicle.title}
+                    <Link className="font-medium text-gray-900 dark:text-white" to={`/tour/${tour._id}`}>
+                      {tour.title}
                     </Link>
+                  </Table.Cell>
+                  <Table.Cell>
+                    {tour.days} days
+                  </Table.Cell>
+                  <Table.Cell>
+                    {tour.destinations.map((dest) => (
+                      <span key={dest._id} className="inline-block bg-gray-100 rounded-full px-2 py-1 text-xs font-semibold text-gray-700 mr-1">
+                        {dest.name}
+                      </span>
+                    ))}
                   </Table.Cell>
                   <Table.Cell>
                     <span onClick={() => {
                       setShowModal(true);
-                      setVehicleIdToDelete(vehicle._id);
+                      setTourIdToDelete(tour._id);
                     }} className="font-medium text-red-500 hover:underline cursor-pointer">
                       Delete
                     </span>
@@ -125,12 +136,11 @@ export default function DashVehicles() {
                   <Table.Cell>
                       <Link
                         className="text-teal-500 hover:underline"
-                        to={`/update-vehicle/${vehicle._id}`}
+                        to={`/update-tour/${tour._id}`}
                       >
                         <span>Edit</span>
                       </Link>
-                    </Table.Cell>
-                  
+                  </Table.Cell>
                 </Table.Row>
               </Table.Body>
             ))}
@@ -142,7 +152,7 @@ export default function DashVehicles() {
           )}
         </>
       ) : (
-        <p>You have no vehicles yet</p>
+        <p>You have no tours yet</p>
       )}
 
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size='md'>
@@ -151,11 +161,11 @@ export default function DashVehicles() {
           <div className='text-center'>
             <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
             <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
-              Are you sure you want to delete this vehicle?
+              Are you sure you want to delete this tour?
             </h3>
             <div className='flex justify-center gap-5'>
-              <Button color='failure' onClick={handleDeleteVehicle}>
-                Yes, I'm Sure
+              <Button color='failure' onClick={handleDeleteTour}>
+                Yes, Im Sure
               </Button>
               <Button color='gray' onClick={() => setShowModal(false)}>
                 No, Cancel
