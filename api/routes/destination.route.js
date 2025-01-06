@@ -15,6 +15,7 @@ const router = express.Router();
 router.post("/create-dest", verifyToken, createDest);
 router.get("/get-dest", getDestinations);
 router.get("/get-dest-names", getDestinationNames);
+
 router.delete("/delete-dest/:destId", verifyToken, deleteDestination);
 router.put("/update-dest/:destId", verifyToken, UpdateDestination);
 

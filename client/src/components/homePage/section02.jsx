@@ -1,4 +1,4 @@
-import React from "react";
+
 import div02cover from "../../images/div02-cover.png";
 
 export default function Section02() {
