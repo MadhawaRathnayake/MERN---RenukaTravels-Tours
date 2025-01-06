@@ -113,7 +113,7 @@ export default function Section01() {
           </div>
         </div>
         <div className="py-4 lg:py-6">
-          <a href="/mappage">
+          <a href="/customize">
             <button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg hover:bg-[#f49120]">
               <b className="text-xl">Customize Your Own Plan</b>
             </button>
