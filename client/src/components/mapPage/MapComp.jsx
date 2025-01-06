@@ -333,7 +333,6 @@ export default function MapComp() {
         <div id="Third-Row-Timeline-Activities" className="">
           Vehicle Details
         </div>
-
       </form>
     </section>
   );
