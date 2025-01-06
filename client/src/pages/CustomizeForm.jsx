@@ -313,7 +313,7 @@ export default function CustomizeForm() {
                 Details about the location you have currently selected:
               </p>
             </div>
-            <div className="mt-4 px-2">
+            <div className="mt-4 px-4">
               <div>
                 <p
                   className="text-justify"
