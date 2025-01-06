@@ -27,12 +27,11 @@ function Dashboard() {
   }, [location.search]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row lg:flex-row">
+    <div className="max-w-7xl py-8 shadow-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row lg:flex-row">
       <div className="md:w-56">
         {/* Sidebar */}
         <DashSidebar />
       </div>
-      
       {/* Conditional rendering based on the selected tab */}
       {tab === "profile" && <DashProfile />}
       {tab === "hotels" && <DashHotels />}
@@ -51,9 +50,9 @@ function Dashboard() {
       {/*Bookings*/}
       {tab === "bookings" && <DashBookings />}
       {tab === "subscribers" && <DashSubscribers />}
-      
       {/* Gallery Tab */}
-      {tab === "gallery" && <DashGallery />}  {/* Render DashGallery when 'gallery' tab is selected */}
+      {tab === "gallery" && <DashGallery />}{" "}
+      {/* Render DashGallery when 'gallery' tab is selected */}
     </div>
   );
 }

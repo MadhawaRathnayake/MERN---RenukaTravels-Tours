@@ -1,11 +1,11 @@
 import React from 'react';
 import TourCard from '../shared/TourCard';
-import useFetch from '../hooks/useFetch';
-import { BASE_URL } from '../utils/config';
+import useFetch from '../../hooks/useFetch';
+import { BASE_URL } from '../../utils/config';
 
 const FeaturedTourList = () => {
-  const { data: tours, loading, error } = useFetch(`${BASE_URL}/tours/gettours`);
-
+  const { data: response, loading, error } = useFetch(`${BASE_URL}/tours/gettours`);
+  const tours = response?.tours || [];
   return (
     <div className="flex flex-wrap -mx-2">
       {loading && (
