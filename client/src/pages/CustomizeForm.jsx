@@ -295,6 +295,11 @@ export default function CustomizeForm() {
                 </div>
               ))}
             </div>
+            <div className="px-4">
+              <p className="text-gray-400 italic">
+                *Select a location to see the details
+              </p>
+            </div>
             <div className="py-2">
               <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
                 Describe any additional locations if you have in your mind:
@@ -313,7 +318,7 @@ export default function CustomizeForm() {
                 Details about the location you have currently selected:
               </p>
             </div>
-            <div className="mt-4 px-2">
+            <div className="mt-4 px-4">
               <div>
                 <p
                   className="text-justify"
