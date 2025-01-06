@@ -91,7 +91,6 @@ const UserStatsChart = () => {
     try {
       const response = await fetch("/api/vehicles/getvehicles");
       const data = await response.json();
-      //console.log("API response data:", data);
 
       if (data && data.dailyVehicleStats) {
         const categories = data.dailyVehicleStats.map((stat) => stat._id);
@@ -112,7 +111,12 @@ const UserStatsChart = () => {
 
   return (
     <div id="line-chart">
-      <Chart options={chartData.options} series={chartData.series} type="line" height="100%" />
+      <Chart
+        options={chartData.options}
+        series={chartData.series}
+        type="line"
+        height="100%"
+      />
     </div>
   );
 };

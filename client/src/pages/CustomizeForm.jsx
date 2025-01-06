@@ -12,13 +12,14 @@ export default function CustomizeForm() {
   const [formData, setFormData] = useState({});
   const [zoom, setZoom] = useState(7.9);
   const position = { lat: 7.87, lng: 80.77 };
-  const [mapHeight, setMapHeight] = useState("80vh"); // Default height
+  const [mapHeight, setMapHeight] = useState("80vh");
   const [destinations, setDestinations] = useState([]);
   const [selectedDestinations, setSelectedDestinations] = useState([]);
   const [selectedDestinationDetails, setSelectedDestinationDetails] = useState({
     description: "",
     activities: [],
   });
+  const [activeDestination, setActiveDestination] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -46,13 +47,14 @@ export default function CustomizeForm() {
   const handleSelectDestination = (destinationName) => {
     if (!selectedDestinations.includes(destinationName)) {
       setSelectedDestinations((prev) => [...prev, destinationName]);
+      handleTileClick(destinationName);
     }
   };
 
   // Fetch details (description and activities) of the selected destination
   const fetchDestinationDetails = async (destinationName) => {
     const response = await fetch(
-      `/api/destination/get-dest/?slug=${destinationName}`
+      `/api/destination/get-dest?searchTerm=${destinationName}`
     );
     const data = await response.json();
     console.log("Fetched destination data:", data); // Add this line for debugging
@@ -68,6 +70,7 @@ export default function CustomizeForm() {
 
   // Handle tile click to fetch details
   const handleTileClick = (destinationName) => {
+    setActiveDestination(destinationName);
     fetchDestinationDetails(destinationName);
   };
 
@@ -234,7 +237,7 @@ export default function CustomizeForm() {
         {/* ***********************************row10*********************************** */}
         <div className="py-2 grid grid-cols-1 sm:grid-rows-2 md:grid-rows-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           {/* ***************************************************cards01*************************************************** */}
-          <div className="py-2 h-96  border-2 rounded-lg shadow-lg">
+          <div className="py-2 border-2 rounded-lg shadow-lg">
             <div className="py-2">
               <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
                 Locations:
@@ -271,12 +274,20 @@ export default function CustomizeForm() {
               {selectedDestinations.map((destination, index) => (
                 <div
                   key={index}
-                  className="flex items-center  px-4 py-2 rounded-md border-2 text-sm text-yellow-400 cursor-pointer"
+                  className={`flex items-center px-4 py-2 rounded-md border-2 text-sm text-yellow-400 cursor-pointer
+          ${
+            activeDestination === destination
+              ? "border-blue-500"
+              : "border-gray-200"
+          }`}
                   onClick={() => handleTileClick(destination)}
                 >
                   <span>{destination}</span>
                   <button
-                    onClick={() => handleRemoveDestination(destination)}
+                    onClick={(e) => {
+                      e.stopPropagation(); // Prevent tile click when removing
+                      handleRemoveDestination(destination);
+                    }}
                     className="ml-2 text-red-500"
                   >
                     X
@@ -299,23 +310,26 @@ export default function CustomizeForm() {
             </div>
             <div className="py-2">
               <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-                Describe any additional locations if you have in your mind:
+                Details about the location you have currently selected:
               </p>
             </div>
-            <div className="mt-4">
+            <div className="mt-4 px-2">
               <div>
-                <strong>Description:</strong>
-                <p>
-                  {selectedDestinationDetails.description ||
-                    "Select a destination to see details"}
-                </p>
+                <p
+                  className="text-justify"
+                  dangerouslySetInnerHTML={{
+                    __html:
+                      selectedDestinationDetails.description ||
+                      "Select a destination to see details",
+                  }}
+                ></p>
               </div>
               <div>
                 <strong>Activities:</strong>
-                <ul>
+                <ul className="ml-12">
                   {selectedDestinationDetails.activities.length > 0 ? (
                     selectedDestinationDetails.activities.map(
-                      (activity, index) => <li key={index}>{activity}</li>
+                      (activity, index) => <li key={index}>• {activity}</li>
                     )
                   ) : (
                     <li>No activities available</li>
@@ -326,7 +340,7 @@ export default function CustomizeForm() {
           </div>
 
           {/* ***************************************************cards02*************************************************** */}
-          <div className="py-2 rounded-lg shadow-lg flex justify-center border-2">
+          <div className="py-2 rounded-lg shadow-lg flex justify-center items-center border-2">
             <div style={{ height: mapHeight, width: "97.5%" }}>
               <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
                 <Map
@@ -635,26 +649,26 @@ function Directions({ selectedDestinations }) {
 
   if (!hasRoute || !leg) return null;
 
-  return (
-    <div className="directions-info">
-      <div>Optimized Route Order:</div>
-      <div className="text-sm text-gray-600">
-        {optimizedOrder.map((dest, index) => (
-          <div key={index}>
-            {index + 1}. {dest}
-          </div>
-        ))}
-      </div>
-      <div className="mt-2">Total Distance: {leg.distance.text}</div>
-      <div>Total Duration: {leg.duration.text}</div>
-      {routes.length > 1 && (
-        <button
-          onClick={() => setRouteIndex((i) => (i + 1) % routes.length)}
-          className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
-        >
-          Show alternative route ({routeIndex + 1} of {routes.length})
-        </button>
-      )}
-    </div>
-  );
+  // return (
+  //   <div className="directions-info">
+  //     <div>Optimized Route Order:</div>
+  //     <div className="text-sm text-gray-600">
+  //       {optimizedOrder.map((dest, index) => (
+  //         <div key={index}>
+  //           {index + 1}. {dest}
+  //         </div>
+  //       ))}
+  //     </div>
+  //     <div className="mt-2">Total Distance: {leg.distance.text}</div>
+  //     <div>Total Duration: {leg.duration.text}</div>
+  //     {routes.length > 1 && (
+  //       <button
+  //         onClick={() => setRouteIndex((i) => (i + 1) % routes.length)}
+  //         className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
+  //       >
+  //         Show alternative route ({routeIndex + 1} of {routes.length})
+  //       </button>
+  //     )}
+  //   </div>
+  // );
 }
