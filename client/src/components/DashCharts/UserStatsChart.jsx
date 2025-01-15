@@ -14,9 +14,6 @@ const UserStatsChart = () => {
         height: "100%",
         type: "area",
         fontFamily: "Inter, sans-serif",
-        dropShadow: {
-          enabled: false,
-        },
         toolbar: {
           show: false,
         },
@@ -24,7 +21,12 @@ const UserStatsChart = () => {
       tooltip: {
         enabled: true,
         x: {
-          show: false,
+          show: true, // Show the date in tooltip
+          formatter: (value, { dataPointIndex }) => {
+            // Get the date from categories and show it in tooltip
+            const categories = chartData.options.xaxis.categories;
+            return categories && categories[dataPointIndex] ? categories[dataPointIndex] : value;
+          },
         },
       },
       fill: {
@@ -52,9 +54,9 @@ const UserStatsChart = () => {
         },
       },
       xaxis: {
-        categories: [],
+        categories: [], // Dates for the last month
         labels: {
-          show: false,
+          show: false, // Hide x-axis labels initially
         },
         axisBorder: {
           show: false,
@@ -77,16 +79,22 @@ const UserStatsChart = () => {
     try {
       const response = await fetch("/api/user/getusers");
       const data = await response.json();
-      //console.log("API response data:", data);
 
       if (data && data.dailyUserStats) {
-        const categories = data.dailyUserStats.map((stat) => stat._id);
-        const counts = data.dailyUserStats.map((stat) => stat.count);
+        const dailyUserStats = data.dailyUserStats;
 
+        // Map dailyUserStats to categories (dates) and data (counts)
+        const categories = dailyUserStats.map((stat) => stat._id); // Dates
+        const counts = dailyUserStats.map((stat) => stat.count); // User counts
+
+        // Update chartData with the new categories and data
         setChartData((prev) => ({
           ...prev,
           series: [{ name: "New users", data: counts }],
-          options: { ...prev.options, xaxis: { categories } },
+          options: { 
+            ...prev.options, 
+            xaxis: { ...prev.options.xaxis, categories } 
+          },
         }));
       } else {
         console.error("dailyUserStats is missing or empty.");
