@@ -285,6 +285,12 @@ export default function CustomizeForm() {
               ))}
             </div>
 
+            <div className="px-4">
+              <p className="text-gray-400 italic">
+                *Select a location to see the details
+              </p>
+            </div>
+            
             <div className="py-2">
               <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
                 Details about the location you have currently selected:
