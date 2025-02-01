@@ -1,18 +1,17 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-import DashSidebar from '../components/DashSidebar';
-import DashProfile from '../components/DashProfile';
-import DashHotels from '../components/DashHotels';
-import DashUsers from '../components/DashUsers';
-import DashboardComp from '../components/DashboardComp';
-import DashDestinations from '../components/DashDestinations';
-import DashTours from '../components/featuredTours/DashTours';
-import DashCreateTours from '../components/featuredTours/DashCreateTour';
-import DashVehicles from '../components/VehicleComp/DashVehicles';
-import DashBookings from '../components/DashBookings';
-import DashSubscribers from '../components/DashSubscribers';
-import DashCreateVehicle from '../components/VehicleComp/DashCreateVehicle';
-import DashGallery from '../components/DashGallery';  // Added import for DashGallery
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import DashSidebar from "../components/DashSidebar";
+import DashProfile from "../components/DashProfile";
+import DashHotels from "../components/DashHotels";
+import DashUsers from "../components/DashUsers";
+import DashboardComp from "../components/DashboardComp";
+import DashDestinations from "../components/DashDestinations";
+import DashTours from "../components/featuredTours/DashTours";
+import DashCreateTours from "../components/featuredTours/DashCreateTour";
+import DashVehicles from "../components/VehicleComp/DashVehicles";
+import DashBookings from "../components/DashBookings";
+import DashCreateVehicle from "../components/VehicleComp/DashCreateVehicle";
+import DashGallery from "../components/DashGallery"; // Added import for DashGallery
 
 function Dashboard() {
   const location = useLocation();
@@ -39,17 +38,13 @@ function Dashboard() {
       {tab === "dash" && <DashboardComp />}
       {tab === "destinations" && <DashDestinations />}
       {/*Tours*/}
-      {tab==='tours' && <DashTours/>}
-      {tab==='createtour' && <DashCreateTours/>}
-      
-        {/*Vehicless*/}
-        {tab==='vehicles' && <DashVehicles/>}
-        {tab==='createvehicle' && <DashCreateVehicle/>}
-      
-      
+      {tab === "tours" && <DashTours />}
+      {tab === "createtour" && <DashCreateTours />}
+      {/*Vehicless*/}
+      {tab === "vehicles" && <DashVehicles />}
+      {tab === "createvehicle" && <DashCreateVehicle />}
       {/*Bookings*/}
       {tab === "bookings" && <DashBookings />}
-      {tab === "subscribers" && <DashSubscribers />}
       {/* Gallery Tab */}
       {tab === "gallery" && <DashGallery />}{" "}
       {/* Render DashGallery when 'gallery' tab is selected */}
