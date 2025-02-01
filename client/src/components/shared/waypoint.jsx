@@ -25,25 +25,26 @@ export default function Waypoint({ days, destinations = [], onChange }) {
   const customStyles = {
     control: (provided) => ({
       ...provided,
-      '@apply border-yellow-300 rounded-lg shadow-sm hover:border-yellow-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500': {}
+      "@apply border-yellow-300 rounded-lg shadow-sm hover:border-yellow-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500":
+        {},
     }),
     option: (provided, state) => ({
       ...provided,
-      '@apply px-3 py-2': {},
-      backgroundColor: state.isFocused ? '#FEF3C7' : 'white',
+      "@apply px-3 py-2": {},
+      backgroundColor: state.isFocused ? "#FEF3C7" : "white",
     }),
     input: (provided) => ({
       ...provided,
-      '@apply p-0.5': {}
+      "@apply p-0.5": {},
     }),
     valueContainer: (provided) => ({
       ...provided,
-      '@apply px-3 py-1.5': {}
+      "@apply px-3 py-1.5": {},
     }),
     container: (provided) => ({
       ...provided,
-      '@apply w-full': {}
-    })
+      "@apply w-full": {},
+    }),
   };
 
   return (
@@ -63,14 +64,16 @@ export default function Waypoint({ days, destinations = [], onChange }) {
               ...allDestinations.map((dest) => ({
                 value: dest._id,
                 label: dest.destinationName,
-              }))
+              })),
             ]}
-            value={allDestinations
-              .filter(dest => dest._id === destinations[i])
-              .map(dest => ({
-                value: dest._id,
-                label: dest.destinationName
-              }))[0]}
+            value={
+              allDestinations
+                .filter((dest) => dest._id === destinations[i])
+                .map((dest) => ({
+                  value: dest._id,
+                  label: dest.destinationName,
+                }))[0]
+            }
             placeholder="Select a destination"
             isClearable
             className="w-full"
@@ -85,7 +88,9 @@ export default function Waypoint({ days, destinations = [], onChange }) {
                 neutral20: "#FCD34D",
               },
             })}
-            onChange={(selected) => onChange(i + 1, selected ? selected.value : null)}
+            onChange={(selected) =>
+              onChange(i + 1, selected ? selected.value : null)
+            }
           />
         </div>
       ))}
