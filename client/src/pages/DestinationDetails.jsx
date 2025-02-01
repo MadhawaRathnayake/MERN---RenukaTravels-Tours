@@ -1,7 +1,6 @@
-import { Spinner } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Spinner } from "flowbite-react";
 
 export default function DestinationDetails() {
   const { destSlug } = useParams();
@@ -12,9 +11,9 @@ export default function DestinationDetails() {
   const [hotels, setHotels] = useState([]);
   const [hotelLoading, setHotelLoading] = useState(true);
   const [hotelError, setHotelError] = useState(false);
-
   const navigate = useNavigate();
 
+  // Keeping the existing useEffect hooks unchanged for functionality
   useEffect(() => {
     const fetchDestinations = async () => {
       try {
@@ -48,8 +47,6 @@ export default function DestinationDetails() {
             slug: destination.slug,
           }));
           setDestinationNames(names);
-        } else {
-          console.log("Error fetching destinations");
         }
       } catch (error) {
         console.log(error.message);
@@ -59,11 +56,10 @@ export default function DestinationDetails() {
   }, []);
 
   useEffect(() => {
-    if (destination && destination.destinationName) {
+    if (destination?.destinationName) {
       const fetchHotels = async () => {
         try {
           setHotelLoading(true);
-          // Fetch hotels by city corresponding to the destination name
           const res = await fetch(
             `/api/hotels/hotels?city=${destination.destinationName}`
           );
@@ -73,7 +69,7 @@ export default function DestinationDetails() {
             setHotelLoading(false);
             return;
           }
-          setHotels(data); // Assuming data is an array of hotels
+          setHotels(data);
           setHotelLoading(false);
         } catch (error) {
           setHotelError(true);
@@ -84,115 +80,102 @@ export default function DestinationDetails() {
     }
   }, [destination]);
 
-  const handleNavigate = (slug) => {
-    navigate(`/destinations/${slug}`);
-  };
-
-  if (loading)
+  if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <Spinner size="xl" />
       </div>
     );
+  }
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div
-        className="w-full flex flex-col items-center justify-center bg-cover bg-center relative"
-        style={{
-          backgroundImage: `url("https://firebasestorage.googleapis.com/v0/b/renuka-travels.appspot.com/o/Destinations-Cover-Image.jpg?alt=media&token=0062a4f0-eabd-4e8e-9f9f-9e6332953d60")`,
-          height: "400px",
-        }}
-      >
-        <div className="absolute inset-0 bg-black opacity-20"></div>
-        <h1 className="text-3xl font-semibold  mt-72 relative text-white z-10">
-          {destination && destination.destinationName}
-        </h1>
-      </div>
-
-      <div className="w-full flex my-12">
-        <div className="w-1/2">
-          <h1 className="text-3xl mb-8 font-semibold">
-            {destination && destination.destinationName}
-          </h1>
-          <div
-            className="flex flex-col items-center mx-10 text-lg"
-            dangerouslySetInnerHTML={{ __html: destination.description }}
-          ></div>
+    <div className="min-h-screen bg-gray-50">
+      {/* Hero Section */}
+      <div className="relative h-[50vh] w-full">
+        <div className="absolute inset-0">
+          <img
+            src={destination?.destImage}
+            alt={destination?.destinationName}
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30" />
         </div>
-        <div className="w-1/2 flex flex-col items-center justify-center">
-          <img src={destination.destImage} alt="" />
-        </div>
-      </div>
-
-      {/* Conditional rendering for the hotels section */}
-      {destination && destination.destinationName !== "Sri Lanka" && (
-        <>
-          <button className="bg-[#F4AC20] text-white font-semibold py-2 px-4 rounded">
-            Hotels in {destination.destinationName}
-          </button>
-
-          <div className="py-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {hotelLoading ? (
-              <Spinner size="lg" />
-            ) : hotelError ? (
-              <p>Failed to load hotels. Please try again later.</p>
-            ) : hotels.length > 0 ? (
-              hotels.map((hotel) => (
-                <div
-                  key={hotel._id}
-                  className="max-w-sm rounded-lg overflow-hidden shadow-lg bg-white"
-                >
-                  <img
-                    className="w-full h-48 object-cover"
-                    src={hotel.hotelImageURL}
-                    alt={hotel.name}
-                  />
-                  <div className="px-6 py-4">
-                    <div className="flex justify-between items-center mb-4">
-                      <div className="font-bold text-xl">{hotel.name}</div>
-                      <span className="text-[#F4AC20] text-xl flex items-center">
-                        ⭐ {hotel.rating}
-                      </span>
-                    </div>
-                    <div className="flex justify-center">
-                      <button
-                        onClick={() => navigate(`/hotels/${hotel._id}`)}
-                        className="bg-[#F4AC20] hover:bg-[#e2b04a] text-white font-bold py-2 rounded"
-                        style={{ width: "128px", padding: "0.5rem 1rem" }}
-                      >
-                        View Details
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))
-            ) : (
-              <p>No hotels available for this destination.</p>
-            )}
+        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col justify-center items-center h-full pb-16">
+            <h1 className="text-5xl font-bold text-white mb-4">
+              {destination?.destinationName}
+            </h1>
           </div>
-        </>
-      )}
+        </div>
+      </div>
 
-      <button className="bg-[#F4AC20] text-white font-semibold py-2 px-4 rounded">
-        Other Destinations
-      </button>
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-32 relative z-10">
+        <div className="bg-white rounded-xl shadow-xl p-8 mb-12">
+          <div className="flex flex-col lg:flex-row gap-12">
+            {/* Description Section */}
+            <div className="lg:w-2/3">
+              <h2 className="text-3xl font-semibold text-gray-900 mb-6">
+                About {destination?.destinationName}
+              </h2>
+              <div
+                className="prose prose-lg max-w-none text-gray-600"
+                dangerouslySetInnerHTML={{ __html: destination?.description }}
+              />
+              {destination?.activities?.length > 0 && (
+                <>
+                  <h2 className="text-3xl font-semibold text-gray-900 my-6">
+                    Activities in {destination?.destinationName}
+                  </h2>
+                  <div
+                    id="Activities"
+                    className="prose prose-lg max-w-none text-gray-600"
+                  >
+                    <ul className="list-disc pl-5">
+                      {destination.activities.map((activity, index) => (
+                        <li key={index}>{activity}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </>
+              )}
+            </div>
 
-      <div className="max-w-full overflow-x-auto">
-        <div className="flex space-x-4 py-4">
-          {destinationNames.length > 0 ? (
-            destinationNames.map((destination, index) => (
-              <button
-                key={index}
-                onClick={() => handleNavigate(destination.slug)}
-                className="bg-teal-500 text-white px-4 py-2 rounded hover:bg-teal-600 whitespace-nowrap"
-              >
-                {destination.name}
-              </button>
-            ))
-          ) : (
-            <p>Loading...</p>
-          )}
+            {/* Other Destinations Section */}
+            <div className="lg:w-1/3">
+              <div className="bg-gray-50 rounded-xl p-6">
+                <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                  Explore Other Destinations
+                </h3>
+                <div className="space-y-3 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+                  {destinationNames
+                    .sort((a, b) => a.name.localeCompare(b.name)) // Sorting alphabetically
+                    .map((dest, index) => (
+                      <button
+                        key={index}
+                        onClick={() => navigate(`/destinations/${dest.slug}`)}
+                        className="w-full p-4 bg-white rounded-lg shadow-sm hover:shadow-md transition-all duration-300 text-gray-900 text-left group flex items-center justify-between"
+                      >
+                        <span className="font-medium">{dest.name}</span>
+                        <svg
+                          className="w-5 h-5 text-gray-400 group-hover:text-gray-600 transform group-hover:translate-x-1 transition-transform"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M9 5l7 7-7 7"
+                          />
+                        </svg>
+                      </button>
+                    ))}
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
