@@ -4,7 +4,6 @@ import "./index.css";
 import Dashboard from "./pages/Dashboard";
 import SignIn from "./pages/SignIn";
 import About from "./pages/About";
-import MapPage from "./pages/MapPage";
 import Register from "./pages/Register";
 import DestinationDetails from "./pages/DestinationDetails";
 import Hotels from "./pages/Hotels";
@@ -38,8 +37,6 @@ export default function App() {
           ></Route>
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />}></Route>
-            <Route path="/map" element={<MapPage />}></Route>
-            <Route path="/mappage" element={<MapPage />}></Route>
             <Route path="/customize" element={<CustomizeForm />}></Route>
           </Route>
           <Route element={<OnlyAdminPrivateRoute />}>

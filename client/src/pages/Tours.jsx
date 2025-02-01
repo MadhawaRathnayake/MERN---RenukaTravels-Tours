@@ -1,7 +1,6 @@
-import { useState, useEffect } from 'react';
-import CommonSection from '../components/shared/CommonSection';
-import TourCard from '../components/shared/TourCard';
-import '../styles/global.css';
+import { useState, useEffect } from "react";
+import TourCard from "../components/shared/TourCard";
+import "../styles/global.css";
 
 const Tours = () => {
   const [tours, setTours] = useState([]);
@@ -24,10 +23,10 @@ const Tours = () => {
           const pages = Math.ceil((data.totalTours || 0) / 8); // Assuming 8 items per page
           setPageCount(pages);
         } else {
-          setError(data.message || 'Failed to fetch tours');
+          setError(data.message || "Failed to fetch tours");
         }
       } catch (err) {
-        setError(err.message || 'Something went wrong');
+        setError(err.message || "Something went wrong");
       } finally {
         setLoading(false);
       }
@@ -39,7 +38,9 @@ const Tours = () => {
 
   return (
     <>
-      <CommonSection title="All Tours" />
+      <div className="h-72 flex text-center justify-center items-center text-4xl">
+        All Tours
+      </div>
       <section>
         <div className="container mx-auto px-4">
           {/* Add search/filter functionality here if needed */}
@@ -63,7 +64,7 @@ const Tours = () => {
                     key={number}
                     onClick={() => setPage(number)}
                     className={`cursor-pointer px-3 py-1 border rounded ${
-                      page === number ? 'bg-blue-500 text-white' : 'bg-gray-100'
+                      page === number ? "bg-blue-500 text-white" : "bg-gray-100"
                     }`}
                   >
                     {number + 1}
