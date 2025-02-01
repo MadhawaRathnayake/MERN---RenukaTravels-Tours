@@ -340,12 +340,12 @@ export default function CustomizeForm() {
             <div style={{ height: mapHeight, width: "97.5%" }}>
               <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
                 <Map
-                  zoom={zoom}
+                  defaultZoom={zoom}
                   center={position}
                   mapId={import.meta.env.VITE_MAP_ID}
                   fullscreenControl={false}
                   streetViewControl={false}
-                  zoomControl={false}
+                  zoomControl={true}
                   gestureHandling="none"
                 >
                   <Directions selectedDestinations={selectedDestinations} />
