@@ -7,6 +7,7 @@ import {
   useMapsLibrary,
   useMap,
 } from "@vis.gl/react-google-maps";
+import SearchableDropdown from "../components/customizePage/SearchableDropdown";
 
 export default function CustomizeForm() {
   const [formData, setFormData] = useState({});
@@ -78,6 +79,14 @@ export default function CustomizeForm() {
     setSelectedDestinations((prev) =>
       prev.filter((item) => item !== destinationName)
     );
+    // Clear active destination if it was the one removed
+    if (activeDestination === destinationName) {
+      setActiveDestination(null);
+      setSelectedDestinationDetails({
+        description: "",
+        activities: [],
+      });
+    }
   };
 
   useEffect(() => {
@@ -179,7 +188,7 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
-              placeholder="Arrival Time"
+              placeholder="Number of people"
               id="comment"
               className="flex-1"
             />
@@ -188,7 +197,7 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
-              placeholder="Arrival Time"
+              placeholder="Number of adults"
               id="comment"
               className="flex-1"
             />
@@ -197,7 +206,7 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
-              placeholder="Arrival Time"
+              placeholder="Number of children"
               id="comment"
               className="flex-1"
             />
@@ -243,31 +252,11 @@ export default function CustomizeForm() {
                 Locations:
               </p>
             </div>
-            <div className="grid grid-cols-1 sm:grid-rows-2 md:grid-rows-1 md:grid-cols-2 lg:grid-cols-2 gap-4 px-4">
-              <TextInput
-                type="text"
-                placeholder="&#x1F50D; Search"
-                id="comment"
-                className="flex-1"
+            <div className="grid grid-cols-1  px-4">
+              <SearchableDropdown
+                destinations={destinations}
+                handleSelectDestination={handleSelectDestination}
               />
-              <select
-                id="location-selection"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
-                onChange={(e) => handleSelectDestination(e.target.value)}
-              >
-                <option value="" disabled selected>
-                  Select
-                </option>
-                {destinations.length > 0 ? (
-                  destinations.map((destination, index) => (
-                    <option key={index} value={destination.destinationName}>
-                      {destination.destinationName}
-                    </option>
-                  ))
-                ) : (
-                  <option disabled>Loading...</option>
-                )}
-              </select>
             </div>
             {/* **********tiles********** */}
             <div className="mt-4 px-4 flex flex-wrap gap-2">
@@ -295,25 +284,19 @@ export default function CustomizeForm() {
                 </div>
               ))}
             </div>
-            <div className="py-2">
-              <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-                Describe any additional locations if you have in your mind:
+
+            <div className="px-4">
+              <p className="text-gray-400 italic">
+                *Select a location to see the details
               </p>
             </div>
-            <div className="px-4">
-              <textarea
-                id="comment"
-                placeholder="Describe additional locations"
-                className="flex-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"
-                rows="2"
-              />
-            </div>
+
             <div className="py-2">
               <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
                 Details about the location you have currently selected:
               </p>
             </div>
-            <div className="mt-4 px-4">
+            <div className="px-4">
               <div>
                 <p
                   className="text-justify"
@@ -337,6 +320,19 @@ export default function CustomizeForm() {
                 </ul>
               </div>
             </div>
+            <div className="py-2">
+              <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
+                Describe any additional locations if you have in your mind:
+              </p>
+            </div>
+            <div className="px-4">
+              <textarea
+                id="comment"
+                placeholder="Describe additional locations"
+                className="flex-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"
+                rows="2"
+              />
+            </div>
           </div>
 
           {/* ***************************************************cards02*************************************************** */}
@@ -344,12 +340,12 @@ export default function CustomizeForm() {
             <div style={{ height: mapHeight, width: "97.5%" }}>
               <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
                 <Map
-                  zoom={zoom}
+                  defaultZoom={zoom}
                   center={position}
                   mapId={import.meta.env.VITE_MAP_ID}
                   fullscreenControl={false}
                   streetViewControl={false}
-                  zoomControl={false}
+                  zoomControl={true}
                   gestureHandling="none"
                 >
                   <Directions selectedDestinations={selectedDestinations} />
@@ -393,11 +389,13 @@ export default function CustomizeForm() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
             >
               <option value="" disabled selected>
-                Select a Type
+                Select the Hotel Star Class
               </option>
-              <option value="Colombo">Best-Budget</option>
-              <option value="Katunayake">Mid-Range</option>
-              <option value="Katunayake">Luxury</option>
+              <option value="1_star">1 star ⭐</option>
+              <option value="2_star">2 stars ⭐⭐</option>
+              <option value="3_star">3 stars ⭐⭐⭐</option>
+              <option value="4_star">4 stars ⭐⭐⭐⭐</option>
+              <option value="5_star">5 stars ⭐⭐⭐⭐⭐</option>
             </select>
           </div>
           {/* column02 */}
@@ -516,85 +514,30 @@ function Directions({ selectedDestinations }) {
   const [routes, setRoutes] = useState([]);
   const [routeIndex, setRouteIndex] = useState(0);
   const [hasRoute, setHasRoute] = useState(false);
-  const [optimizedOrder, setOptimizedOrder] = useState([]);
+  const [markers, setMarkers] = useState([]);
 
-  const selected = routes[routeIndex];
-  const leg = selected ? selected.legs[0] : null;
-
-  // Function to calculate distance between two points using Google's Distance Matrix Service
-  const calculateDistance = async (origin, destination) => {
-    return new Promise((resolve, reject) => {
-      const service = new routesLibrary.DistanceMatrixService();
-      service.getDistanceMatrix(
-        {
-          origins: [origin],
-          destinations: [destination],
-          travelMode: google.maps.TravelMode.DRIVING,
-        },
-        (response, status) => {
-          if (status === "OK") {
-            resolve(response.rows[0].elements[0].distance.value);
-          } else {
-            reject(new Error("Failed to calculate distance"));
-          }
-        }
-      );
-    });
+  const clearMap = () => {
+    if (directionsRenderer) {
+      directionsRenderer.setDirections(null);
+    }
+    // Clear existing markers
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+    setRoutes([]);
+    setHasRoute(false);
   };
 
-  // Function to optimize route using nearest neighbor algorithm
-  const optimizeRoute = async (destinations) => {
-    if (destinations.length <= 2) return destinations;
-
-    let unvisited = [...destinations.slice(1, -1)]; // Exclude first and last points
-    let optimizedRoute = [destinations[0]]; // Start with the first destination
-    let currentPoint = destinations[0];
-
-    while (unvisited.length > 0) {
-      let shortestDistance = Infinity;
-      let nearestPoint = null;
-      let nearestIndex = -1;
-
-      // Find the nearest unvisited point
-      for (let i = 0; i < unvisited.length; i++) {
-        try {
-          const distance = await calculateDistance(currentPoint, unvisited[i]);
-          if (distance < shortestDistance) {
-            shortestDistance = distance;
-            nearestPoint = unvisited[i];
-            nearestIndex = i;
-          }
-        } catch (error) {
-          console.error("Error calculating distance:", error);
-        }
-      }
-
-      if (nearestPoint) {
-        optimizedRoute.push(nearestPoint);
-        unvisited.splice(nearestIndex, 1);
-        currentPoint = nearestPoint;
-      }
+  // Function to calculate the route
+  const calculateRoute = async (destinations) => {
+    if (!directionsService || !directionsRenderer || destinations.length < 2) {
+      clearMap();
+      return;
     }
 
-    // Add the last destination back
-    optimizedRoute.push(destinations[destinations.length - 1]);
-    return optimizedRoute;
-  };
-
-  // Function to calculate the route based on optimized destinations
-  const calculateRoute = async (destinations) => {
-    if (!directionsService || !directionsRenderer || destinations.length < 2)
-      return;
-
     try {
-      // Optimize the route order
-      const optimizedDestinations = await optimizeRoute(destinations);
-      setOptimizedOrder(optimizedDestinations);
-
-      const origin = optimizedDestinations[0];
-      const destination =
-        optimizedDestinations[optimizedDestinations.length - 1];
-      const waypoints = optimizedDestinations.slice(1, -1).map((location) => ({
+      const origin = destinations[0];
+      const destination = destinations[destinations.length - 1];
+      const waypoints = destinations.slice(1, -1).map((location) => ({
         location,
         stopover: true,
       }));
@@ -604,42 +547,66 @@ function Directions({ selectedDestinations }) {
         destination: destination,
         waypoints: waypoints,
         travelMode: google.maps.TravelMode.DRIVING,
-        provideRouteAlternatives: true,
-        optimizeWaypoints: true, // Add Google's built-in optimization
+        optimizeWaypoints: true,
       });
 
+      // Clear existing markers before adding new ones
+      markers.forEach((marker) => marker.setMap(null));
+      const newMarkers = [];
+
+      // Create markers with custom labels for each location
+      destinations.forEach((location, index) => {
+        const position =
+          index === 0
+            ? response.routes[0].legs[0].start_location
+            : response.routes[0].legs[index - 1].end_location;
+
+        const marker = new google.maps.Marker({
+          position: position,
+          map: map,
+          label: {
+            text: location,
+            color: "white",
+            fontSize: "14px",
+            fontWeight: "bold",
+          },
+          title: location,
+        });
+        newMarkers.push(marker);
+      });
+
+      setMarkers(newMarkers);
+      directionsRenderer.setOptions({ suppressMarkers: true });
       directionsRenderer.setDirections(response);
       setRoutes(response.routes);
       setHasRoute(true);
     } catch (error) {
       console.error("Error calculating route:", error);
-      setHasRoute(false);
+      clearMap();
     }
   };
 
   useEffect(() => {
     if (!routesLibrary || !map) return;
+
+    const renderer = new routesLibrary.DirectionsRenderer({
+      map,
+      suppressMarkers: true,
+    });
     setDirectionsService(new routesLibrary.DirectionsService());
-    setDirectionsRenderer(new routesLibrary.DirectionsRenderer({ map }));
+    setDirectionsRenderer(renderer);
 
     return () => {
-      if (directionsRenderer) {
-        directionsRenderer.setMap(null);
+      if (renderer) {
+        renderer.setMap(null);
       }
+      markers.forEach((marker) => marker.setMap(null));
     };
   }, [routesLibrary, map]);
 
   useEffect(() => {
     if (!directionsService || !directionsRenderer) return;
-
-    if (selectedDestinations && selectedDestinations.length >= 2) {
-      calculateRoute(selectedDestinations);
-    } else {
-      if (directionsRenderer) {
-        directionsRenderer.setDirections(null);
-      }
-      setHasRoute(false);
-    }
+    calculateRoute(selectedDestinations);
   }, [selectedDestinations, directionsService, directionsRenderer]);
 
   useEffect(() => {
@@ -647,28 +614,5 @@ function Directions({ selectedDestinations }) {
     directionsRenderer.setRouteIndex(routeIndex);
   }, [routeIndex, directionsRenderer, hasRoute]);
 
-  if (!hasRoute || !leg) return null;
-
-  // return (
-  //   <div className="directions-info">
-  //     <div>Optimized Route Order:</div>
-  //     <div className="text-sm text-gray-600">
-  //       {optimizedOrder.map((dest, index) => (
-  //         <div key={index}>
-  //           {index + 1}. {dest}
-  //         </div>
-  //       ))}
-  //     </div>
-  //     <div className="mt-2">Total Distance: {leg.distance.text}</div>
-  //     <div>Total Duration: {leg.duration.text}</div>
-  //     {routes.length > 1 && (
-  //       <button
-  //         onClick={() => setRouteIndex((i) => (i + 1) % routes.length)}
-  //         className="bg-blue-500 text-white px-4 py-2 rounded mt-2"
-  //       >
-  //         Show alternative route ({routeIndex + 1} of {routes.length})
-  //       </button>
-  //     )}
-  //   </div>
-  // );
+  return null;
 }
