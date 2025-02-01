@@ -94,9 +94,9 @@ export default function CustomizeForm() {
       const screenHeight = window.innerHeight;
 
       if (screenHeight < 600) {
-        setMapHeight("50vh"); // Smaller height for small screens
+        setMapHeight("150vh"); // Smaller height for small screens
       } else if (screenHeight < 800) {
-        setMapHeight("65vh");
+        setMapHeight("110vh");
       } else {
         setMapHeight("80vh"); // Larger height for bigger screens
       }
@@ -340,12 +340,12 @@ export default function CustomizeForm() {
             <div style={{ height: mapHeight, width: "97.5%" }}>
               <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
                 <Map
-                  defaultZoom={zoom}
+                  zoom={zoom}
                   center={position}
                   mapId={import.meta.env.VITE_MAP_ID}
                   fullscreenControl={false}
                   streetViewControl={false}
-                  zoomControl={true}
+                  zoomControl={false}
                   gestureHandling="none"
                 >
                   <Directions selectedDestinations={selectedDestinations} />
@@ -509,25 +509,75 @@ export default function CustomizeForm() {
 function Directions({ selectedDestinations }) {
   const map = useMap();
   const routesLibrary = useMapsLibrary("routes");
+  const geocodingLibrary = useMapsLibrary("geocoding");
   const [directionsService, setDirectionsService] = useState(null);
   const [directionsRenderer, setDirectionsRenderer] = useState(null);
+  const [geocodingService, setGeocodingService] = useState(null);
   const [routes, setRoutes] = useState([]);
   const [routeIndex, setRouteIndex] = useState(0);
   const [hasRoute, setHasRoute] = useState(false);
   const [markers, setMarkers] = useState([]);
 
+  useEffect(() => {
+    if (geocodingLibrary) {
+      setGeocodingService(new geocodingLibrary.Geocoder());
+    }
+  }, [geocodingLibrary]);
+
   const clearMap = () => {
     if (directionsRenderer) {
       directionsRenderer.setDirections(null);
     }
-    // Clear existing markers
     markers.forEach((marker) => marker.setMap(null));
     setMarkers([]);
     setRoutes([]);
     setHasRoute(false);
   };
 
-  // Function to calculate the route
+  const getLocationName = async (position) => {
+    if (!geocodingService) return "";
+
+    try {
+      const response = await geocodingService.geocode({
+        location: position,
+      });
+
+      if (response.results[0]) {
+        // Try to get the locality or sublocality first
+        for (let component of response.results[0].address_components) {
+          if (
+            component.types.includes("locality") ||
+            component.types.includes("sublocality")
+          ) {
+            return component.short_name;
+          }
+        }
+        // Fallback to formatted address if no locality found
+        return response.results[0].formatted_address.split(",")[0];
+      }
+      return "";
+    } catch (error) {
+      console.error("Reverse geocoding error:", error);
+      return "";
+    }
+  };
+
+  const createMarker = async (position) => {
+    const locationName = await getLocationName(position);
+
+    return new google.maps.Marker({
+      position: position,
+      map: map,
+      label: {
+        text: locationName,
+        color: "white",
+        fontSize: "14px",
+        fontWeight: "bold",
+      },
+      title: locationName,
+    });
+  };
+
   const calculateRoute = async (destinations) => {
     if (!directionsService || !directionsRenderer || destinations.length < 2) {
       clearMap();
@@ -550,30 +600,20 @@ function Directions({ selectedDestinations }) {
         optimizeWaypoints: true,
       });
 
-      // Clear existing markers before adding new ones
+      // Clear existing markers
       markers.forEach((marker) => marker.setMap(null));
-      const newMarkers = [];
 
-      // Create markers with custom labels for each location
-      destinations.forEach((location, index) => {
-        const position =
-          index === 0
-            ? response.routes[0].legs[0].start_location
-            : response.routes[0].legs[index - 1].end_location;
+      // Get route points for markers
+      const legs = response.routes[0].legs;
+      const positions = [
+        legs[0].start_location,
+        ...legs.map((leg) => leg.end_location),
+      ];
 
-        const marker = new google.maps.Marker({
-          position: position,
-          map: map,
-          label: {
-            text: location,
-            color: "white",
-            fontSize: "14px",
-            fontWeight: "bold",
-          },
-          title: location,
-        });
-        newMarkers.push(marker);
-      });
+      // Create markers with names from reverse geocoding
+      const newMarkers = await Promise.all(
+        positions.map((position) => createMarker(position))
+      );
 
       setMarkers(newMarkers);
       directionsRenderer.setOptions({ suppressMarkers: true });
@@ -585,6 +625,20 @@ function Directions({ selectedDestinations }) {
       clearMap();
     }
   };
+
+  useEffect(() => {
+    markers.forEach((marker) => marker.setMap(null));
+    setMarkers([]);
+
+    if (directionsService && directionsRenderer && geocodingService) {
+      calculateRoute(selectedDestinations);
+    }
+  }, [
+    selectedDestinations,
+    directionsService,
+    directionsRenderer,
+    geocodingService,
+  ]);
 
   useEffect(() => {
     if (!routesLibrary || !map) return;
@@ -603,11 +657,6 @@ function Directions({ selectedDestinations }) {
       markers.forEach((marker) => marker.setMap(null));
     };
   }, [routesLibrary, map]);
-
-  useEffect(() => {
-    if (!directionsService || !directionsRenderer) return;
-    calculateRoute(selectedDestinations);
-  }, [selectedDestinations, directionsService, directionsRenderer]);
 
   useEffect(() => {
     if (!directionsRenderer || !hasRoute) return;
