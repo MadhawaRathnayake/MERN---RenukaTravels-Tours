@@ -9,7 +9,7 @@ export default function About() {
           src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
           alt=""
         />
-        <h1 className="text-3xl mt-24">About Renuka Travels and Tours</h1>
+        <h1 className="text-3xl mt-24">About Renuka Tours and Travels</h1>
         <div className="text-center m-24">
           At Renuka Tours and Travels, we’re passionate about showcasing the
           beauty and culture of Sri Lanka to the world. With years of experience

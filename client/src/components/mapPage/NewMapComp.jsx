@@ -1,8 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  APIProvider,
-  Map,
-} from "@vis.gl/react-google-maps";
+import { APIProvider, Map } from "@vis.gl/react-google-maps";
 
 import SearchBar from "../shared/dest-dropdown";
 import TimelineComponent from "./timeline";
@@ -18,7 +15,8 @@ export default function MapComp() {
   useEffect(() => {
     const updateZoom = () => {
       const screenHeight = window.innerHeight;
-      let calculatedZoom = screenHeight < 600 ? 6.5 : screenHeight < 800 ? 7.5 : 7.9;
+      let calculatedZoom =
+        screenHeight < 600 ? 6.5 : screenHeight < 800 ? 7.5 : 7.9;
       setZoom(calculatedZoom);
     };
 
@@ -30,7 +28,9 @@ export default function MapComp() {
   useEffect(() => {
     const updateHeight = () => {
       const screenHeight = window.innerHeight;
-      setMapHeight(screenHeight < 600 ? "50vh" : screenHeight < 800 ? "65vh" : "80vh");
+      setMapHeight(
+        screenHeight < 600 ? "50vh" : screenHeight < 800 ? "65vh" : "80vh"
+      );
     };
 
     updateHeight();
@@ -66,7 +66,10 @@ export default function MapComp() {
         <div className="flex flex-col md:flex-row items-center mb-8">
           <div className="w-1/2 h-full">
             <div className="h-full flex justify-center items-center">
-              <div id="floating-panel" className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md">
+              <div
+                id="floating-panel"
+                className="bg-white shadow-lg rounded-lg p-6 w-full max-w-md"
+              >
                 <div className="mb-4">
                   <label
                     htmlFor="start"
@@ -99,8 +102,15 @@ export default function MapComp() {
                   mapId={import.meta.env.VITE_MAP_ID}
                   fullscreenControl={false}
                   streetViewControl={false}
-                  zoomControl={false}
-                  gestureHandling="none"
+                  mapTypeControl={true} // Enable map type control
+                  zoomControl={true} // Ensure zoom controls are enabled
+                  zoomControlOptions={{
+                    position:
+                      typeof window !== "undefined" && window.google
+                        ? window.google.maps.ControlPosition.RIGHT_BOTTOM
+                        : 3, // Default to BOTTOM_RIGHT if undefined
+                  }}
+                  gestureHandling="greedy" // Allow full zoom control
                 >
                   <Directions />
                 </Map>

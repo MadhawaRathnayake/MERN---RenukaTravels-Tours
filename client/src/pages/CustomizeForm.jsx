@@ -290,7 +290,7 @@ export default function CustomizeForm() {
                 *Select a location to see the details
               </p>
             </div>
-            
+
             <div className="py-2">
               <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
                 Details about the location you have currently selected:
@@ -389,11 +389,13 @@ export default function CustomizeForm() {
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
             >
               <option value="" disabled selected>
-                Select a Type
+                Select the Hotel Star Class
               </option>
-              <option value="Colombo">Best-Budget</option>
-              <option value="Katunayake">Mid-Range</option>
-              <option value="Katunayake">Luxury</option>
+              <option value="1_star">1 star ⭐</option>
+              <option value="2_star">2 stars ⭐⭐</option>
+              <option value="3_star">3 stars ⭐⭐⭐</option>
+              <option value="4_star">4 stars ⭐⭐⭐⭐</option>
+              <option value="5_star">5 stars ⭐⭐⭐⭐⭐</option>
             </select>
           </div>
           {/* column02 */}
