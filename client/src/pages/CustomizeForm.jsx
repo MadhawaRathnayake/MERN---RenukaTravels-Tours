@@ -94,9 +94,9 @@ export default function CustomizeForm() {
       const screenHeight = window.innerHeight;
 
       if (screenHeight < 600) {
-        setMapHeight("50vh"); // Smaller height for small screens
+        setMapHeight("150vh"); // Smaller height for small screens
       } else if (screenHeight < 800) {
-        setMapHeight("65vh");
+        setMapHeight("110vh");
       } else {
         setMapHeight("80vh"); // Larger height for bigger screens
       }
@@ -340,12 +340,12 @@ export default function CustomizeForm() {
             <div style={{ height: mapHeight, width: "97.5%" }}>
               <APIProvider apiKey={import.meta.env.VITE_GOOGLE_MAP_API}>
                 <Map
-                  defaultZoom={zoom}
+                  zoom={zoom}
                   center={position}
                   mapId={import.meta.env.VITE_MAP_ID}
                   fullscreenControl={false}
                   streetViewControl={false}
-                  zoomControl={true}
+                  zoomControl={false}
                   gestureHandling="none"
                 >
                   <Directions selectedDestinations={selectedDestinations} />
