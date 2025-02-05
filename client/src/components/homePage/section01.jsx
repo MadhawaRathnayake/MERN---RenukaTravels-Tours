@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
-import homecover from "../../images/home-div01.png";
+import sec01 from "../../images/sec01-01.jpg";
+import sec02 from "../../images/sec01-02.jpg";
+import sec03 from "../../images/sec01-03.jpg";
+import sec04 from "../../images/sec01-04.jpg";
+import sec05 from "../../images/sec01-05.jpg";
 import { useSelector } from "react-redux";
 import "./section01.css";
+import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 
 /*****************************************************************************************************************************/
 /*
@@ -18,6 +23,7 @@ import "./section01.css";
 export default function Section01() {
   const { currentUser } = useSelector((state) => state.user);
   const [showBox, setShowBox] = useState(false);
+  const slides = [sec01, sec02, sec03, sec04, sec05];
 
   useEffect(() => {
     // Show the red box after 3 seconds
@@ -32,6 +38,28 @@ export default function Section01() {
   const handleClose = () => {
     setShowBox(false);
   };
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const prevSlide = () => {
+    const isFirstSlide = currentIndex === 0;
+    const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
+    setCurrentIndex(newIndex);
+  };
+  const nextSlide = () => {
+    const isLastSlide = currentIndex === slides.length - 1;
+    const newIndex = isLastSlide ? slides.length - 1 : currentIndex + 1;
+    setCurrentIndex(newIndex);
+  };
+  const goToSlide = (slideIndex) => {
+    setCurrentIndex(slideIndex);
+  };
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, [slides.length]);
 
   return (
     <section className="relative">
@@ -76,13 +104,32 @@ export default function Section01() {
         </div>
 
         {/* right */}
-        <div className=" md:py-4">
-          <div className="lg:h-full md:h-full rounded-md md:flex md:justify-center md:visible lg:visible h-1/5 m-6 md:m-0">
-            <img
-              src={homecover}
-              alt="cover.img"
-              className="lg:w-full md:w-1/2"
-            />
+        <div className="md:pt-4  invisible md:visible lg:visible ">
+          <div className="relative md:h-[360px] rounded-md md:flex md:justify-center h-1/5 m-6 md:m-0 group">
+            {/* Image Container */}
+            <div
+              style={{ backgroundImage: `url(${slides[currentIndex]})` }}
+              className="w-full h-full rounded-2xl bg-center bg-cover duration-1000"
+            >
+              {/* Navigation Buttons (inside image container) */}
+              <div className="hidden group-hover:block absolute top-1/2 left-5 -translate-y-1/2 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
+                <BsChevronCompactLeft onClick={prevSlide} size={30} />
+              </div>
+              <div className="hidden group-hover:block absolute top-1/2 right-5 -translate-y-1/2 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
+                <BsChevronCompactRight onClick={nextSlide} size={30} />
+              </div>
+            </div>
+          </div>
+          <div className="flex justify-center">
+            {slides.map((slide, slideIndex) => (
+              <div
+                key={slideIndex}
+                onClick={() => goToSlide(slideIndex)}
+                className="text-2xl mx-2 cursor-pointer"
+              >
+                •
+              </div>
+            ))}
           </div>
         </div>
       </div>
