@@ -13,7 +13,6 @@ export default function DestinationDetails() {
   const [hotelError, setHotelError] = useState(false);
   const navigate = useNavigate();
 
-  // Keeping the existing useEffect hooks unchanged for functionality
   useEffect(() => {
     const fetchDestinations = async () => {
       try {

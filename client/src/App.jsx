@@ -21,6 +21,7 @@ import Gallery from "./pages/Gallery";
 import NewHomePage from "./pages/NewHomePage";
 import NavigationBar from "./components/NavigationBar";
 import CustomizeForm from "./pages/CustomizeForm";
+import OurServices from "./pages/OurServices";
 export default function App() {
   return (
     <div className="body-color">
@@ -31,6 +32,7 @@ export default function App() {
           <Route path="/about" element={<About />}></Route>
           <Route path="/gallery" element={<Gallery />}></Route>
           <Route path="/tours" element={<Tours />}></Route>
+          <Route path="services" element={<OurServices />}></Route>
           <Route
             path="/destinations/:destSlug"
             element={<DestinationDetails />}

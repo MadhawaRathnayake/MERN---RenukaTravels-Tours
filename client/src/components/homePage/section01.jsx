@@ -23,6 +23,7 @@ import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 export default function Section01() {
   const { currentUser } = useSelector((state) => state.user);
   const [showBox, setShowBox] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const slides = [sec01, sec02, sec03, sec04, sec05];
 
   useEffect(() => {
@@ -39,7 +40,6 @@ export default function Section01() {
     setShowBox(false);
   };
 
-  const [currentIndex, setCurrentIndex] = useState(0);
   const prevSlide = () => {
     const isFirstSlide = currentIndex === 0;
     const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
@@ -57,7 +57,6 @@ export default function Section01() {
     const interval = setInterval(() => {
       setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
     }, 5000);
-
     return () => clearInterval(interval);
   }, [slides.length]);
 
