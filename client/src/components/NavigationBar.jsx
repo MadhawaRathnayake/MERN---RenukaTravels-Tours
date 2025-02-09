@@ -121,6 +121,12 @@ export default function NavigationBar() {
                   Gallery
                 </Link>
                 <Link
+                  to="/services"
+                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
+                >
+                  Our Services
+                </Link>
+                <Link
                   to="/about"
                   className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
                 >
@@ -189,12 +195,7 @@ export default function NavigationBar() {
             >
               Home
             </Link>
-            <Link
-              to="/about"
-              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-            >
-              About Us
-            </Link>
+
             <Link
               to="/destinations/sri-lanka"
               className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
@@ -212,6 +213,18 @@ export default function NavigationBar() {
               className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
             >
               Gallery
+            </Link>
+            <Link
+              to="/services"
+              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+            >
+              Our Services
+            </Link>
+            <Link
+              to="/about"
+              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+            >
+              About Us
             </Link>
             {!currentUser && (
               <Link
