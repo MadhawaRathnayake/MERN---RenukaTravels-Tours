@@ -10,7 +10,10 @@ import {
 import SearchableDropdown from "../components/customizePage/SearchableDropdown";
 
 export default function CustomizeForm() {
-  const [formData, setFormData] = useState({});
+  const [selectedStar, setSelectedStar] = useState("");
+  const [selectedType, setSelectedType] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [zoom, setZoom] = useState(7.9);
   const position = { lat: 7.87, lng: 80.77 };
   const [mapHeight, setMapHeight] = useState("80vh");
@@ -24,9 +27,59 @@ export default function CustomizeForm() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    for (let [key, value] of formData.entries) {
-      console.log({ key, value });
+    setLoading(true);
+    setError(null);
+
+    try {
+      const formData = {
+        // General Information
+        arrivalDate: e.target.arrivalDate.value,
+        departureDate: e.target.departureDate.value,
+        arrivalTime: e.target.arrivalTime.value,
+        numberOfPeople: parseInt(e.target.numberOfPeople.value),
+        numberOfAdults: parseInt(e.target.numberOfAdults.value),
+        numberOfChildren: parseInt(e.target.numberOfChildren.value),
+        dateComments: e.target.dateComments.value,
+
+        // Location Information
+        selectedDestinations,
+        additionalLocations: e.target.additionalLocations.value,
+
+        // Accommodation
+        accommodationType: e.target.accommodationType.value,
+        numberOfBedrooms: parseInt(e.target.numberOfBedrooms.value),
+        accommodationPreference: e.target.accommodationPreference.value,
+
+        // Transport
+        vehicleType: e.target.vehicleType.value,
+        numberOfVehicles: parseInt(e.target.numberOfVehicles.value),
+        transportPreference: e.target.transportPreference.value,
+      };
+
+      console.log(formData);
+
+      const res = await fetch("/api/trip-plan/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw new Error(data.message || "Something went wrong");
+      }
+
+      // Reset form or redirect
+      e.target.reset();
+      setSelectedDestinations([]);
+      // You might want to show a success message or redirect
+    } catch (error) {
+      setError(error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -111,7 +164,7 @@ export default function CustomizeForm() {
   }, []);
 
   return (
-    <section>
+    <form onSubmit={handleSubmit}>
       <div className="py-8 basic-struture shadow-xl">
         {/* ***********************************row01*********************************** */}
         <div className="py-2 yellow-bg">
@@ -145,18 +198,24 @@ export default function CustomizeForm() {
         <div className="pb-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
           {/* column01 */}
           <div>
-            <Datepicker className="w-3/4 md:w-1/2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <Datepicker
+              name="arrivalDate"
+              className="w-3/4 md:w-1/2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
           {/* column02 */}
           <div>
-            <Datepicker className="w-3/4 md:w-1/2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+            <Datepicker
+              name="departureDate"
+              className="w-3/4 md:w-1/2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+            />
           </div>
           {/* column03 */}
           <div>
             <TextInput
               type="text"
+              name="arrivalTime"
               placeholder="Arrival Time"
-              id="comment"
               className="flex-1"
             />
           </div>
@@ -188,8 +247,8 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
+              name="numberOfPeople"
               placeholder="Number of people"
-              id="comment"
               className="flex-1"
             />
           </div>
@@ -197,8 +256,8 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
+              name="numberOfAdults"
               placeholder="Number of adults"
-              id="comment"
               className="flex-1"
             />
           </div>
@@ -206,8 +265,8 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
+              name="numberOfChildren"
               placeholder="Number of children"
-              id="comment"
               className="flex-1"
             />
           </div>
@@ -222,8 +281,8 @@ export default function CustomizeForm() {
         <div className="pb-2 flex justify-center">
           <TextInput
             type="text"
+            name="dateComments"
             placeholder="Any Comments about the date"
-            id="comment"
             className="flex-1"
           />
         </div>
@@ -327,7 +386,7 @@ export default function CustomizeForm() {
             </div>
             <div className="px-4">
               <textarea
-                id="comment"
+                name="additionalLocations"
                 placeholder="Describe additional locations"
                 className="flex-1 w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none"
                 rows="2"
@@ -386,9 +445,12 @@ export default function CustomizeForm() {
           <div>
             <select
               id="start"
+              name="accommodationType"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+              value={selectedStar}
+              onChange={(e) => setSelectedStar(e.target.value)}
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 Select the Hotel Star Class
               </option>
               <option value="1_star">1 star ⭐</option>
@@ -402,8 +464,8 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
+              name="numberOfBedrooms"
               placeholder="Number of Bedrooms"
-              id="comment"
               className="flex-1"
             />
           </div>
@@ -411,8 +473,8 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
+              name="accommodationPreference"
               placeholder="Describe Any Preference"
-              id="comment"
               className="flex-1"
             />
           </div>
@@ -448,9 +510,12 @@ export default function CustomizeForm() {
           <div>
             <select
               id="start"
+              name="vehicleType"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
             >
-              <option value="" disabled selected>
+              <option value="" disabled>
                 Select a Type
               </option>
               <option value="Sedan">Sedan</option>
@@ -459,15 +524,14 @@ export default function CustomizeForm() {
               <option value="SUV-VIP">SUV-VIP</option>
               <option value="High-Roof-Van">High Roof Van</option>
               <option value="Bus">Bus</option>
-              {/* to-do : types should get dynamically */}
             </select>
           </div>
           {/* column02 */}
           <div>
             <TextInput
               type="text"
+              name="numberOfVehicles"
               placeholder="Number of Vehicles"
-              id="comment"
               className="flex-1"
             />
           </div>
@@ -475,8 +539,8 @@ export default function CustomizeForm() {
           <div>
             <TextInput
               type="text"
+              name="transportPreference"
               placeholder="Describe Any Preference"
-              id="comment"
               className="flex-1"
             />
           </div>
@@ -500,7 +564,7 @@ export default function CustomizeForm() {
           </button>
         </div>
       </div>
-    </section>
+    </form>
   );
 }
 
