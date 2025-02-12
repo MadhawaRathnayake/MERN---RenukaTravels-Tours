@@ -1,7 +1,7 @@
 import TripPlan from "../models/plan.model.js";
 import nodemailer from "nodemailer";
 import { errorHandler } from "../utils/error.js";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 dotenv.config();
 
 // Set up nodemailer transport
@@ -26,7 +26,7 @@ const sendTripPlanEmail = async (tripPlanData) => {
   try {
     const mailOptions = {
       from: "renukatoursandtravels1@gmail.com", // Sender's email
-      to: "madhawasoftnet@gmail.com", // The recipient's email (can be dynamic)
+      to: "renukatours94@gmail.com", // The recipient's email (can be dynamic)
       subject: `New Trip Plan Created by User ${tripPlanData.userId}`,
       text: `A new trip plan has been created with the following details:\n\n
         User: ${tripPlanData.userId}\n
