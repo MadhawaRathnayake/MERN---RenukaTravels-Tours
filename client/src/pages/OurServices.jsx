@@ -56,7 +56,7 @@ const services = [
     title: "Food and beverages",
     icon: images.static.food,
     description:
-      "Since Sri Lanka is famous for its extremely delicious and spicy flavours, we let you take the maximum out of this tour. Gourmand chefs and mixologists will ensure that you have the most preferred Sri Lankan, Indian, Chinese, Italian, Western or Thai food and beverages coming from all over the world.",
+      "Sri Lanka is a culinary paradise, offering a fusion of bold flavors and global cuisines. From spicy local curries and fresh seafood to Indian, Chinese, Italian, Western, and Thai delights, every meal is an experience. Our expert chefs and mixologists ensure a perfect blend of taste and tradition, making your journey even more memorable.",
     slideKey: "slides2",
   },
   {
@@ -64,7 +64,7 @@ const services = [
     title: "Hotels and Villas",
     icon: images.static.hotel,
     description:
-      "We have an elegant choice of luxury accommodation with panoramic and breathtaking views over the mountains and oceans. Those are proven to be the finest hotels and villas that provide the best services in the country.",
+      "Experience the finest luxury accommodations in Sri Lanka, offering breathtaking views of mountains and oceans. Our handpicked hotels and villas provide world-class service, ensuring comfort, elegance, and an unforgettable stay.",
     slideKey: "slides3",
   },
   {
@@ -72,7 +72,7 @@ const services = [
     title: "Vehicle Rental",
     icon: images.static.car,
     description:
-      "We have a line of super luxury vehicles to explore the country with or without chauffeurs. The choice is always with our customers to choose the vehicle along with the destinations.",
+      "Travel in style with our fleet of luxury vehicles, available with or without chauffeurs. Choose your ideal ride and explore Sri Lanka at your own pace, ensuring comfort and convenience throughout your journey.",
     slideKey: "slides4",
   },
   {
@@ -80,7 +80,7 @@ const services = [
     title: "Chauffeur Drive Services",
     icon: images.static.driver,
     description:
-      "Our team provides the best chauffeurs who will safely and comfortably drive you throughout the journey.",
+      "Enjoy a seamless journey with our professional chauffeur drive services. Our experienced and friendly chauffeurs ensure a safe, comfortable, and stress-free travel experience, allowing you to relax and explore Sri Lanka with ease.",
     image: images.static.driver_jpg,
   },
   {
@@ -88,7 +88,7 @@ const services = [
     title: "Concierge Services",
     icon: images.static.concierge,
     description:
-      "You can have concierge services to make the stay easier. This service will be provided upon request. Pamper yourself with the services and delve your comfort ensuring a safe and a hassle free journey.",
+      "Our concierge services ensure a hassle-free and personalized travel experience. From itinerary planning and reservations to exclusive experiences, we take care of every detail, so you can relax and enjoy your journey in Sri Lanka.",
     image: images.static.contingence,
   },
   {
@@ -96,7 +96,7 @@ const services = [
     title: "Personal Helicopters",
     icon: images.static.helicopter,
     description:
-      "When travelling, choose personal helicopters, since they save a considerable amount of time making the journey less tiresome. Additionally, it lets you have a panoramic view over the splendour of the country.",
+      "Option for personal helicopters to make your travel experience quicker and more enjoyable. Not only do they save valuable time, but they also offer stunning aerial views of Sri Lanka’s breathtaking landscapes, allowing you to see the country's beauty from a whole new perspective.",
     image: images.static.helicopter_jpg,
   },
 ];
@@ -113,8 +113,8 @@ const ServiceCard = ({ service, index, slideIndex }) => {
       }}
       className={`w-full h-full bg-center bg-cover duration-1000 ${
         isEven
-          ? "rounded-tr-2xl rounded-br-2xl"
-          : "rounded-tl-2xl rounded-bl-2xl"
+          ? "md:rounded-tr-2xl rounded-br-2xl"
+          : "md:rounded-tl-2xl rounded-bl-2xl"
       }`}
     />
   ) : (
@@ -122,18 +122,18 @@ const ServiceCard = ({ service, index, slideIndex }) => {
       style={{ backgroundImage: `url(${service.image})` }}
       className={`w-full h-full bg-center bg-cover duration-1000 ${
         isEven
-          ? "rounded-tr-2xl rounded-br-2xl"
-          : "rounded-tl-2xl rounded-bl-2xl"
+          ? "md:rounded-tr-2xl rounded-br-2xl"
+          : "md:rounded-tl-2xl rounded-bl-2xl"
       }`}
     />
   );
 
   const contentSection = (
     <div
-      className={`w-full md:w-1/2 flex flex-col items-center text-center justify-center p-8 bg-yellow-300 duration-1000 ${
+      className={`w-full min-h-96  md:w-1/2 flex flex-col items-center text-center rounded-2xl md:rounded-none justify-center p-8 bg-yellow-300 duration-1000 ${
         isEven
-          ? "rounded-tl-2xl rounded-bl-2xl"
-          : "rounded-tr-2xl rounded-br-2xl"
+          ? "md:rounded-tl-2xl md:rounded-bl-2xl"
+          : "md:rounded-tr-2xl md:rounded-br-2xl"
       }`}
     >
       <img src={service.icon} alt={service.title} className="w-16" />
@@ -147,7 +147,7 @@ const ServiceCard = ({ service, index, slideIndex }) => {
   );
 
   const imageSection = (
-    <div className="w-full md:w-1/2 flex items-center justify-center bg-white">
+    <div className="w-full md:w-1/2 rounded-2xl flex items-center justify-center bg-white">
       {imageContent}
     </div>
   );
@@ -155,7 +155,7 @@ const ServiceCard = ({ service, index, slideIndex }) => {
   return (
     <div
       id={service.id}
-      className={`min-h-96 mt-8 flex flex-col ${
+      className={`mt-8 flex flex-col ${
         isEven ? "md:flex-row" : "md:flex-row-reverse"
       } rounded-2xl shadow-xl hover:shadow-2xl duration-1000`}
     >
@@ -198,7 +198,7 @@ export default function OurServices() {
 
   return (
     <section>
-      <div className="relative h-[50vh] w-full">
+      <div className="relative h-80 w-full">
         <div className="absolute inset-0">
           <div
             style={{
