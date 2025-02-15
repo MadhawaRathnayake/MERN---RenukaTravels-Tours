@@ -1,5 +1,5 @@
-import  { useState, useEffect } from "react";
-import { Alert, Button, TextInput,  FileInput } from "flowbite-react";
+import { useState, useEffect } from "react";
+import { Alert, Button, TextInput, FileInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 import {
   getDownloadURL,
@@ -17,7 +17,7 @@ export default function UpdateDestination() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({ additionalImages: [] });
   const [publishError, setPublishError] = useState(null);
   const [activities, setActivities] = useState([]); // Added for activities
   const [activityInput, setActivityInput] = useState(""); // Input for activities
@@ -50,14 +50,19 @@ export default function UpdateDestination() {
 
   const handleAddActivity = (e) => {
     e.preventDefault();
-    if (activityInput.trim() !== "" && !activities.includes(activityInput.trim())) {
+    if (
+      activityInput.trim() !== "" &&
+      !activities.includes(activityInput.trim())
+    ) {
       setActivities([...activities, activityInput.trim()]);
       setActivityInput("");
     }
   };
 
   const handleRemoveActivity = (activityToRemove) => {
-    setActivities(activities.filter((activity) => activity !== activityToRemove));
+    setActivities(
+      activities.filter((activity) => activity !== activityToRemove)
+    );
   };
 
   const handleUpdloadImage = async () => {
@@ -117,7 +122,7 @@ export default function UpdateDestination() {
 
       if (res.ok) {
         setPublishError(null);
-        navigate(`/destination/${data.slug}`);
+        navigate(`/destinations/${data.slug}`);
       }
     } catch (error) {
       setPublishError("Something went wrong");
@@ -201,6 +206,74 @@ export default function UpdateDestination() {
             className="w-full h-72 object-cover"
           />
         )}
+
+        {/* Additional Images Section */}
+        <div className="flex flex-col gap-4 border-4 p-3">
+          <label className="font-bold">Upload Additional Images (Max 5)</label>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const selectedFile = e.target.files[0];
+              if (selectedFile && formData.additionalImages.length < 5) {
+                const storage = getStorage(app);
+                const fileName = new Date().getTime() + "-" + selectedFile.name;
+                const storageRef = ref(storage, fileName);
+                const uploadTask = uploadBytesResumable(
+                  storageRef,
+                  selectedFile
+                );
+
+                uploadTask.on(
+                  "state_changed",
+                  null,
+                  () => setImageUploadError("Upload failed!"),
+                  () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then(
+                      (downloadURL) => {
+                        setFormData({
+                          ...formData,
+                          additionalImages: [
+                            ...formData.additionalImages,
+                            downloadURL,
+                          ],
+                        });
+                      }
+                    );
+                  }
+                );
+              }
+            }}
+          />
+        </div>
+        {formData.additionalImages && (
+          <div className="grid grid-cols-3 gap-2">
+            {formData.additionalImages.map((img, index) => (
+              <div key={index} className="relative">
+                <img
+                  src={img}
+                  alt={`upload-${index}`}
+                  className="w-full h-32 object-cover"
+                />
+                <button
+                  type="button"
+                  className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                  onClick={() => {
+                    setFormData({
+                      ...formData,
+                      additionalImages: formData.additionalImages.filter(
+                        (_, i) => i !== index
+                      ),
+                    });
+                  }}
+                >
+                  X
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
         <ReactQuill
           theme="snow"
           placeholder="Description"
@@ -214,14 +287,14 @@ export default function UpdateDestination() {
 
         {/* Activities section */}
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2 items-center"> {/* New container for input and button */}
+          <div className="flex gap-2 items-center">
             <TextInput
               type="text"
               placeholder="Add an activity (e.g., Hiking, Swimming)"
               value={activityInput}
               onChange={(e) => setActivityInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAddActivity(e)}
-              className="flex-1" // Make input take available space
+              className="flex-1"
             />
             <button
               type="button"
