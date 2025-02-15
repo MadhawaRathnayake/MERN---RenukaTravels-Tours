@@ -103,7 +103,7 @@ export default function NavigationBar() {
                   Home
                 </Link>
                 <Link
-                  to="/destinations/sri-lanka"
+                  to="/destinations"
                   className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
                 >
                   Destinations
@@ -197,7 +197,7 @@ export default function NavigationBar() {
             </Link>
 
             <Link
-              to="/destinations/sri-lanka"
+              to="/destinations"
               className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
             >
               Destinations
