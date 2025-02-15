@@ -34,7 +34,12 @@ export default function DashDestinations() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState({
+    destinationName: "",
+    destImage: "",
+    additionalImages: [],
+    description: "",
+  });
   const [publishError, setPublishError] = useState(null);
   const [activities, setActivities] = useState([]);
   const [activityInput, setActivityInput] = useState("");
@@ -105,19 +110,55 @@ export default function DashDestinations() {
 
   const handleAddActivity = (e) => {
     e.preventDefault();
-    if (activityInput.trim() !== "" && !activities.includes(activityInput.trim())) {
+    if (
+      activityInput.trim() !== "" &&
+      !activities.includes(activityInput.trim())
+    ) {
       setActivities([...activities, activityInput.trim()]);
       setActivityInput("");
     }
   };
 
   const handleRemoveActivity = (activityToRemove) => {
-    setActivities(activities.filter((activity) => activity !== activityToRemove));
+    setActivities(
+      activities.filter((activity) => activity !== activityToRemove)
+    );
   };
+
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   const updatedFormData = { ...formData, activities };
+  //   try {
+  //     const res = await fetch("/api/destination/create-dest", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify(updatedFormData),
+  //     });
+  //     const data = await res.json();
+  //     if (!res.ok) {
+  //       setPublishError(data.message);
+  //       return;
+  //     }
+
+  //     if (res.ok) {
+  //       setPublishError(null);
+  //       navigate(`/destinations/${data.slug}`);
+  //     }
+  //   } catch (error) {
+  //     setPublishError("Something went wrong");
+  //   }
+  // };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedFormData = { ...formData, activities };
+    const updatedFormData = {
+      ...formData,
+      activities,
+      additionalImages: formData.additionalImages || [], // Ensure additionalImages is included
+    };
+
     try {
       const res = await fetch("/api/destination/create-dest", {
         method: "POST",
@@ -126,20 +167,21 @@ export default function DashDestinations() {
         },
         body: JSON.stringify(updatedFormData),
       });
+
       const data = await res.json();
       if (!res.ok) {
         setPublishError(data.message);
         return;
       }
 
-      if (res.ok) {
-        setPublishError(null);
-        navigate(`/destinations/${data.slug}`);
-      }
+      setPublishError(null);
+      navigate(`/destinations/${data.slug}`);
     } catch (error) {
       setPublishError("Something went wrong");
     }
   };
+
+  // above code is new
 
   return (
     <section className="w-full">
@@ -179,7 +221,8 @@ export default function DashDestinations() {
                   if (selectedFile) {
                     setFile(selectedFile);
                     const storage = getStorage(app);
-                    const fileName = new Date().getTime() + "-" + selectedFile.name;
+                    const fileName =
+                      new Date().getTime() + "-" + selectedFile.name;
                     const storageRef = ref(storage, fileName);
                     const uploadTask = uploadBytesResumable(
                       storageRef,
@@ -234,6 +277,75 @@ export default function DashDestinations() {
               />
             )}
 
+            <div className="flex flex-col gap-4 border-4 p-3">
+              <label className="font-bold">
+                Upload Additional Images (Max 5)
+              </label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={(e) => {
+                  const selectedFile = e.target.files[0];
+                  if (selectedFile && formData.additionalImages.length < 5) {
+                    const storage = getStorage(app);
+                    const fileName =
+                      new Date().getTime() + "-" + selectedFile.name;
+                    const storageRef = ref(storage, fileName);
+                    const uploadTask = uploadBytesResumable(
+                      storageRef,
+                      selectedFile
+                    );
+
+                    uploadTask.on(
+                      "state_changed",
+                      null,
+                      () => setImageUploadError("Upload failed!"),
+                      () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then(
+                          (downloadURL) => {
+                            setFormData({
+                              ...formData,
+                              additionalImages: [
+                                ...formData.additionalImages,
+                                downloadURL,
+                              ],
+                            });
+                          }
+                        );
+                      }
+                    );
+                  }
+                }}
+              />
+            </div>
+            {formData.additionalImages && (
+              <div className="grid grid-cols-3 gap-2">
+                {formData.additionalImages.map((img, index) => (
+                  <div key={index} className="relative">
+                    <img
+                      src={img}
+                      alt={`upload-${index}`}
+                      className="w-full h-32 object-cover"
+                    />
+                    <button
+                      type="button"
+                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
+                      onClick={() => {
+                        setFormData({
+                          ...formData,
+                          additionalImages: formData.additionalImages.filter(
+                            (_, i) => i !== index
+                          ),
+                        });
+                      }}
+                    >
+                      X
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+
             <ReactQuill
               theme="snow"
               placeholder="Description"
@@ -245,14 +357,14 @@ export default function DashDestinations() {
             />
 
             <div className="flex flex-col gap-2">
-              <div className="flex gap-2 items-center"> {/* New container for input and button */}
+              <div className="flex gap-2 items-center">
                 <TextInput
                   type="text"
                   placeholder="Add an activity (e.g., Hiking, Swimming)"
                   value={activityInput}
                   onChange={(e) => setActivityInput(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleAddActivity(e)}
-                  className="flex-1" // Make input take available space
+                  className="flex-1"
                 />
                 <button
                   type="button"
@@ -294,12 +406,10 @@ export default function DashDestinations() {
         </div>
       ) : (
         <>
-        
           <div className="w-full flex justify-between items-start mr-3.5 pl-16 my-2">
-            
             <h2 className="text-3xl font-semibold text-gray-900 ">
-          <span className="text-[#F4AC20]">ALL</span> DESTINATIONS
-        </h2>
+              <span className="text-[#F4AC20]">ALL</span> DESTINATIONS
+            </h2>
             <button
               className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg hover:bg-[#f49120]"
               onClick={() => setShowAlternateView(true)}
