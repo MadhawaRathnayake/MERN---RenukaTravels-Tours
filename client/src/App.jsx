@@ -23,6 +23,8 @@ import NavigationBar from "./components/NavigationBar";
 import CustomizeForm from "./pages/CustomizeForm";
 import OurServices from "./pages/OurServices";
 import DestinationHome from "./pages/DestinationsHome";
+import WriteReview from "./components/Review/write";
+import ReviewsSection from "./components/Review/ReviewComp";
 
 export default function App() {
   return (
@@ -36,6 +38,8 @@ export default function App() {
           <Route path="/tours" element={<Tours />}></Route>
           <Route path="services" element={<OurServices />}></Route>
           <Route path="/destinations" element={<DestinationHome />}></Route>
+          <Route path="/write-review" element={<WriteReview />}></Route>
+          <Route path="/reviews" element={<ReviewsSection />}></Route>
           <Route
             path="/destinations/:destSlug"
             element={<DestinationDetails />}
