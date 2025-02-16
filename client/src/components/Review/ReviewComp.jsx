@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import WriteReview from './write';
 
 const ReviewsSection = () => {
+  const navigate = useNavigate(); // Initialize navigate
   const [reviews, setReviews] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
   const [lastMonthRating, setLastMonthRating] = useState(0);
@@ -152,9 +154,9 @@ const ReviewsSection = () => {
     <section className="py-24 relative">
       <div className="w-full max-w-7xl px-4 md:px-5 lg:px-6 mx-auto">
         <div>
-        <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-10 text-black mb-8 text-center">
-  Customer <span className="text-yellow-400">reviews</span> &amp; rating
-</h2>
+          <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-10 text-black mb-8 text-center">
+            Customer <span className="text-yellow-400">reviews</span> &amp; rating
+          </h2>
 
           <div className="grid grid-cols-12 mb-11">
             <div className="col-span-12 xl:col-span-4 flex items-center">
@@ -228,7 +230,15 @@ const ReviewsSection = () => {
                   <div className="col-span-12 md:col-span-4 max-lg:mt-8 md:pl-8">
                     <div className="flex items-center flex-col justify-center w-full h-full">
                       <button
-                        onClick={() => setIsWriteReviewMode(true)}
+                        onClick={() => {
+                          if (!currentUser) {
+                            // Redirect to sign-in page if not logged in
+                            navigate('/signin');
+                          } else {
+                            // Allow writing a review if logged in
+                            setIsWriteReviewMode(true);
+                          }
+                        }}
                         className="rounded-full px-6 py-4 bg-yellow-400 font-semibold text-lg text-white whitespace-nowrap mb-6 w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-400"
                       >
                         Write A Review
@@ -243,6 +253,7 @@ const ReviewsSection = () => {
             </div>
           </div>
 
+          {/* Latest Reviews */}
           <div className="pb-8 border-b border-gray-200 max-xl:max-w-3xl max-xl:mx-auto">
             <h4 className="font-manrope font-semibold text-3xl leading-10 text-black mb-6">
               Latest Reviews
