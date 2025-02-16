@@ -9,6 +9,8 @@ import DestinationDetails from "./pages/DestinationDetails";
 import Hotels from "./pages/Hotels";
 import Vehicles from "./pages/Vehicles";
 import Tours from "./pages/Tours";
+import TourDetails from "./pages/TourDetails";
+import UpdateTour from "./components/featuredTours/UpdateTours";
 import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
@@ -56,6 +58,8 @@ export default function App() {
           <Route path="/hotels" element={<Hotels />}></Route>
           <Route path="/vehicles" element={<Vehicles />}></Route>
           <Route path="/tours" element={<Tours />}></Route>
+          <Route path='/update-tour/:tourId' element={<UpdateTour />} />
+          <Route path="/tours/:id" element={<TourDetails />}></Route>
           <Route path="/hotels/:id" element={<HotelDetails />} />
           <Route path="/add-hotel" element={<InputHotel />} />
           <Route path="/contact" element={<ContactUs />} />

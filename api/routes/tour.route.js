@@ -6,10 +6,14 @@ import {
   updateTour,
   getTour,
 } from "../controllers/tour.controller.js";
+
+import { sendTourEmail } from "../controllers/email.controller.js";
+
 import express from "express";
 
 const router = express.Router();
 
+router.post("/send-email", sendTourEmail);
 // Create a new tour (protected)
 router.post('/create', verifyToken, create);
 
@@ -20,9 +24,10 @@ router.get('/gettours', getTours);
 router.get('/gettour/:tourId', getTour);
 
 // Update a specific tour (protected)
-router.put('/update-tour/:tourId', verifyToken, updateTour);
+router.put('/update-tour/:tourId', updateTour);
 
 // Delete a specific tour (protected)
 router.delete('/delete-tour/:tourId/:userId', verifyToken, deleteTour);
+
 
 export default router;
