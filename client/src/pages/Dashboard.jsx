@@ -13,9 +13,12 @@ import DashBookings from "../components/DashBookings";
 import DashCreateVehicle from "../components/VehicleComp/DashCreateVehicle";
 import DashGallery from "../components/DashGallery";
 
+
+
 function Dashboard() {
   const location = useLocation();
   const [tab, setTab] = useState("");
+
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -27,6 +30,7 @@ function Dashboard() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -86,6 +90,7 @@ function Dashboard() {
           <div className="flex-1 pl-4">{renderContent()}</div>
         </div>
       )}
+
     </div>
   );
 }
