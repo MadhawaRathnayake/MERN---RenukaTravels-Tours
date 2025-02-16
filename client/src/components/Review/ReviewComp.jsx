@@ -229,7 +229,7 @@ const ReviewsSection = () => {
                     <div className="flex items-center flex-col justify-center w-full h-full">
                       <button
                         onClick={() => setIsWriteReviewMode(true)}
-                        className="rounded-full px-6 py-4 bg-indigo-600 font-semibold text-lg text-white whitespace-nowrap mb-6 w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-400"
+                        className="rounded-full px-6 py-4 bg-yellow-400 font-semibold text-lg text-white whitespace-nowrap mb-6 w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-400"
                       >
                         Write A Review
                       </button>
