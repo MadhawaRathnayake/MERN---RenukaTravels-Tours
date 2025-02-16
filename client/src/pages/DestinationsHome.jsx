@@ -3,8 +3,9 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Spinner } from "flowbite-react";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
+import welcomeImg from "../images/Welcome.jpg";
 
-export default function DestinationDetails() {
+export default function DestinationHone() {
   const { destSlug } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
@@ -42,7 +43,7 @@ export default function DestinationDetails() {
     useEffect(() => {
       const interval = setInterval(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-      }, 3000);
+      }, 5000);
       return () => clearInterval(interval);
     }, [slides.length]);
 
@@ -190,19 +191,13 @@ export default function DestinationDetails() {
       <div className="relative h-[50vh] w-full">
         <div className="absolute inset-0">
           <img
-            src={destination?.destImage}
-            alt={destination?.destinationName}
+            src={welcomeImg}
+            alt="Welcome"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-b " />
         </div>
-        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-center items-center h-full pb-16">
-            <h1 className="text-5xl font-bold text-white mb-4">
-              {destination?.destinationName}
-            </h1>
-          </div>
-        </div>
+        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"></div>
       </div>
 
       {/* Main Content */}
@@ -212,36 +207,21 @@ export default function DestinationDetails() {
             {/* Description Section */}
             <div className="lg:w-2/3">
               <h2 className="text-3xl font-semibold text-gray-900 mb-6">
-                About {destination?.destinationName}
+                Welcome to Sri Lanka
               </h2>
               <div
                 className="prose prose-lg max-w-none text-gray-600"
-                dangerouslySetInnerHTML={{ __html: destination?.description }}
-              />
-              {destination?.activities?.length > 0 && (
-                <>
-                  <h2 className="text-3xl font-semibold text-gray-900 my-6">
-                    Activities in {destination?.destinationName}
-                  </h2>
-                  <div
-                    id="Activities"
-                    className="prose prose-lg max-w-none text-gray-600"
-                  >
-                    <ul className="list-disc pl-5">
-                      {destination.activities.map((activity, index) => (
-                        <li key={index}>{activity}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </>
-              )}
+                dangerouslySetInnerHTML={{
+                  __html: `<p>	Sri Lanka, an island nation in the Indian Ocean, is a <strong>paradise for travelers</strong> seeking diverse experiences. Known for its stunning landscapes, the country offers a rich tapestry of <strong>cultural heritage and natural beauty</strong>.</p><p><br></p><p>	One of the highlights is the <strong>Ancient City of Sigiriya</strong>, a UNESCO World Heritage site featuring a magnificent rock fortress that dates back to the 5th century. The city of <strong>Kandy</strong>, home to the <strong>Temple of the Sacred Tooth Relic</strong>, is another cultural gem, where visitors can immerse themselves in Buddhist traditions.</p><p><br></p><p>	For nature lovers, the <strong>Yala National Park</strong> presents a chance to spot majestic wildlife, including leopards and elephants, amidst lush scenery. <strong>Unawatuna Beach</strong> and <strong>Mirissa</strong> are perfect for sun-seekers, offering pristine sands and vibrant marine life for snorkeling enthusiasts.</p><p><br></p><p>	With its <strong>breathtaking landscapes, rich history, and warm hospitality</strong>, Sri Lanka is a captivating destination that promises unforgettable adventures.</p>`,
+                }}
+              ></div>
             </div>
 
             {/* Other Destinations Section */}
             <div className="lg:w-1/3">
               <div className="bg-gray-50 rounded-xl p-6">
                 <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                  Explore Other Destinations
+                  Explore All the Destinations
                 </h3>
                 <div className="space-y-3 max-h-96 overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
                   {destinationNames

@@ -24,12 +24,11 @@ function Dashboard() {
       setTab(tabFromUrl);
     }
   }, [location.search]);
-
   return (
     <div className="max-w-7xl py-8 shadow-xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-row lg:flex-row">
       <div className="md:w-56">
         {/* Sidebar */}
-        <DashSidebar />
+        <DashSidebar />{" "}
       </div>
       {/* Conditional rendering based on the selected tab */}
       {tab === "profile" && <DashProfile />}

@@ -1,7 +1,39 @@
 import Destination from "../models/destination.model.js";
 import { errorHandler } from "../utils/error.js";
 
-export const createDest = async (req, rest, next) => {
+// export const createDest = async (req, rest, next) => {
+//   if (!req.user.isAdmin) {
+//     return next(
+//       errorHandler(
+//         403,
+//         "You are not authenticated to make changes to the database"
+//       )
+//     );
+//   }
+//   if (!req.body.destinationName || !req.body.description) {
+//     return next(errorHandler(400, "Please fill all the required fields"));
+//   }
+//   const slug = req.body.destinationName
+//     .split(" ")
+//     .join("-")
+//     .toLowerCase()
+//     .replace(/[^a-zA-Z0-9-]/g, "-");
+//   const newDestination = new Destination({
+//     ...req.body,
+//     slug,
+//     userId: req.user.id,
+//     activities: req.body.activities || [], // Allow adding activities
+//   });
+
+//   try {
+//     const savedDestination = await newDestination.save();
+//     rest.status(201).json(savedDestination);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+export const createDest = async (req, res, next) => {
   if (!req.user.isAdmin) {
     return next(
       errorHandler(
@@ -13,25 +45,36 @@ export const createDest = async (req, rest, next) => {
   if (!req.body.destinationName || !req.body.description) {
     return next(errorHandler(400, "Please fill all the required fields"));
   }
+
+  if (req.body.additionalImages && req.body.additionalImages.length > 5) {
+    return next(errorHandler(400, "You can upload a maximum of 5 images"));
+  }
+
   const slug = req.body.destinationName
     .split(" ")
     .join("-")
     .toLowerCase()
     .replace(/[^a-zA-Z0-9-]/g, "-");
+
   const newDestination = new Destination({
     ...req.body,
     slug,
     userId: req.user.id,
-    activities: req.body.activities || [], // Allow adding activities
+    activities: req.body.activities || [],
+    additionalImages: req.body.additionalImages || [], // Store up to 5 images
   });
 
   try {
     const savedDestination = await newDestination.save();
-    rest.status(201).json(savedDestination);
+    res.status(201).json(savedDestination);
   } catch (error) {
     next(error);
   }
 };
+
+// abve is new
+
+
 
 export const getDestinations = async (req, res, next) => {
   try {
@@ -125,12 +168,42 @@ export const deleteDestination = async (req, res, next) => {
   }
 };
 
+// export const UpdateDestination = async (req, res, next) => {
+//   if (!req.user.isAdmin) {
+//     return next(
+//       errorHandler(403, "You are not allowed to update this destination")
+//     );
+//   }
+//   try {
+//     const updatedDestination = await Destination.findByIdAndUpdate(
+//       req.params.destId,
+//       {
+//         $set: {
+//           destinationName: req.body.destinationName,
+//           description: req.body.description,
+//           destImage: req.body.destImage,
+//           activities: req.body.activities || [], // Update activities
+//         },
+//       },
+//       { new: true }
+//     );
+//     res.status(200).json(updatedDestination);
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const UpdateDestination = async (req, res, next) => {
   if (!req.user.isAdmin) {
     return next(
       errorHandler(403, "You are not allowed to update this destination")
     );
   }
+
+  if (req.body.additionalImages && req.body.additionalImages.length > 5) {
+    return next(errorHandler(400, "You can upload a maximum of 5 images"));
+  }
+
   try {
     const updatedDestination = await Destination.findByIdAndUpdate(
       req.params.destId,
@@ -139,7 +212,8 @@ export const UpdateDestination = async (req, res, next) => {
           destinationName: req.body.destinationName,
           description: req.body.description,
           destImage: req.body.destImage,
-          activities: req.body.activities || [], // Update activities
+          activities: req.body.activities || [],
+          additionalImages: req.body.additionalImages || [], // Update gallery images
         },
       },
       { new: true }
@@ -149,6 +223,8 @@ export const UpdateDestination = async (req, res, next) => {
     next(error);
   }
 };
+
+// above is new
 
 export const getDestinationDetails = async (req, res, next) => {
   try {

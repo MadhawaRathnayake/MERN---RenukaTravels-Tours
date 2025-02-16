@@ -15,6 +15,11 @@ const destinationSchema = new mongoose.Schema(
       type: String,
       default: "", // Default cover photo
     },
+    additionalImages: {
+      type: [String], // Array of image URLs
+      validate: [arrayLimit, "{PATH} exceeds the limit of 5 images"],
+      default: [],
+    },
     description: {
       type: String,
       required: true,
@@ -26,11 +31,16 @@ const destinationSchema = new mongoose.Schema(
     },
     activities: {
       type: [String], // Array of strings
-      default: [], // Default to an empty array
+      default: [],
     },
   },
   { timestamps: true }
 );
+
+// Validation function to limit galleryImages to 5
+function arrayLimit(val) {
+  return val.length <= 5;
+}
 
 const Destination = mongoose.model("Destination", destinationSchema);
 
