@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Table, Button, Modal } from "flowbite-react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
-import GalleryForm from "./galleryPage/GalleryForm"; // Adjust the path as needed
+import GalleryForm from "./galleryPage/GalleryForm"; 
 
 const GalleryTable = () => {
   const [galleries, setGalleries] = useState([]);
   const [selectedGallery, setSelectedGallery] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [showForm, setShowForm] = useState(false); // State to toggle the form visibility
+  const [showForm, setShowForm] = useState(false);
 
   useEffect(() => {
     fetchGalleries();
@@ -26,16 +26,16 @@ const GalleryTable = () => {
 
   const toggleForm = () => {
     setShowForm(!showForm);
-    setSelectedGallery(null); // Reset selectedGallery when toggling form
+    setSelectedGallery(null);
   };
 
   return (
     <section className="container mx-auto p-4">
-      <div className="flex justify-between items-center mb-4">
-      <h2 className="text-3xl font-semibold text-gray-900 ">
+      {/* Header and Add Button */}
+      <div className="flex flex-wrap justify-between items-center mb-4">
+        <h2 className="text-lg md:text-3xl font-semibold text-gray-900 text-center">
           <span className="text-[#F4AC20]">GALLERY</span> MANAGEMENT
         </h2>
-        
         <Button
           className="bg-[#F4AC20] text-white py-1 px-4 rounded-lg hover:bg-[#f49120]"
           onClick={toggleForm}
@@ -44,44 +44,46 @@ const GalleryTable = () => {
         </Button>
       </div>
 
-      {/* Show Table if not showing form */}
+      {/* Table Wrapper for Mobile Scrolling */}
       {!showForm && (
-        <Table hoverable={true} className="w-full">
-          <Table.Head>
-            <Table.HeadCell>Date</Table.HeadCell>
-            <Table.HeadCell>Image</Table.HeadCell>
-            <Table.HeadCell>City</Table.HeadCell>
-            <Table.HeadCell>Delete</Table.HeadCell>
-          </Table.Head>
-          <Table.Body>
-            {galleries.map((gallery) => (
-              <Table.Row key={gallery._id} className="bg-white">
-                <Table.Cell>
-                  {/* Assuming gallery.date is in the correct format, adjust as necessary */}
-                  {new Date(gallery.updatedAt).toLocaleDateString()}
-                </Table.Cell>
-                <Table.Cell>
-                  <img
-                    src={gallery.imageURL} // Assuming the image URL is stored in gallery.imageURL
-                    alt={gallery.name}
-                    className="w-16 h-12 object-cover rounded-md"
-                  />
-                </Table.Cell>
-                <Table.Cell>{gallery.city}</Table.Cell>
-                <Table.Cell>
-                  <span onClick={() => {
-                      setShowModal(true);
-                      setSelectedGallery(gallery);
-                    }} className="font-medium text-red-500 hover:underline cursor-pointer">
+        <div className="overflow-x-auto">
+          <Table hoverable={true} className="w-full">
+            <Table.Head>
+              <Table.HeadCell>Date</Table.HeadCell>
+              <Table.HeadCell>Image</Table.HeadCell>
+              <Table.HeadCell>City</Table.HeadCell>
+              <Table.HeadCell>Delete</Table.HeadCell>
+            </Table.Head>
+            <Table.Body>
+              {galleries.map((gallery) => (
+                <Table.Row key={gallery._id} className="bg-white">
+                  <Table.Cell>
+                    {new Date(gallery.updatedAt).toLocaleDateString()}
+                  </Table.Cell>
+                  <Table.Cell>
+                    <img
+                      src={gallery.imageURL}
+                      alt={gallery.name}
+                      className="w-16 h-12 object-cover rounded-md min-w-[64px]"
+                    />
+                  </Table.Cell>
+                  <Table.Cell>{gallery.city}</Table.Cell>
+                  <Table.Cell>
+                    <span
+                      onClick={() => {
+                        setShowModal(true);
+                        setSelectedGallery(gallery);
+                      }}
+                      className="font-medium text-red-500 hover:underline cursor-pointer"
+                    >
                       Delete
-
-                  </span>
-                  
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
+                    </span>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </div>
       )}
 
       {/* Show Form if showForm is true */}
@@ -95,7 +97,7 @@ const GalleryTable = () => {
         />
       )}
 
-      {/* Modal for Delete Confirmation */}
+      {/* Delete Confirmation Modal */}
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
         <Modal.Body>
           <div className="text-center">
@@ -109,7 +111,7 @@ const GalleryTable = () => {
                 onClick={() => {
                   deleteGallery(selectedGallery._id);
                   setShowModal(false);
-                  setSelectedGallery(null); // Clear selection after deleting
+                  setSelectedGallery(null);
                 }}
               >
                 Yes, Delete
