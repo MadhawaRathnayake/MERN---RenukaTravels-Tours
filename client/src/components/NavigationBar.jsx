@@ -31,6 +31,10 @@ export default function NavigationBar() {
     setMenuOpen((prev) => !prev);
   };
 
+  const closeMenu = () => {
+    setMenuOpen(false);
+  };
+
   return (
     <nav className="shadow-lg lg:py-3">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">
@@ -187,78 +191,90 @@ export default function NavigationBar() {
 
       {/* Mobile Menu */}
       {menuOpen && (
-        <div className={`sm:hidden`} id="mobile-menu">
-          <div className={`space-y-1 px-2 pb-3 pt-2`}>
-            <Link
-              to="/"
-              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-            >
-              Home
-            </Link>
+  <div className={`sm:hidden`} id="mobile-menu">
+    <div className={`space-y-1 px-2 pb-3 pt-2`}>
+      <Link
+        to="/"
+        onClick={closeMenu}
+        className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+      >
+        Home
+      </Link>
 
-            <Link
-              to="/destinations"
-              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-            >
-              Destinations
-            </Link>
-            <Link
-              to="/tours"
-              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-            >
-              Featured Tours
-            </Link>
-            <Link
-              to="/gallery"
-              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-            >
-              Gallery
-            </Link>
-            <Link
-              to="/services"
-              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-            >
-              Our Services
-            </Link>
-            <Link
-              to="/about"
-              className={`block rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-            >
-              About Us
-            </Link>
-            {!currentUser && (
-              <Link
-                to="/signin"
-                className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-              >
-                Log In
-              </Link>
-            )}
-            {currentUser && (
-              <>
-                <Link
-                  to="/dashboard?tab=dash"
-                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-                >
-                  Dashboard
-                </Link>
-                <Link
-                  to="/dashboard?tab=profile"
-                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-                >
-                  Profile
-                </Link>
-                <Link
-                  onClick={handleSignout}
-                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-                >
-                  Log Out
-                </Link>
-              </>
-            )}
-          </div>
-        </div>
+      <Link
+        to="/destinations"
+        onClick={closeMenu}
+        className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+      >
+        Destinations
+      </Link>
+      <Link
+        to="/tours"
+        onClick={closeMenu}
+        className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+      >
+        Featured Tours
+      </Link>
+      <Link
+        to="/gallery"
+        onClick={closeMenu}
+        className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+      >
+        Gallery
+      </Link>
+      <Link
+        to="/services"
+        onClick={closeMenu}
+        className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+      >
+        Our Services
+      </Link>
+      <Link
+        to="/about"
+        onClick={closeMenu}
+        className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+      >
+        About Us
+      </Link>
+      {!currentUser && (
+        <Link
+          to="/signin"
+          onClick={closeMenu}
+          className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+        >
+          Log In
+        </Link>
       )}
+      {currentUser && (
+        <>
+          <Link
+            to="/dashboard?tab=dash"
+            onClick={closeMenu}
+            className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+          >
+            Dashboard
+          </Link>
+          <Link
+            to="/dashboard?tab=profile"
+            onClick={closeMenu}
+            className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+          >
+            Profile
+          </Link>
+          <Link
+            onClick={() => {
+              closeMenu();
+              handleSignout();
+            }}
+            className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+          >
+            Log Out
+          </Link>
+        </>
+      )}
+    </div>
+  </div>
+)}
     </nav>
   );
 }
