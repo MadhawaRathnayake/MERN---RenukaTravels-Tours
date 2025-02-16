@@ -70,16 +70,14 @@ export default function DashVehicles() {
   }
 
   return (
-    <div className="lg:mr-32 lg:ml-10 w-full table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 
-      scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-
+    <div className="container mx-auto p-4">
       {/* Title and Add Button */}
-      <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-900 ">
+      <div className="flex flex-wrap justify-between items-center mb-4">
+        <h2 className="text-lg md:text-2xl font-semibold text-gray-900 text-center">
           ALL <span className="text-[#F4AC20]">VEHICLES</span>
         </h2>
         <Link to="/dashboard?tab=createvehicle">
-          <Button style={{ backgroundColor: "#F4AC20", borderColor: "#F4AC20" }}>
+          <Button className="bg-[#F4AC20] text-white px-4 py-1 rounded-lg hover:bg-[#f49120]">
             Add a vehicle
           </Button>
         </Link>
@@ -87,79 +85,74 @@ export default function DashVehicles() {
 
       {currentUser.isAdmin && userVehicles.length > 0 ? (
         <>
-          <Table hoverable className="shadow-md">
-            <Table.Head>
-              <Table.HeadCell>Date Updated</Table.HeadCell>
-              <Table.HeadCell>Vehicle Image</Table.HeadCell>
-              <Table.HeadCell>Vehicle Title</Table.HeadCell>
-              <Table.HeadCell>Delete</Table.HeadCell>
-              <Table.HeadCell>Edit</Table.HeadCell>
-              
-            </Table.Head>
-            {userVehicles.map((vehicle) => (
-              <Table.Body key={vehicle._id} className="devide-y">
-                <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell>{new Date(vehicle.updatedAt).toLocaleDateString()}</Table.Cell>
-                  <Table.Cell>
-                    <Link to={`/vehicles`}>
-                      <img 
-                        src={vehicle.image}
-                        alt={vehicle.title}
-                        className="w-20 h-10 object-cover bg-gray-500"
-                      />
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <Link className="font-medium text-gray-900 dark:text-white" to={`/vehicles`}>
-                      {vehicle.title}
-                    </Link>
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span onClick={() => {
-                      setShowModal(true);
-                      setVehicleIdToDelete(vehicle._id);
-                    }} className="font-medium text-red-500 hover:underline cursor-pointer">
-                      Delete
-                    </span>
-                  </Table.Cell>
-                  <Table.Cell>
-                      <Link
-                        className="text-teal-500 hover:underline"
-                        to={`/update-vehicle/${vehicle._id}`}
-                      >
-                        <span>Edit</span>
+          {/* Responsive Table */}
+          <div className="overflow-x-auto">
+            <Table hoverable className="w-full">
+              <Table.Head>
+                <Table.HeadCell>Date Updated</Table.HeadCell>
+                <Table.HeadCell>Vehicle Image</Table.HeadCell>
+                <Table.HeadCell>Vehicle Title</Table.HeadCell>
+                <Table.HeadCell>Delete</Table.HeadCell>
+                <Table.HeadCell>Edit</Table.HeadCell>
+              </Table.Head>
+              <Table.Body>
+                {userVehicles.map((vehicle) => (
+                  <Table.Row key={vehicle._id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
+                    <Table.Cell>{new Date(vehicle.updatedAt).toLocaleDateString()}</Table.Cell>
+                    <Table.Cell>
+                      <Link to={`/vehicles`}>
+                        <img 
+                          src={vehicle.image}
+                          alt={vehicle.title}
+                          className="w-16 h-12 object-cover rounded-md min-w-[64px]"
+                        />
                       </Link>
                     </Table.Cell>
-                  
-                </Table.Row>
+                    <Table.Cell>
+                      <Link className="font-medium text-gray-900 dark:text-white" to={`/vehicles`}>
+                        {vehicle.title}
+                      </Link>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <span onClick={() => {
+                        setShowModal(true);
+                        setVehicleIdToDelete(vehicle._id);
+                      }} className="font-medium text-red-500 hover:underline cursor-pointer">
+                        Delete
+                      </span>
+                    </Table.Cell>
+                    <Table.Cell>
+                      <Link className="text-teal-500 hover:underline" to={`/update-vehicle/${vehicle._id}`}>
+                        Edit
+                      </Link>
+                    </Table.Cell>
+                  </Table.Row>
+                ))}
               </Table.Body>
-            ))}
-          </Table>
+            </Table>
+          </div>
+
           {showMore && (
-            <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-7">
+            <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-3">
               Show more
             </button>
           )}
         </>
       ) : (
-        <p>You have no vehicles yet</p>
+        <p className="text-center text-gray-600">You have no vehicles yet</p>
       )}
 
+      {/* Delete Confirmation Modal */}
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size='md'>
-        <Modal.Header />
         <Modal.Body>
           <div className='text-center'>
-            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
-            <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+            <HiOutlineExclamationCircle className='h-14 w-14 text-red-500 mb-4 mx-auto' />
+            <h3 className='mb-5 text-lg text-gray-700'>
               Are you sure you want to delete this vehicle?
             </h3>
-            <div className='flex justify-center gap-5'>
-              <Button color='failure' onClick={handleDeleteVehicle}>
-                Yes, I'm Sure
-              </Button>
-              <Button color='gray' onClick={() => setShowModal(false)}>
-                No, Cancel
-              </Button>
+            <div className='flex justify-center gap-4'>
+              <Button color='failure' onClick={handleDeleteVehicle}>Yes, Delete</Button>
+              <Button color='gray' onClick={() => setShowModal(false)}>Cancel</Button>
             </div>
           </div>
         </Modal.Body>

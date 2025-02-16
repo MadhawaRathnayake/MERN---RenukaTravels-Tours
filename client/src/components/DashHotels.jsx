@@ -13,15 +13,14 @@ const HotelTable = () => {
     fetchHotels();
   }, []);
 
- const fetchHotels = async () => {
-  try {
-    const response = await axios.get("/api/hotels");
-    setHotels(response.data.hotels); // Access the `hotels` array
-  } catch (error) {
-    console.error("Error fetching hotels:", error);
-  }
-};
-
+  const fetchHotels = async () => {
+    try {
+      const response = await axios.get("/api/hotels");
+      setHotels(response.data.hotels);
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+    }
+  };
 
   const deleteHotel = async (id) => {
     await axios.delete(`/api/hotels/${id}`);
@@ -45,45 +44,47 @@ const HotelTable = () => {
       </div>
 
       {!selectedHotel && (
-        <Table hoverable={true} className="w-full">
-          <Table.Head>
-            <Table.HeadCell>Hotel Name</Table.HeadCell>
-            <Table.HeadCell>City</Table.HeadCell>
-            <Table.HeadCell>Edit</Table.HeadCell>
-            <Table.HeadCell>Delete</Table.HeadCell>
-          </Table.Head>
-          <Table.Body>
-            {hotels.map((hotel) => (
-              <Table.Row key={hotel._id} className="bg-white">
-                <Table.Cell>{hotel.name}</Table.Cell>
-                <Table.Cell>{hotel.city}</Table.Cell>
-                <Table.Cell>
-                  <Button
-                    color=""
-                    style={{ color: "teal" }} // Placeholder for color
-                    size="xs"
-                    onClick={() => setSelectedHotel(hotel)}
-                  >
-                    Edit
-                  </Button>
-                </Table.Cell>
-                <Table.Cell>
-                  <Button
-                    color=""
-                    style={{ color: "red" }} // Placeholder for color
-                    size="xs"
-                    onClick={() => {
-                      setShowModal(true);
-                      setSelectedHotel(hotel);
-                    }}
-                  >
-                    Delete
-                  </Button>
-                </Table.Cell>
-              </Table.Row>
-            ))}
-          </Table.Body>
-        </Table>
+        <div className="overflow-x-auto">
+          <Table hoverable={true} className="w-full min-w-max">
+            <Table.Head>
+              <Table.HeadCell>Hotel Name</Table.HeadCell>
+              <Table.HeadCell>City</Table.HeadCell>
+              <Table.HeadCell>Edit</Table.HeadCell>
+              <Table.HeadCell>Delete</Table.HeadCell>
+            </Table.Head>
+            <Table.Body>
+              {hotels.map((hotel) => (
+                <Table.Row key={hotel._id} className="bg-white">
+                  <Table.Cell>{hotel.name}</Table.Cell>
+                  <Table.Cell>{hotel.city}</Table.Cell>
+                  <Table.Cell>
+                    <Button
+                      color=""
+                      className="text-teal-600 hover:underline"
+                      size="xs"
+                      onClick={() => setSelectedHotel(hotel)}
+                    >
+                      Edit
+                    </Button>
+                  </Table.Cell>
+                  <Table.Cell>
+                    <Button
+                      color=""
+                      className="text-red-600 hover:underline"
+                      size="xs"
+                      onClick={() => {
+                        setShowModal(true);
+                        setSelectedHotel(hotel);
+                      }}
+                    >
+                      Delete
+                    </Button>
+                  </Table.Cell>
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table>
+        </div>
       )}
 
       {selectedHotel && (
@@ -96,25 +97,20 @@ const HotelTable = () => {
         />
       )}
 
-      <Modal
-        show={showModal}
-        onClose={() => setShowModal(false)}
-        popup
-        size="md"
-      >
+      <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
         <Modal.Body>
           <div className="text-center">
             <HiOutlineExclamationCircle className="h-14 w-14 text-red-500 mb-4 mx-auto" />
             <h3 className="mb-5 text-lg font-semibold text-gray-700">
               Are you sure you want to delete this hotel?
             </h3>
-            <div className="flex justify-center gap-4">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button
                 color="failure"
                 onClick={() => {
                   deleteHotel(selectedHotel._id);
                   setShowModal(false);
-                  setSelectedHotel(null); // Clear selection after deleting
+                  setSelectedHotel(null);
                 }}
               >
                 Yes, Delete
