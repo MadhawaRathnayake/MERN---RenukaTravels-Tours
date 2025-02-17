@@ -17,11 +17,16 @@ export default function DashReviews() {
   const [selectedReview, setSelectedReview] = useState("");
   const [showReviewModal, setShowReviewModal] = useState(false);
 
+  // New states for image preview modal
+  const [selectedImages, setSelectedImages] = useState([]);
+  const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+  const [showImageModal, setShowImageModal] = useState(false);
+
   // Helper function to truncate review comment to 5 words
   const truncateReview = (comment) => {
     const words = comment.split(" ");
-    if (words.length <= 8) return comment;
-    return words.slice(0, 8).join(" ") + " ...";
+    if (words.length <= 5) return comment;
+    return words.slice(0, 5).join(" ") + " ...";
   };
 
   // Fetch reviews and then user data for each review
@@ -33,10 +38,14 @@ export default function DashReviews() {
       const response = await axios.get(endpoint);
       const reviewsData = response.data.reviews;
 
-      // Update reviews state (append if "Show More" or replace on initial load)
-      setReviews((prev) =>
-        startIndex ? [...prev, ...reviewsData] : reviewsData
-      );
+      // Merge new reviews and sort by createdAt in descending order (latest first)
+      setReviews((prev) => {
+        const combined = startIndex ? [...prev, ...reviewsData] : reviewsData;
+        return combined.sort(
+          (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+        );
+      });
+
       if (reviewsData.length < 9) {
         setShowMore(false);
       }
@@ -76,6 +85,29 @@ export default function DashReviews() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentUser]);
 
+  // Add arrow key navigation for image modal
+  useEffect(() => {
+    if (!showImageModal) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "ArrowLeft") {
+        setSelectedImageIndex((prev) =>
+          selectedImages.length > 0
+            ? (prev - 1 + selectedImages.length) % selectedImages.length
+            : prev
+        );
+      } else if (e.key === "ArrowRight") {
+        setSelectedImageIndex((prev) =>
+          selectedImages.length > 0
+            ? (prev + 1) % selectedImages.length
+            : prev
+        );
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showImageModal, selectedImages]);
+
   const handleShowMore = () => {
     const startIndex = reviews.length;
     fetchReviews(startIndex);
@@ -93,6 +125,13 @@ export default function DashReviews() {
     }
   };
 
+  // Function to open image preview modal
+  const openModal = (images, index) => {
+    setSelectedImages(images);
+    setSelectedImageIndex(index);
+    setShowImageModal(true);
+  };
+
   return (
     <div className="p-3 lg:mr-28 w-full overflow-x-auto md:mx-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-500">
       <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-5 text-center md:text-left">
@@ -107,6 +146,7 @@ export default function DashReviews() {
                 <Table.HeadCell>User Profile</Table.HeadCell>
                 <Table.HeadCell>Username</Table.HeadCell>
                 <Table.HeadCell>Review</Table.HeadCell>
+                <Table.HeadCell>Images</Table.HeadCell>
                 <Table.HeadCell>Delete</Table.HeadCell>
               </Table.Head>
               <Table.Body>
@@ -132,36 +172,54 @@ export default function DashReviews() {
                         {reviewUser.username || "Anonymous"}
                       </Table.Cell>
                       <Table.Cell className="text-sm">
-  <span
-    onClick={() => {
-      setSelectedReview(review.comment);
-      setShowReviewModal(true);
-    }}
-    className="cursor-pointer"
-  >
-    {truncateReview(review.comment)}
-  </span>
-  {review.rating !== undefined && (
-    <div className="mt-2 flex items-center">
-      {Array.from({ length: 5 }, (_, index) => (
-        <svg
-          key={index}
-          width="20"
-          height="20"
-          viewBox="0 0 20 20"
-          fill={index < review.rating ? "#FBBF24" : "#D1D5DB"}
-          xmlns="http://www.w3.org/2000/svg"
-        >
-          <path
-            d="M9.10326 2.31699C9.47008 1.57374 10.5299 1.57374 10.8967 2.31699L12.7063 5.98347C12.8519 6.27862 13.1335 6.48319 13.4592 6.53051L17.5054 7.11846C18.3256 7.23765 18.6531 8.24562 18.0596 8.82416L15.1318 11.6781C14.8961 11.9079 14.7885 12.2389 14.8442 12.5632L15.5353 16.5931C15.6754 17.41 14.818 18.033 14.0844 17.6473L10.4653 15.7446C10.174 15.5915 9.82598 15.5915 9.53466 15.7446L5.91562 17.6473C5.18199 18.033 4.32456 17.41 4.46467 16.5931L5.15585 12.5632C5.21148 12.2389 5.10393 11.9079 4.86825 11.6781L1.94038 8.82416C1.34687 8.24562 1.67438 7.23765 2.4946 7.11846L6.54081 6.53051C6.86652 6.48319 7.14808 6.27862 7.29374 5.98347L9.10326 2.31699Z"
-          />
-        </svg>
-      ))}
-      <span className="ml-2 text-gray-600">{review.rating}</span>
-    </div>
-  )}
-</Table.Cell>
-
+                        <span
+                          onClick={() => {
+                            setSelectedReview(review.comment);
+                            setShowReviewModal(true);
+                          }}
+                          className="cursor-pointer"
+                        >
+                          {truncateReview(review.comment)}
+                        </span>
+                        {review.rating !== undefined && (
+                          <div className="mt-2 flex items-center">
+                            {Array.from({ length: 5 }, (_, index) => (
+                              <svg
+                                key={index}
+                                width="20"
+                                height="20"
+                                viewBox="0 0 20 20"
+                                fill={index < review.rating ? "#FBBF24" : "#D1D5DB"}
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M9.10326 2.31699C9.47008 1.57374 10.5299 1.57374 10.8967 2.31699L12.7063 5.98347C12.8519 6.27862 13.1335 6.48319 13.4592 6.53051L17.5054 7.11846C18.3256 7.23765 18.6531 8.24562 18.0596 8.82416L15.1318 11.6781C14.8961 11.9079 14.7885 12.2389 14.8442 12.5632L15.5353 16.5931C15.6754 17.41 14.818 18.033 14.0844 17.6473L10.4653 15.7446C10.174 15.5915 9.82598 15.5915 9.53466 15.7446L5.91562 17.6473C5.18199 18.033 4.32456 17.41 4.46467 16.5931L5.15585 12.5632C5.21148 12.2389 5.10393 11.9079 4.86825 11.6781L1.94038 8.82416C1.34687 8.24562 1.67438 7.23765 2.4946 7.11846L6.54081 6.53051C6.86652 6.48319 7.14808 6.27862 7.29374 5.98347L9.10326 2.31699Z"
+                                />
+                              </svg>
+                            ))}
+                            <span className="ml-2 text-gray-600">
+                              {review.rating}
+                            </span>
+                          </div>
+                        )}
+                      </Table.Cell>
+                      <Table.Cell className="text-sm">
+                        {review.images && review.images.length > 0 ? (
+                          <div className="flex gap-2">
+                            {review.images.map((imgUrl, index) => (
+                              <img
+                                key={index}
+                                src={imgUrl}
+                                alt={`Review image ${index + 1}`}
+                                className="w-16 h-16 object-cover cursor-pointer rounded"
+                                onClick={() => openModal(review.images, index)}
+                              />
+                            ))}
+                          </div>
+                        ) : (
+                          <span className="text-gray-500">No images</span>
+                        )}
+                      </Table.Cell>
                       <Table.Cell>
                         <span
                           onClick={() => {
@@ -233,6 +291,25 @@ export default function DashReviews() {
           <div className="text-center">
             <p className="text-sm text-gray-700">{selectedReview}</p>
           </div>
+        </Modal.Body>
+      </Modal>
+
+      {/* Image Preview Modal */}
+      <Modal
+        show={showImageModal}
+        onClose={() => setShowImageModal(false)}
+        popup
+        size="full"
+      >
+        <Modal.Header>Review Image</Modal.Header>
+        <Modal.Body>
+          {selectedImages.length > 0 && (
+            <img
+              src={selectedImages[selectedImageIndex]}
+              alt={`Review image ${selectedImageIndex + 1}`}
+              className="w-full h-full object-contain"
+            />
+          )}
         </Modal.Body>
       </Modal>
     </div>
