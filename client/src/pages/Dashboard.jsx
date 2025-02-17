@@ -12,6 +12,7 @@ import DashVehicles from "../components/VehicleComp/DashVehicles";
 import DashBookings from "../components/DashBookings";
 import DashCreateVehicle from "../components/VehicleComp/DashCreateVehicle";
 import DashGallery from "../components/DashGallery";
+import DashReviews from "../components/DashReviews";
 
 
 
@@ -64,6 +65,8 @@ function Dashboard() {
         return <DashBookings />;
       case "gallery":
         return <DashGallery />;
+        case "reviews":
+        return <DashReviews />;
       default:
         return <DashboardComp />;
     }
