@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
 import WriteReview from './write';
 
 const ReviewsSection = () => {
-  const navigate = useNavigate(); // Initialize navigate
+  const navigate = useNavigate();
   const [reviews, setReviews] = useState([]);
   const [averageRating, setAverageRating] = useState(0);
   const [lastMonthRating, setLastMonthRating] = useState(0);
@@ -24,6 +24,12 @@ const ReviewsSection = () => {
   const [modalImages, setModalImages] = useState([]);
   const [modalCurrentIndex, setModalCurrentIndex] = useState(0);
   const [isWriteReviewMode, setIsWriteReviewMode] = useState(false);
+
+  // New state to control how many reviews to display
+  const [reviewsLimit, setReviewsLimit] = useState(2);
+
+  // New state for filtering by star rating (null means no filter)
+  const [filterRating, setFilterRating] = useState(null);
 
   const fetchReviews = async () => {
     try {
@@ -51,10 +57,9 @@ const ReviewsSection = () => {
         lastMonth = 11;
         lastMonthYear = now.getFullYear() - 1;
       } else {
-        lastMonth = now.getMonth(); // previous month
+        lastMonth = now.getMonth();
         lastMonthYear = now.getFullYear();
       }
-
       const lastMonthReviews = reviewsData.filter((review) => {
         const reviewDate = new Date(review.createdAt);
         return (
@@ -62,7 +67,6 @@ const ReviewsSection = () => {
           reviewDate.getFullYear() === lastMonthYear
         );
       });
-
       if (lastMonthReviews.length > 0) {
         const totalLastMonthRating = lastMonthReviews.reduce(
           (sum, review) => sum + review.rating,
@@ -94,9 +98,12 @@ const ReviewsSection = () => {
 
   useEffect(() => {
     fetchReviews();
+    // Optionally, set up polling for real-time updates:
+    const interval = setInterval(fetchReviews, 10000); // every 10 seconds
+    return () => clearInterval(interval);
   }, []);
 
-  // Function to add new review to the state
+  // This callback is passed to WriteReview to add the new review immediately.
   const addReview = (newReview) => {
     setReviews((prevReviews) => [newReview, ...prevReviews]);
   };
@@ -134,21 +141,26 @@ const ReviewsSection = () => {
     setModalCurrentIndex(0);
   };
 
-  useEffect(() => {
-    const handleKeyDown = (e) => {
-      if (!isModalOpen) return;
-      if (e.key === 'ArrowRight' && modalImages.length) {
-        setModalCurrentIndex((prevIndex) => (prevIndex + 1) % modalImages.length);
-      } else if (e.key === 'ArrowLeft' && modalImages.length) {
-        setModalCurrentIndex((prevIndex) => (prevIndex - 1 + modalImages.length) % modalImages.length);
-      } else if (e.key === 'Escape') {
-        closeModal();
-      }
-    };
+  // Handler for filtering reviews by star rating.
+  const handleFilterRating = (rating) => {
+    // Toggle filter: if the same rating is clicked, clear the filter.
+    if (filterRating === rating) {
+      setFilterRating(null);
+    } else {
+      setFilterRating(rating);
+    }
+    // Reset the reviews limit when filter changes.
+    setReviewsLimit(2);
+  };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen, modalImages]);
+  // Apply filtering based on the selected star rating.
+  const filteredReviews = filterRating
+    ? reviews.filter((review) => review.rating === filterRating)
+    : reviews;
+  const sortedReviews = [...filteredReviews].sort(
+    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+  );
+  const displayedReviews = sortedReviews.slice(0, reviewsLimit);
 
   return (
     <section className="py-24 relative">
@@ -162,7 +174,11 @@ const ReviewsSection = () => {
             <div className="col-span-12 xl:col-span-4 flex items-center">
               <div className="box flex flex-col gap-y-4 w-full max-xl:max-w-3xl mx-auto">
                 {[5, 4, 3, 2, 1].map((rating) => (
-                  <div key={rating} className="flex items-center w-full">
+                  <div
+                    key={rating}
+                    onClick={() => handleFilterRating(rating)}
+                    className="flex items-center w-full cursor-pointer"
+                  >
                     <p className="font-medium text-lg py-[1px] text-black mr-[2px]">{rating}</p>
                     <svg
                       width="20"
@@ -232,10 +248,8 @@ const ReviewsSection = () => {
                       <button
                         onClick={() => {
                           if (!currentUser) {
-                            // Redirect to sign-in page if not logged in
                             navigate('/signin');
                           } else {
-                            // Allow writing a review if logged in
                             setIsWriteReviewMode(true);
                           }
                         }}
@@ -243,7 +257,10 @@ const ReviewsSection = () => {
                       >
                         Write A Review
                       </button>
-                      <button className="rounded-full px-6 py-4 bg-white font-semibold text-lg text-indigo-600 whitespace-nowrap w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200">
+                      <button 
+                        onClick={() => setReviewsLimit(4)}
+                        className="rounded-full px-6 py-4 bg-white font-semibold text-lg text-indigo-600 whitespace-nowrap w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200"
+                      >
                         See All Reviews
                       </button>
                     </div>
@@ -258,53 +275,64 @@ const ReviewsSection = () => {
             <h4 className="font-manrope font-semibold text-3xl leading-10 text-black mb-6">
               Latest Reviews
             </h4>
-            {[...reviews]
-              .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-              .slice(0, 2)
-              .map((review) => {
-                const reviewUser = reviewUsers[review.userId] || {};
-                return (
-                  <div
-                    key={review._id}
-                    className="pt-11 pb-8 border-b border-gray-100 max-xl:max-w-2xl max-xl:mx-auto"
-                  >
-                    <div className="flex items-center gap-3 mb-4">
-                      {renderStars(review.rating)}
-                    </div>
-                    <div className="flex sm:items-center flex-col min-[400px]:flex-row justify-between gap-5 mb-4">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={reviewUser.profilePicture || "https://via.placeholder.com/150"}
-                          alt={reviewUser.username}
-                          className="w-8 h-8 rounded-full object-cover"
-                        />
-                        <h6 className="font-semibold text-lg leading-8 text-indigo-600">
-                          {reviewUser.username || "Anonymous"}
-                        </h6>
-                      </div>
-                      <p className="font-normal text-lg leading-8 text-gray-400">
-                        {new Date(review.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                    <p className="font-normal text-lg leading-8 text-gray-400 max-xl:text-justify">
-                      {review.comment}
-                    </p>
-                    {review.images && review.images.length > 0 && (
-                      <div className="mt-4 flex gap-2">
-                        {review.images.map((imgUrl, index) => (
-                          <img
-                            key={index}
-                            src={imgUrl}
-                            alt={`Review image ${index + 1}`}
-                            className="w-16 h-16 object-cover cursor-pointer rounded"
-                            onClick={() => openModal(review.images, index)}
-                          />
-                        ))}
-                      </div>
-                    )}
+            {displayedReviews.map((review) => {
+              const reviewUser = reviewUsers[review.userId] || {};
+              return (
+                <div
+                  key={review._id}
+                  className="pt-11 pb-8 border-b border-gray-100 max-xl:max-w-2xl max-xl:mx-auto"
+                >
+                  <div className="flex items-center gap-3 mb-4">
+                    {renderStars(review.rating)}
                   </div>
-                );
-              })}
+                  <div className="flex sm:items-center flex-col min-[400px]:flex-row justify-between gap-5 mb-4">
+                    <div className="flex items-center gap-3">
+                      <img
+                        src={reviewUser.profilePicture || "https://via.placeholder.com/150"}
+                        alt={reviewUser.username}
+                        className="w-8 h-8 rounded-full object-cover"
+                      />
+                      <h6 className="font-semibold text-lg leading-8 text-indigo-600">
+                        {reviewUser.username || "Anonymous"}
+                      </h6>
+                    </div>
+                    <p className="font-normal text-lg leading-8 text-gray-400">
+                      {new Date(review.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <p className="font-normal text-lg leading-8 text-gray-400 max-xl:text-justify">
+                    {review.comment}
+                  </p>
+                  {review.images && review.images.length > 0 && (
+                    <div className="mt-4 flex gap-2">
+                      {review.images.map((imgUrl, index) => (
+                        <img
+                          key={index}
+                          src={imgUrl}
+                          alt={`Review image ${index + 1}`}
+                          className="w-16 h-16 object-cover cursor-pointer rounded"
+                          onClick={() => openModal(review.images, index)}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Load More / You reached all the reviews */}
+          <div className="flex justify-center mt-6">
+            {reviewsLimit < filteredReviews.length ? (
+              <button
+                onClick={() => setReviewsLimit(prev => prev + 2)}
+                className="rounded-full px-6 py-4 border border-indigo-600 font-semibold text-lg text-indigo-600 whitespace-nowrap text-center shadow-sm transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200"
+              >
+                Load More
+              </button>
+            ) : (
+              <p className="text-lg font-semibold text-indigo-600">You reached all the reviews</p>
+            )}
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between pt-8 max-xl:max-w-3xl max-xl:mx-auto">
