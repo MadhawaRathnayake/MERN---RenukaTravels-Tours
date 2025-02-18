@@ -1,6 +1,7 @@
 import TripPlan from "../models/plan.model.js";
 import nodemailer from "nodemailer";
 import { errorHandler } from "../utils/error.js";
+import { getUserEmail } from "./user.controller.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -13,23 +14,26 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-transporter.verify(function (error, success) {
-  if (error) {
-    console.log("SMTP connection error:", error);
-  } else {
-    console.log("Server is ready to take our messages");
-  }
-});
+// transporter.verify(function (error, success) {
+//   if (error) {
+//     console.log("SMTP connection error:", error);
+//   } else {
+//     console.log("Server is ready to take our messages");
+//   }
+// });
 
 // Function to send the trip plan data as an email
 const sendTripPlanEmail = async (tripPlanData) => {
   try {
+    const userEmail = await getUserEmail(tripPlanData.userId); // Fetch the user's email
+
     const mailOptions = {
       from: "renukatoursandtravels1@gmail.com", // Sender's email
       to: "renukatours94@gmail.com", // The recipient's email (can be dynamic)
       subject: `New Trip Plan Created by User ${tripPlanData.userId}`,
       text: `A new trip plan has been created with the following details:\n\n
         User: ${tripPlanData.userId}\n
+        User Email: ${userEmail}\n
         Arrival Date: ${tripPlanData.arrivalDate}\n
         Departure Date: ${tripPlanData.departureDate}\n
         Number of People: ${tripPlanData.numberOfPeople}\n
@@ -39,23 +43,82 @@ const sendTripPlanEmail = async (tripPlanData) => {
         Accommodation Type: ${tripPlanData.accommodationType}\n
         Vehicle Type: ${tripPlanData.vehicleType}\n
         Status: ${tripPlanData.status}\n`,
-      html: `<h1>New Trip Plan Created</h1>
-        <p><strong>User:</strong> ${tripPlanData.userId}</p>
-        <p><strong>Arrival Date:</strong> ${tripPlanData.arrivalDate}</p>
-        <p><strong>Departure Date:</strong> ${tripPlanData.departureDate}</p>
-        <p><strong>Number of People:</strong> ${tripPlanData.numberOfPeople}</p>
-        <p><strong>Number of Adults:</strong> ${tripPlanData.numberOfAdults}</p>
-        <p><strong>Number of Children:</strong> ${
-          tripPlanData.numberOfChildren
-        }</p>
-        <p><strong>Selected Destinations:</strong> ${tripPlanData.selectedDestinations.join(
-          ", "
-        )}</p>
-        <p><strong>Accommodation Type:</strong> ${
-          tripPlanData.accommodationType
-        }</p>
-        <p><strong>Vehicle Type:</strong> ${tripPlanData.vehicleType}</p>
-        <p><strong>Status:</strong> ${tripPlanData.status}</p>`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
+          <h1 style="color: #333; text-align: center;">New Trip Plan Created</h1>
+          <p style="font-size: 16px; color: #555;">A new trip plan has been created with the following details:</p>
+          <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>User:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.userId
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>User Email:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${userEmail}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Arrival Date:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.arrivalDate
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Departure Date:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.departureDate
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Number of People:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.numberOfPeople
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Number of Adults:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.numberOfAdults
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Number of Children:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.numberOfChildren
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Selected Destinations:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${tripPlanData.selectedDestinations.join(
+                ", "
+              )}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Accommodation Type:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.accommodationType
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Vehicle Type:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.vehicleType
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Status:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.status
+              }</td>
+            </tr>
+          </table>
+          <p style="font-size: 16px; color: #555; margin-top: 20px;">Thank you for using Renuka Tours and Travels!</p>
+              <div style="text-align: center; margin-top: 20px;">
+            <img src="https://firebasestorage.googleapis.com/v0/b/renuka-travels.appspot.com/o/logo.png?alt=media&token=e001d6db-fd7c-4f41-a230-eab2e5f00cd9" alt="Logo" style="max-width: 100px; height: auto;">
+          </div>
+          </div>
+      `,
     };
 
     await transporter.sendMail(mailOptions);

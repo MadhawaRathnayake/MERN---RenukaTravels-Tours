@@ -42,14 +42,14 @@ export default function DestinationDetails() {
     useEffect(() => {
       const interval = setInterval(() => {
         setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-      }, 3000);
+      }, 4000);
       return () => clearInterval(interval);
     }, [slides.length]);
 
     return (
       <>
-        <div className="md:pt-4 invisible md:visible lg:visible">
-          <div className="relative md:h-[360px] rounded-md md:flex md:justify-center h-1/5 m-6 md:m-0 group">
+        <div className="md:pt-4">
+          <div className="relative h-[360px] rounded-md md:flex md:justify-center m-6 md:m-0 group">
             {/* Navigation Buttons (inside image container) */}
             <div className="hidden group-hover:block absolute top-1/2 left-5 -translate-y-1/2 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer">
               <BsChevronCompactLeft onClick={prevSlide} size={30} />
