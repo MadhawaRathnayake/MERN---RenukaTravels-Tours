@@ -5,6 +5,7 @@ import {
   HiOutlineUserGroup,
   HiUser,
   HiMenu,
+  HiOutlineStar,
 } from "react-icons/hi";
 import {
   FaHotel,
@@ -110,6 +111,11 @@ export default function DashSidebar() {
       name: "Users",
       path: "users",
       icon: HiOutlineUserGroup,
+    },
+    currentUser.isAdmin && {
+      name: "Reviews",
+      path: "reviews",
+      icon: HiOutlineStar,
     },
   ].filter(Boolean);
 
