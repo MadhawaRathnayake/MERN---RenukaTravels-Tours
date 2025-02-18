@@ -33,9 +33,9 @@ export default function UpdateTour() {
 
     const fetchTour = async () => {
       try {
-        const res = await fetch(`/api/tours/getTour/${tourId}`);
+        const res = await fetch(`/api/tours/gettour/${tourId}`);
         const data = await res.json();
-        console.log(data.destinations);
+       // console.log(data.destinations);
         if (!res.ok) {
           setPublishError(data.message);
           return;
