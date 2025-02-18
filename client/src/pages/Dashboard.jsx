@@ -14,8 +14,6 @@ import DashCreateVehicle from "../components/VehicleComp/DashCreateVehicle";
 import DashGallery from "../components/DashGallery";
 import DashReviews from "../components/DashReviews";
 
-
-
 function Dashboard() {
   const location = useLocation();
   const [tab, setTab] = useState("");
