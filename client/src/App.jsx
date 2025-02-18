@@ -9,6 +9,8 @@ import DestinationDetails from "./pages/DestinationDetails";
 import Hotels from "./pages/Hotels";
 import Vehicles from "./pages/Vehicles";
 import Tours from "./pages/Tours";
+import TourDetails from "./pages/TourDetails";
+import UpdateTour from "./components/featuredTours/UpdateTours";
 import Footer from "./components/Footer";
 import PrivateRoute from "./components/PrivateRoute";
 import OnlyAdminPrivateRoute from "./components/OnlyAdminPrivateRoute";
@@ -23,6 +25,8 @@ import NavigationBar from "./components/NavigationBar";
 import CustomizeForm from "./pages/CustomizeForm";
 import OurServices from "./pages/OurServices";
 import DestinationHome from "./pages/DestinationsHome";
+import WriteReview from "./components/Review/write";
+import ReviewsSection from "./components/Review/ReviewComp";
 
 export default function App() {
   return (
@@ -36,6 +40,8 @@ export default function App() {
           <Route path="/tours" element={<Tours />}></Route>
           <Route path="services" element={<OurServices />}></Route>
           <Route path="/destinations" element={<DestinationHome />}></Route>
+          <Route path="/write-review" element={<WriteReview />}></Route>
+          <Route path="/reviews" element={<ReviewsSection />}></Route>
           <Route
             path="/destinations/:destSlug"
             element={<DestinationDetails />}
@@ -59,6 +65,8 @@ export default function App() {
           <Route path="/hotels" element={<Hotels />}></Route>
           <Route path="/vehicles" element={<Vehicles />}></Route>
           <Route path="/tours" element={<Tours />}></Route>
+          <Route path='/update-tour/:tourId' element={<UpdateTour />} />
+          <Route path="/tours/:id" element={<TourDetails />}></Route>
           <Route path="/hotels/:id" element={<HotelDetails />} />
           <Route path="/add-hotel" element={<InputHotel />} />
           <Route path="/contact" element={<ContactUs />} />

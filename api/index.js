@@ -9,6 +9,7 @@ import destRoutes from "./routes/destination.route.js";
 import tourRoutes from "./routes/tour.route.js";
 import galleryRoutes from "./routes/gallery.route.js";
 import tripPlanRoutes from './routes/plan.route.js';
+import reviewRoutes from "./routes/review.route.js";
 import cors from "cors";
 import path from "path";
 import cookieParser from "cookie-parser";
@@ -42,6 +43,7 @@ app.use("/api/vehicles", vehicleRoutes);
 app.use("/api/destination", destRoutes);
 app.use("/api/tours", tourRoutes);
 app.use("/api/gallery", galleryRoutes);
+app.use("/api/review", reviewRoutes);
 
 app.use("/api/trip-plan", tripPlanRoutes);
 
