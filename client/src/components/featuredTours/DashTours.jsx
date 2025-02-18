@@ -73,8 +73,8 @@ export default function DashTours() {
   return (
     <div className="p-4 w-full overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 ">
-          ALL <span className="text-[#F4AC20]">TOURS</span>
+      <h2 className="text-lg md:text-3xl font-semibold text-gray-900 text-center">
+          <span className="text-[#F4AC20]">ALL</span> TOURS
         </h2>
         <Link to="/dashboard?tab=createtour">
           <Button className="bg-[#F4AC20] border-[#F4AC20] px-4 py-2 text-sm sm:text-base">
