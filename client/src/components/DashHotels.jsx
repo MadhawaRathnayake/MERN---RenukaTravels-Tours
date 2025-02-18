@@ -34,7 +34,9 @@ const HotelTable = () => {
   return (
     <section className="container mx-auto p-4">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-2xl font-bold text-gray-800">Hotels Management</h2>
+      <h2 className="text-lg md:text-3xl font-semibold text-gray-900 text-center">
+          <span className="text-[#F4AC20]">HOTELS</span> MANAGEMENT
+        </h2>
         <Button
           className="bg-[#F4AC20] text-white py-1 px-4 rounded-lg hover:bg-[#f49120]"
           onClick={toggleForm}
