@@ -2,14 +2,14 @@ import { Button, Modal, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { HiOutlineExclamationCircle } from 'react-icons/hi';
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function DashTours() {
   const { currentUser } = useSelector((state) => state.user);
   const [userTours, setUserTours] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [tourIdToDelete, setTourIdToDelete] = useState('');
+  const [tourIdToDelete, setTourIdToDelete] = useState("");
 
   useEffect(() => {
     const fetchTours = async () => {
@@ -48,52 +48,49 @@ export default function DashTours() {
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
 
   const handleDeleteTour = async () => {
     setShowModal(false);
     try {
-      const res = await fetch(`/api/tours/delete-tour/${tourIdToDelete}/${currentUser._id}`, {
-        method: 'DELETE',
-      });
+      const res = await fetch(
+        `/api/tours/delete-tour/${tourIdToDelete}/${currentUser._id}`,
+        {
+          method: "DELETE",
+        }
+      );
       const data = await res.json();
       if (!res.ok) {
         console.log(data.message);
       } else {
-        setUserTours((prev) =>
-          prev.filter((tour) => tour._id !== tourIdToDelete)
-        );
+        setUserTours((prev) => prev.filter((tour) => tour._id !== tourIdToDelete));
       }
     } catch (error) {
       console.log(error.message);
     }
-  }
+  };
 
   return (
-    <div className="lg:mr-32 lg:ml-10 w-full table-auto overflow-x-scroll md:mx-auto p-3 scrollbar scrollbar-track-slate-100 
-      scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
-
-      {/* Title and Add Button */}
+    <div className="p-4 w-full overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
-        <h2 className="text-xl font-semibold text-gray-900 ">
+        <h2 className="text-lg sm:text-xl font-semibold text-gray-900 ">
           ALL <span className="text-[#F4AC20]">TOURS</span>
         </h2>
         <Link to="/dashboard?tab=createtour">
-          <Button style={{ backgroundColor: "#F4AC20", borderColor: "#F4AC20" }}>
-            Add a tour
+          <Button className="bg-[#F4AC20] border-[#F4AC20] px-4 py-2 text-sm sm:text-base">
+            Add a Tour
           </Button>
         </Link>
       </div>
 
       {currentUser.isAdmin && userTours.length > 0 ? (
-        <>
-          <Table hoverable className="shadow-md">
+        <div className="overflow-x-auto">
+          <Table hoverable className="w-full text-sm sm:text-base">
             <Table.Head>
               <Table.HeadCell>Date Updated</Table.HeadCell>
               <Table.HeadCell>Tour Photo</Table.HeadCell>
               <Table.HeadCell>Tour Title</Table.HeadCell>
               <Table.HeadCell>Days</Table.HeadCell>
-              <Table.HeadCell>Destinations</Table.HeadCell>
               <Table.HeadCell>Delete</Table.HeadCell>
               <Table.HeadCell>Edit</Table.HeadCell>
             </Table.Head>
@@ -103,71 +100,69 @@ export default function DashTours() {
                   <Table.Cell>{new Date(tour.updatedAt).toLocaleDateString()}</Table.Cell>
                   <Table.Cell>
                     <Link to={`/tour/${tour._id}`}>
-                      <img 
+                      <img
                         src={tour.photo}
                         alt={tour.title}
-                        className="w-20 h-10 object-cover bg-gray-500"
+                        className="w-16 h-10 sm:w-20 sm:h-12 object-cover bg-gray-500 rounded"
                       />
                     </Link>
                   </Table.Cell>
                   <Table.Cell>
-                    <Link className="font-medium text-gray-900 dark:text-white" to={`/tour/${tour._id}`}>
+                    <Link
+                      className="font-medium text-gray-900 dark:text-white"
+                      to={`/tour/${tour._id}`}
+                    >
                       {tour.title}
                     </Link>
                   </Table.Cell>
+                  <Table.Cell>{tour.days} days</Table.Cell>
                   <Table.Cell>
-                    {tour.days} days
-                  </Table.Cell>
-                  <Table.Cell>
-                    {tour.destinations.map((dest) => (
-                      <span key={dest._id} className="inline-block bg-gray-100 rounded-full px-2 py-1 text-xs font-semibold text-gray-700 mr-1">
-                        {dest.name}
-                      </span>
-                    ))}
-                  </Table.Cell>
-                  <Table.Cell>
-                    <span onClick={() => {
-                      setShowModal(true);
-                      setTourIdToDelete(tour._id);
-                    }} className="font-medium text-red-500 hover:underline cursor-pointer">
+                    <span
+                      onClick={() => {
+                        setShowModal(true);
+                        setTourIdToDelete(tour._id);
+                      }}
+                      className="text-red-500 hover:underline cursor-pointer"
+                    >
                       Delete
                     </span>
                   </Table.Cell>
                   <Table.Cell>
-                      <Link
-                        className="text-teal-500 hover:underline"
-                        to={`/update-tour/${tour._id}`}
-                      >
-                        <span>Edit</span>
-                      </Link>
+                    <Link className="text-teal-500 hover:underline" to={`/update-tour/${tour._id}`}>
+                      Edit
+                    </Link>
                   </Table.Cell>
                 </Table.Row>
               </Table.Body>
             ))}
           </Table>
+
           {showMore && (
-            <button onClick={handleShowMore} className="w-full text-teal-500 self-center text-sm py-7">
-              Show more
+            <button
+              onClick={handleShowMore}
+              className="w-full text-teal-500 text-sm sm:text-base py-4"
+            >
+              Show More
             </button>
           )}
-        </>
+        </div>
       ) : (
-        <p>You have no tours yet</p>
+        <p className="text-center text-gray-600">You have no tours yet.</p>
       )}
 
-      <Modal show={showModal} onClose={() => setShowModal(false)} popup size='md'>
+      <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
         <Modal.Header />
         <Modal.Body>
-          <div className='text-center'>
-            <HiOutlineExclamationCircle className='h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto' />
-            <h3 className='mb-5 text-lg text-gray-500 dark:text-gray-400'>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="h-14 w-14 text-gray-400 dark:text-gray-200 mb-4 mx-auto" />
+            <h3 className="mb-5 text-lg text-gray-500 dark:text-gray-400">
               Are you sure you want to delete this tour?
             </h3>
-            <div className='flex justify-center gap-5'>
-              <Button color='failure' onClick={handleDeleteTour}>
-                Yes, Im Sure
+            <div className="flex justify-center gap-5">
+              <Button color="failure" onClick={handleDeleteTour}>
+                Yes, I'm Sure
               </Button>
-              <Button color='gray' onClick={() => setShowModal(false)}>
+              <Button color="gray" onClick={() => setShowModal(false)}>
                 No, Cancel
               </Button>
             </div>
