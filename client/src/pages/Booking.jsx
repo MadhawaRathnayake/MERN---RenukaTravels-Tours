@@ -1,4 +1,4 @@
-import React from "react";
+
 
 function Booking() {
   return (
@@ -16,7 +16,7 @@ function Booking() {
       </div>
 
       {/* Form Section with negative margin */}
-      <div className="max-w-lg mx-auto bg-white p-8 mt-8 shadow-lg rounded-lg -mt-20 relative z-10">
+      <div className="max-w-lg mx-auto bg-white p-8 mt-8 shadow-lg rounded-lg  relative z-10">
         <form>
           <div className="mb-4">
             <label className="block text-gray-700 text-sm font-bold mb-2">
