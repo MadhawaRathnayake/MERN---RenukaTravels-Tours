@@ -96,7 +96,9 @@ export default function Section01() {
           {!currentUser && (
             <div className="py-5">
               <button className="bg-[#F4AC20] text-white py-2 px-6 rounded-lg hover:bg-[#f49120]">
-                <b className="text-xl">Sign Up</b>
+                <a href="/signin">
+                  <b className="text-xl">Sign Up</b>
+                </a>
               </button>
             </div>
           )}

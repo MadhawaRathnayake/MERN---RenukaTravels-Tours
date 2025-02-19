@@ -73,8 +73,8 @@ export default function DashVehicles() {
     <div className="container mx-auto p-4">
       {/* Title and Add Button */}
       <div className="flex flex-wrap justify-between items-center mb-4">
-        <h2 className="text-lg md:text-2xl font-semibold text-gray-900 text-center">
-          ALL <span className="text-[#F4AC20]">VEHICLES</span>
+      <h2 className="text-lg md:text-3xl font-semibold text-gray-900 text-center">
+          <span className="text-[#F4AC20]">ALL</span> VEHICLES
         </h2>
         <Link to="/dashboard?tab=createvehicle">
           <Button className="bg-[#F4AC20] text-white px-4 py-1 rounded-lg hover:bg-[#f49120]">
