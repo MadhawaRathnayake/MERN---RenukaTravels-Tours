@@ -35,7 +35,7 @@ const TourDetails = () => {
                 <img
                   src={photo}
                   alt={title}
-                  className="w-full h-72 object-cover rounded-md mb-6"
+                  className="w-full h-80 object-cover rounded-md mb-6"
                 />
               )}
               <div className="tour__info">

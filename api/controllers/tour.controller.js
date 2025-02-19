@@ -37,7 +37,8 @@ export const create = async (req, res, next) => {
 export const getTour = async (req, res, next) => {
     try {
         const tour = await Tour.findById(req.params.tourId)
-            .populate('destinations', 'name location');
+            .populate('destinations', 'name location')
+            .maxTimeMS(60000);
 
         if (!tour) {
             return next(errorHandler(404, "Tour not found"));
@@ -75,7 +76,8 @@ export const getTours = async (req, res, next) => {
             .populate('destinations', 'name location')
             .sort({ updatedAt: sortDirection })
             .skip(startIndex)
-            .limit(limit);
+            .limit(limit)
+            .maxTimeMS(60000);
 
         // Get total count of tours
         const totalTours = await Tour.countDocuments();
