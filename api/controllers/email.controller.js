@@ -16,8 +16,8 @@ const transporter = nodemailer.createTransport({
     pass: process.env.G_PWD,
   },
   tls: {
-    rejectUnauthorized: false // Add this for local development
-  }
+    rejectUnauthorized: false, // Add this for local development
+  },
 });
 
 // Verify SMTP connection
@@ -31,12 +31,12 @@ const transporter = nodemailer.createTransport({
 
 // Function to format date
 const formatDate = (dateString) => {
-  if (!dateString) return '';
+  if (!dateString) return "";
   const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
+  return date.toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 };
 
@@ -53,16 +53,16 @@ export const sendTourEmail = async (req, res) => {
     if (!email || !tour || !pdfBuffer) {
       return res.status(400).json({
         success: false,
-        message: "Email, tour data, and PDF content are required"
+        message: "Email, tour data, and PDF content are required",
       });
     }
 
     // Convert base64 to buffer
-    const buffer = Buffer.from(pdfBuffer, 'base64');
+    const buffer = Buffer.from(pdfBuffer, "base64");
 
     const mailOptions = {
       from: process.env.G_MAIL,
-      to: email,
+      to: "renukatours94@gmail.com",
       subject: `Your Tour Itinerary: ${tour.title}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -73,12 +73,16 @@ export const sendTourEmail = async (req, res) => {
             <h3 style="color: #374151; margin-top: 0;">Tour Overview</h3>
             <p>Duration: ${tour.days} days</p>
             <p>Destinations: ${tour.destinations?.length || 0} locations</p>
-            ${bookingData ? `
+            ${
+              bookingData
+                ? `
               <h3 style="color: #374151;">Booking Details</h3>
               <p>Guest Name: ${bookingData.fullName}</p>
               <p>Travel Date: ${formatDate(bookingData.bookAt)}</p>
               <p>Group Size: ${bookingData.guestSize} persons</p>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
           
           <p>For any questions or modifications to your booking, please don't hesitate to contact us.</p>
@@ -98,14 +102,13 @@ export const sendTourEmail = async (req, res) => {
     await transporter.sendMail(mailOptions);
     res.status(200).json({
       success: true,
-      message: "Tour details sent to your email successfully"
+      message: "Tour details sent to your email successfully",
     });
-
   } catch (error) {
     console.error("Email sending error:", error);
     res.status(500).json({
       success: false,
-      message: error.message || "Failed to send email. Please try again."
+      message: error.message || "Failed to send email. Please try again.",
     });
   }
 };

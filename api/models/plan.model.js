@@ -36,10 +36,12 @@ const tripPlanSchema = new mongoose.Schema(
       default: "",
     },
     // Location Information
-    selectedDestinations: [{
-      type: String,
-      required: true,
-    }],
+    selectedDestinations: [
+      {
+        type: String,
+        required: true,
+      },
+    ],
     additionalLocations: {
       type: String,
       default: "",
@@ -47,7 +49,7 @@ const tripPlanSchema = new mongoose.Schema(
     // Accommodation
     accommodationType: {
       type: String,
-      enum: ["1_star", "2_star", "3_star", "4_star", "5_star"],
+      enum: ["3_star", "4_star", "5_star", "5+_star"],
       required: true,
     },
     numberOfBedrooms: {
@@ -72,11 +74,23 @@ const tripPlanSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    mobileNumber: {
+      type: String,
+      required: true,
+    },
+    whatsappNumber: {
+      type: String,
+      required: true,
+    },
+    email: {
+      type: String,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["pending", "confirmed", "cancelled"],
-      default: "pending"
-    }
+      default: "pending",
+    },
   },
   { timestamps: true }
 );
