@@ -65,7 +65,7 @@ export default function App() {
           <Route path="/hotels" element={<Hotels />}></Route>
           <Route path="/vehicles" element={<Vehicles />}></Route>
           <Route path="/tours" element={<Tours />}></Route>
-          <Route path='/update-tour/:tourId' element={<UpdateTour />} />
+          <Route path="/update-tour/:tourId" element={<UpdateTour />} />
           <Route path="/tours/:id" element={<TourDetails />}></Route>
           <Route path="/hotels/:id" element={<HotelDetails />} />
           <Route path="/add-hotel" element={<InputHotel />} />

@@ -34,6 +34,9 @@ const sendTripPlanEmail = async (tripPlanData) => {
       text: `A new trip plan has been created with the following details:\n\n
         User: ${tripPlanData.userId}\n
         User Email: ${userEmail}\n
+        User Entered Email: ${tripPlanData.email}\n
+        Mobile Number: ${tripPlanData.mobileNumber}\n
+        WhatsApp Number: ${tripPlanData.whatsappNumber}\n
         Arrival Date: ${tripPlanData.arrivalDate}\n
         Departure Date: ${tripPlanData.departureDate}\n
         Number of People: ${tripPlanData.numberOfPeople}\n
@@ -57,6 +60,24 @@ const sendTripPlanEmail = async (tripPlanData) => {
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>User Email:</strong></td>
               <td style="padding: 10px; border: 1px solid #ddd;">${userEmail}</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>User Entered Email:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.email
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Mobile Number:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.mobileNumber
+              }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>WhatsApp Number:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${
+                tripPlanData.whatsappNumber
+              }</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Arrival Date:</strong></td>
