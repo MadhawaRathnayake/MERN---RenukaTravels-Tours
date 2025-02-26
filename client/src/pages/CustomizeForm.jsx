@@ -1,6 +1,6 @@
 import "../index.css";
 import { useEffect, useState } from "react";
-import { Datepicker, TextInput, Timeline, Button } from "flowbite-react";
+import { Datepicker, TextInput, Button, Modal } from "flowbite-react";
 import {
   APIProvider,
   Map,
@@ -24,36 +24,51 @@ export default function CustomizeForm() {
     activities: [],
   });
   const [activeDestination, setActiveDestination] = useState(null);
+  const commonStyles = {
+    gridContainer: "grid grid-cols-1 md:grid-cols-3 gap-4 px-4",
+    gridItem: "grid grid-rows-2",
+    label: "text-gray-700 font-semibold sm:ml-2 md:ml-4 mt-auto",
+    datepickerClass:
+      "w-full rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500",
+  };
+  // Add this with other state declarations
+  const [showConfirmModal, setShowConfirmModal] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    // Remove e parameter
     setLoading(true);
     setError(null);
 
     try {
+      const form = document.querySelector("form");
       const formData = {
         // General Information
-        arrivalDate: e.target.arrivalDate.value,
-        departureDate: e.target.departureDate.value,
-        arrivalTime: e.target.arrivalTime.value,
-        numberOfPeople: parseInt(e.target.numberOfPeople.value),
-        numberOfAdults: parseInt(e.target.numberOfAdults.value),
-        numberOfChildren: parseInt(e.target.numberOfChildren.value),
-        dateComments: e.target.dateComments.value,
+        arrivalDate: form.arrivalDate.value,
+        departureDate: form.departureDate.value,
+        arrivalTime: form.arrivalTime.value,
+        numberOfPeople: parseInt(form.numberOfPeople.value),
+        numberOfAdults: parseInt(form.numberOfAdults.value),
+        numberOfChildren: parseInt(form.numberOfChildren.value),
+        dateComments: form.dateComments.value,
 
         // Location Information
         selectedDestinations,
-        additionalLocations: e.target.additionalLocations.value,
+        additionalLocations: form.additionalLocations.value,
 
         // Accommodation
-        accommodationType: e.target.accommodationType.value,
-        numberOfBedrooms: parseInt(e.target.numberOfBedrooms.value),
-        accommodationPreference: e.target.accommodationPreference.value,
+        accommodationType: form.accommodationType.value,
+        numberOfBedrooms: parseInt(form.numberOfBedrooms.value),
+        accommodationPreference: form.accommodationPreference.value,
 
         // Transport
-        vehicleType: e.target.vehicleType.value,
-        numberOfVehicles: parseInt(e.target.numberOfVehicles.value),
-        transportPreference: e.target.transportPreference.value,
+        vehicleType: form.vehicleType.value,
+        numberOfVehicles: parseInt(form.numberOfVehicles.value),
+        transportPreference: form.transportPreference.value,
+
+        //contact Information
+        mobileNumber: form.mobileNumber.value,
+        whatsappNumber: form.whatsappNumber.value,
+        email: form.email.value,
       };
 
       console.log(formData);
@@ -72,10 +87,9 @@ export default function CustomizeForm() {
         throw new Error(data.message || "Something went wrong");
       }
 
-      // Reset form or redirect
-      e.target.reset();
+      // Reset form
+      form.reset();
       setSelectedDestinations([]);
-      // You might want to show a success message or redirect
     } catch (error) {
       setError(error.message);
     } finally {
@@ -164,136 +178,11 @@ export default function CustomizeForm() {
   }, []);
 
   return (
-    <form onSubmit={handleSubmit}>
+    <form onSubmit={(e) => e.preventDefault()}>
       <div className="py-8 basic-struture shadow-xl">
-        {/* ***********************************row01*********************************** */}
-        <div className="py-2 yellow-bg">
-          <h3 className="text-xl text-white text-center">
-            General Information
-          </h3>
-        </div>
-
-        {/* ***********************************row02*********************************** */}
-        <div className="py-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {/* column01 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Arrival Date:
-            </p>
-          </div>
-          {/* column02 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Departure Date:
-            </p>
-          </div>
-          {/* column03 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Arrival Time (approximate):
-            </p>
-          </div>
-        </div>
-        {/* ***********************************row03*********************************** */}
-        <div className="pb-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {/* column01 */}
-          <div>
-            <Datepicker
-              name="arrivalDate"
-              className="w-3/4 md:w-1/2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          {/* column02 */}
-          <div>
-            <Datepicker
-              name="departureDate"
-              className="w-3/4 md:w-1/2 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-            />
-          </div>
-          {/* column03 */}
-          <div>
-            <TextInput
-              type="text"
-              name="arrivalTime"
-              placeholder="Arrival Time"
-              className="flex-1"
-            />
-          </div>
-        </div>
-        {/* ***********************************row04*********************************** */}
-        <div className="py-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {/* column01 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Number of people:
-            </p>
-          </div>
-          {/* column02 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Number of adults:
-            </p>
-          </div>
-          {/* column03 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Number of children:
-            </p>
-          </div>
-        </div>
-        {/* ***********************************row05*********************************** */}
-        <div className="pb-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {/* column01 */}
-          <div>
-            <TextInput
-              type="text"
-              name="numberOfPeople"
-              placeholder="Number of people"
-              className="flex-1"
-            />
-          </div>
-          {/* column02 */}
-          <div>
-            <TextInput
-              type="text"
-              name="numberOfAdults"
-              placeholder="Number of adults"
-              className="flex-1"
-            />
-          </div>
-          {/* column03 */}
-          <div>
-            <TextInput
-              type="text"
-              name="numberOfChildren"
-              placeholder="Number of children"
-              className="flex-1"
-            />
-          </div>
-        </div>
-        {/* ***********************************row06*********************************** */}
-        <div className="py-2">
-          <p className="text-gray-700 font-semibold text-center">
-            If you have any comments about the date please mention here:
-          </p>
-        </div>
-        {/* ***********************************row07*********************************** */}
-        <div className="pb-2 flex justify-center">
-          <TextInput
-            type="text"
-            name="dateComments"
-            placeholder="Any Comments about the date"
-            className="flex-1"
-          />
-        </div>
-
-        {/* ***********************************row08*********************************** */}
-        <div className="py-2 yellow-bg">
-          <h3 className="text-xl text-white text-center">
-            Location Information
-          </h3>
-        </div>
-        {/* ***********************************row09*********************************** */}
+        <h3 className="py-2 yellow-bg text-xl text-white text-center">
+          Location Information
+        </h3>
         <div className="py-2">
           <p className="text-gray-700 font-semibold text-center">
             Select the locations you are interest to visit:
@@ -302,7 +191,6 @@ export default function CustomizeForm() {
 
         {/* ***************************************************cards*************************************************** */}
 
-        {/* ***********************************row10*********************************** */}
         <div className="py-2 grid grid-cols-1 sm:grid-rows-2 md:grid-rows-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
           {/* ***************************************************cards01*************************************************** */}
           <div className="py-2 border-2 rounded-lg shadow-lg">
@@ -414,35 +302,82 @@ export default function CustomizeForm() {
           </div>
         </div>
 
-        {/* ***********************************row11*********************************** */}
-        <div className="py-2 yellow-bg">
-          <h3 className="text-xl text-white text-center">Accommodation</h3>
+        <h3 className="py-2 yellow-bg text-xl text-white text-center">
+          General Information
+        </h3>
+        <div className={commonStyles.gridContainer}>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Arrival Date:</p>
+            <Datepicker
+              name="arrivalDate"
+              className={commonStyles.datepickerClass}
+              minDate={new Date()}
+            />
+          </div>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Departure Date:</p>
+            <Datepicker
+              name="departureDate"
+              className={commonStyles.datepickerClass}
+              minDate={new Date()}
+            />
+          </div>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Arrival Time (approximate):</p>
+            <TextInput
+              type="text"
+              name="arrivalTime"
+              placeholder="Arrival Time - ex:(10 AM)"
+              className="flex-1"
+            />
+          </div>
         </div>
-        {/* ***********************************row12*********************************** */}
-        <div className="py-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {/* column01 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Accomodation Type:
-            </p>
+        <div className={commonStyles.gridContainer}>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Number of people:</p>
+            <TextInput
+              type="text"
+              name="numberOfPeople"
+              placeholder="Number of people"
+              className="flex-1"
+            />
           </div>
-          {/* column02 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Number of Bedrooms:
-            </p>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Number of adults:</p>
+            <TextInput
+              type="text"
+              name="numberOfAdults"
+              placeholder="Number of adults"
+              className="flex-1"
+            />
           </div>
-          {/* column03 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Describe any Specific preference:
-            </p>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Number of children:</p>
+            <TextInput
+              type="text"
+              name="numberOfChildren"
+              placeholder="Number of children"
+              className="flex-1"
+            />
           </div>
         </div>
-        {/* ***********************************row13*********************************** */}
-        <div className="pb-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {/* column01 */}
-          <div>
+        <p className="py-2 text-gray-700 font-semibold text-center">
+          If you have any comments about the date please mention here:
+        </p>
+        <div className="pt-0 p-4 flex justify-center">
+          <TextInput
+            type="text"
+            name="dateComments"
+            placeholder="Any Comments about the date"
+            className="flex-1"
+          />
+        </div>
+        <h3 className="py-2 yellow-bg text-xl text-white text-center">
+          Accommodation
+        </h3>
+        <div className={commonStyles.gridContainer}>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Accommodation Type:</p>
             <select
               id="start"
               name="accommodationType"
@@ -453,15 +388,14 @@ export default function CustomizeForm() {
               <option value="" disabled>
                 Select the Hotel Star Class
               </option>
-              <option value="1_star">1 star ⭐</option>
-              <option value="2_star">2 stars ⭐⭐</option>
               <option value="3_star">3 stars ⭐⭐⭐</option>
               <option value="4_star">4 stars ⭐⭐⭐⭐</option>
               <option value="5_star">5 stars ⭐⭐⭐⭐⭐</option>
+              <option value="5+_star">5+ stars 🌟🌟🌟🌟🌟🌟</option>
             </select>
           </div>
-          {/* column02 */}
-          <div>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Number of Bedrooms:</p>
             <TextInput
               type="text"
               name="numberOfBedrooms"
@@ -469,8 +403,10 @@ export default function CustomizeForm() {
               className="flex-1"
             />
           </div>
-          {/* column03 */}
-          <div>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>
+              Describe any Specific preference:
+            </p>
             <TextInput
               type="text"
               name="accommodationPreference"
@@ -479,35 +415,12 @@ export default function CustomizeForm() {
             />
           </div>
         </div>
-        {/* ***********************************row14*********************************** */}
-        <div className="py-2 yellow-bg">
-          <h3 className="text-xl text-white text-center">Transport</h3>
-        </div>
-        {/* ***********************************row15*********************************** */}
-        <div className="py-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {/* column01 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Vehicle Type:
-            </p>
-          </div>
-          {/* column02 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Number of Vehicles:
-            </p>
-          </div>
-          {/* column03 */}
-          <div className="pt-2">
-            <p className="text-gray-700 font-semibold sm:ml-2 md:ml-4">
-              Describe any Specific preference:
-            </p>
-          </div>
-        </div>
-        {/* ***********************************row13*********************************** */}
-        <div className="pb-2 grid grid-cols-1 sm:grid-rows-3 md:grid-rows-1 md:grid-cols-3 lg:grid-cols-3 gap-4">
-          {/* column01 */}
-          <div>
+        <h3 className="py-2 mt-4 yellow-bg text-xl text-white text-center">
+          Transport
+        </h3>
+        <div className={commonStyles.gridContainer}>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Vehicle Type:</p>
             <select
               id="start"
               name="vehicleType"
@@ -526,8 +439,8 @@ export default function CustomizeForm() {
               <option value="Bus">Bus</option>
             </select>
           </div>
-          {/* column02 */}
-          <div>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Number of Vehicles:</p>
             <TextInput
               type="text"
               name="numberOfVehicles"
@@ -535,8 +448,10 @@ export default function CustomizeForm() {
               className="flex-1"
             />
           </div>
-          {/* column03 */}
-          <div>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>
+              Describe any Specific preference:
+            </p>
             <TextInput
               type="text"
               name="transportPreference"
@@ -545,7 +460,38 @@ export default function CustomizeForm() {
             />
           </div>
         </div>
-        {/* ***********************************row17*********************************** */}
+        <h3 className="py-2 mt-4 yellow-bg text-xl text-white text-center">
+          Contact Information
+        </h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Mobile No:</p>
+            <TextInput
+              type="text"
+              name="mobileNumber"
+              placeholder="Mobile Number"
+              className="flex-1"
+            />
+          </div>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>WhatsApp/Telegram:</p>
+            <TextInput
+              type="text"
+              name="whatsappNumber"
+              placeholder="WhatsApp/Telegram Number"
+              className="flex-1"
+            />
+          </div>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Email:</p>
+            <TextInput
+              type="text"
+              name="email"
+              placeholder="Email"
+              className="flex-1"
+            />
+          </div>
+        </div>
         <div className="py-2">
           <p className="text-gray-400 italic">
             *Don’t worry about the details you’ve entered; you can modify any
@@ -555,15 +501,43 @@ export default function CustomizeForm() {
             for further confirmation.
           </p>
         </div>
+        {/* Replace the existing submit button div with this code */}
         <div className="flex justify-center">
           <button
-            type="submit"
-            className="bg-[#F4AC20] text-xl text-white font-semibold py-4 px-12  rounded-lg hover:bg-[#f49120]"
+            type="button"
+            onClick={() => setShowConfirmModal(true)}
+            className="bg-[#F4AC20] text-xl text-white font-semibold py-4 px-12 rounded-lg hover:bg-[#f49120]"
           >
             Submit Your Plan
           </button>
         </div>
       </div>
+
+      <Modal show={showConfirmModal} onClose={() => setShowConfirmModal(false)}>
+        <Modal.Header>Confirm Submission</Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6">
+            <p className="text-base leading-relaxed text-gray-500 dark:text-gray-400">
+              Are you sure you want to submit your travel plan? You can still
+              modify any details later by discussing with our service agent.
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            className="bg-[#F4AC20] hover:bg-[#f49120]"
+            onClick={() => {
+              setShowConfirmModal(false);
+              handleSubmit();
+            }}
+          >
+            Yes, Submit
+          </Button>
+          <Button color="gray" onClick={() => setShowConfirmModal(false)}>
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </form>
   );
 }
