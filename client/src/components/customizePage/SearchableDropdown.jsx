@@ -11,8 +11,8 @@ const SearchableDropdown = ({ destinations, handleSelectDestination }) => {
 
   const handleSelect = (destinationName) => {
     handleSelectDestination(destinationName);
-    setSearchTerm(""); // Clear the search term
-    setIsDropdownOpen(false); // Close the dropdown
+    setSearchTerm("");
+    setIsDropdownOpen(false);
   };
 
   // Close dropdown when clicking outside
