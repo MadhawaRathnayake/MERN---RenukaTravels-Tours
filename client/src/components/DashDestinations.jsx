@@ -98,7 +98,9 @@ export default function DashDestinations() {
         console.log(data.message);
       } else {
         setDestinationsList((prev) =>
-          prev.filter((destination) => destination._id !== destinationIdToDelete)
+          prev.filter(
+            (destination) => destination._id !== destinationIdToDelete
+          )
         );
       }
     } catch (error) {
@@ -108,14 +110,19 @@ export default function DashDestinations() {
 
   const handleAddActivity = (e) => {
     e.preventDefault();
-    if (activityInput.trim() !== "" && !activities.includes(activityInput.trim())) {
+    if (
+      activityInput.trim() !== "" &&
+      !activities.includes(activityInput.trim())
+    ) {
       setActivities([...activities, activityInput.trim()]);
       setActivityInput("");
     }
   };
 
   const handleRemoveActivity = (activityToRemove) => {
-    setActivities(activities.filter((activity) => activity !== activityToRemove));
+    setActivities(
+      activities.filter((activity) => activity !== activityToRemove)
+    );
   };
 
   const handleSubmit = async (e) => {
@@ -187,15 +194,20 @@ export default function DashDestinations() {
                     if (selectedFile) {
                       setFile(selectedFile);
                       const storage = getStorage(app);
-                      const fileName = new Date().getTime() + "-" + selectedFile.name;
+                      const fileName =
+                        new Date().getTime() + "-" + selectedFile.name;
                       const storageRef = ref(storage, fileName);
-                      const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+                      const uploadTask = uploadBytesResumable(
+                        storageRef,
+                        selectedFile
+                      );
 
                       uploadTask.on(
                         "state_changed",
                         (snapshot) => {
                           const progress =
-                            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                            (snapshot.bytesTransferred / snapshot.totalBytes) *
+                            100;
                           setImageUploadProgress(progress.toFixed(0));
                         },
                         (error) => {
@@ -232,7 +244,7 @@ export default function DashDestinations() {
             {imageUploadError && (
               <Alert color="failure">{imageUploadError}</Alert>
             )}
-            
+
             {formData.destImage && (
               <img
                 src={formData.destImage}
@@ -253,9 +265,13 @@ export default function DashDestinations() {
                   const selectedFile = e.target.files[0];
                   if (selectedFile && formData.additionalImages.length < 5) {
                     const storage = getStorage(app);
-                    const fileName = new Date().getTime() + "-" + selectedFile.name;
+                    const fileName =
+                      new Date().getTime() + "-" + selectedFile.name;
                     const storageRef = ref(storage, fileName);
-                    const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+                    const uploadTask = uploadBytesResumable(
+                      storageRef,
+                      selectedFile
+                    );
 
                     uploadTask.on(
                       "state_changed",
@@ -266,7 +282,10 @@ export default function DashDestinations() {
                           (downloadURL) => {
                             setFormData({
                               ...formData,
-                              additionalImages: [...formData.additionalImages, downloadURL],
+                              additionalImages: [
+                                ...formData.additionalImages,
+                                downloadURL,
+                              ],
                             });
                           }
                         );
@@ -358,7 +377,7 @@ export default function DashDestinations() {
             <Button type="submit" color="warning" className="w-full sm:w-auto">
               Add Destination
             </Button>
-            
+
             {publishError && (
               <Alert className="mt-5" color="failure">
                 {publishError}
@@ -386,10 +405,18 @@ export default function DashDestinations() {
                 <div className="min-w-full">
                   <Table hoverable className="shadow-md">
                     <Table.Head>
-                      <Table.HeadCell className="whitespace-nowrap">Image</Table.HeadCell>
-                      <Table.HeadCell className="whitespace-nowrap">Name</Table.HeadCell>
-                      <Table.HeadCell className="whitespace-nowrap">Delete</Table.HeadCell>
-                      <Table.HeadCell className="whitespace-nowrap">Edit</Table.HeadCell>
+                      <Table.HeadCell className="whitespace-nowrap">
+                        Image
+                      </Table.HeadCell>
+                      <Table.HeadCell className="whitespace-nowrap">
+                        Name
+                      </Table.HeadCell>
+                      <Table.HeadCell className="whitespace-nowrap">
+                        Delete
+                      </Table.HeadCell>
+                      <Table.HeadCell className="whitespace-nowrap">
+                        Edit
+                      </Table.HeadCell>
                     </Table.Head>
                     {destinationsList.map((destination) => (
                       <Table.Body className="divide-y" key={destination._id}>
@@ -406,7 +433,7 @@ export default function DashDestinations() {
                           <Table.Cell>
                             <Link
                               className="font-medium text-gray-900"
-                              to={`/destination/${destination.slug}`}
+                              to={`/destinations/${destination.slug}`}
                             >
                               {destination.destinationName}
                             </Link>
