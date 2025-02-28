@@ -24,7 +24,7 @@ import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
 import { useNavigate } from "react-router-dom";
 
-export default function DashBookings() {
+export default function DashTravelPlan() {
   const { currentUser } = useSelector((state) => state.user);
   const [showModal, setShowModal] = useState(false);
   const [bookingList, setBookingList] = useState([]);
@@ -34,37 +34,42 @@ export default function DashBookings() {
   const [bookingIdToDelete, setBookingIdToDelete] = useState(null);
   const [startIndex, setStartIndex] = useState(0); // Track start index
 
+  useEffect(() => {
+    fetchTripPlans(); // Initial fetch when component mounts
+  }, []);
+
   const fetchTripPlans = async (newStartIndex = 0) => {
     try {
       setLoading(true);
       const res = await fetch(
-        `/api/trip-plan/get?startIndex=${newStartIndex}&limit=10`
+        `/api/trip-plan/user-trips?startIndex=${newStartIndex}&limit=10`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+        }
       );
       const data = await res.json();
-
-      if (res.ok) {
-        setBookingList((prev) => [...prev, ...data.tripPlans]); // Append new data
-        setStartIndex(newStartIndex + 10); // Update startIndex
-        if (data.tripPlans.length < 10) {
-          setShowMore(false); // Hide button if no more data
-        }
+  
+      if (!res.ok) {
+        throw new Error(data.message || 'Failed to fetch travel plans');
       }
+  
+      if (newStartIndex === 0) {
+        setBookingList(data.tripPlans);
+      } else {
+        setBookingList((prev) => [...prev, ...data.tripPlans]);
+      }
+      setStartIndex(newStartIndex + 10);
+      setShowMore(data.tripPlans.length === 10);
     } catch (error) {
       setError(error.message);
-      console.log(error.message);
+      console.error('Error fetching travel plans:', error);
     } finally {
       setLoading(false);
     }
-  };
-
-  useEffect(() => {
-    if (currentUser.isAdmin) {
-      fetchTripPlans();
-    }
-  }, [currentUser._id]);
-
-  const handleShowMore = () => {
-    fetchTripPlans(startIndex);
   };
 
   const handleDeleteBooking = async () => {
@@ -80,7 +85,6 @@ export default function DashBookings() {
         const data = await res.json();
         throw new Error(data.message || "Error deleting booking");
       }
-
       // Update the booking list by filtering out the deleted booking
       setBookingList((prev) =>
         prev.filter((booking) => booking._id !== bookingIdToDelete)
@@ -102,7 +106,7 @@ export default function DashBookings() {
       </div>
 
       <div className="w-full overflow-x-auto px-4 sm:px-6">
-        {currentUser.isAdmin && bookingList.length > 0 ? (
+        {bookingList.length > 0 ? (
           <>
             <div className="min-w-full">
               <Table hoverable className="shadow-md">
@@ -156,14 +160,6 @@ export default function DashBookings() {
                 </Table.Body>
               </Table>
             </div>
-            {showMore && (
-              <button
-                onClick={handleShowMore}
-                className="w-full text-teal-500 self-center text-sm py-4"
-              >
-                Show more
-              </button>
-            )}
           </>
         ) : (
           <p className="text-center py-4">You have no bookings yet!</p>
