@@ -3,8 +3,11 @@ import { Search, ZoomIn } from "lucide-react";
 
 export default function Gallery() {
   const [images, setImages] = useState([]);
+  const [displayedImages, setDisplayedImages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedImage, setSelectedImage] = useState(null);
+  const [page, setPage] = useState(1);
+  const imagesPerPage = 10;
 
   useEffect(() => {
     const fetchGallery = async () => {
@@ -12,6 +15,7 @@ export default function Gallery() {
         const response = await fetch("/api/gallery");
         const data = await response.json();
         setImages(data);
+        setDisplayedImages(data.slice(0, imagesPerPage));
       } catch (error) {
         console.error("Failed to fetch gallery items:", error);
       } finally {
@@ -21,12 +25,22 @@ export default function Gallery() {
     fetchGallery();
   }, []);
 
+  const loadMoreImages = () => {
+    const nextPage = page + 1;
+    const startIndex = page * imagesPerPage;
+    const endIndex = nextPage * imagesPerPage;
+    const nextImages = images.slice(startIndex, endIndex);
+    
+    setDisplayedImages([...displayedImages, ...nextImages]);
+    setPage(nextPage);
+  };
+
   if (loading) {
     return (
       <section className="mt-8 p-4">
         <div className="max-w-7xl mx-auto">
-          <div className="grid grid-cols-3 gap-4">
-            {[...Array(9)].map((_, i) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {[...Array(6)].map((_, i) => (
               <div
                 key={i}
                 className="h-64 w-full rounded-lg bg-gray-200 animate-pulse"
@@ -55,17 +69,15 @@ export default function Gallery() {
         <div
           className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
           style={{
-            gridAutoRows: "15px", // Increased base row height
+            gridAutoRows: "15px",
           }}
         >
-          {images.map((image, index) => (
+          {displayedImages.map((image, index) => (
             <div
               key={index}
               className="relative group rounded-lg overflow-hidden transition-transform duration-300 hover:-translate-y-1 hover:shadow-xl cursor-pointer bg-gray-100"
               style={{
-                gridRowEnd: `span ${Math.ceil(
-                  Math.random() * 12 + 5 // Increased random multiplier
-                )}`,
+                gridRowEnd: `span ${Math.ceil(Math.random() * 12 + 5)}`,
               }}
               onClick={() => setSelectedImage(image)}
             >
@@ -81,6 +93,19 @@ export default function Gallery() {
             </div>
           ))}
         </div>
+        
+        {/* See More Button */}
+        {displayedImages.length < images.length && (
+          <div className="flex justify-center mt-8">
+            
+            <button 
+              onClick={loadMoreImages}
+              className="w-full text-teal-500 text-sm py-4 hover:underline"
+            >
+              See more...
+            </button>
+          </div>
+        )}
       </div>
 
       {selectedImage && (

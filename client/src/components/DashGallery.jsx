@@ -6,6 +6,7 @@ import GalleryForm from "./galleryPage/GalleryForm";
 
 const GalleryTable = () => {
   const [galleries, setGalleries] = useState([]);
+  const [displayedCount, setDisplayedCount] = useState(10); // Show 5 items initially
   const [selectedGallery, setSelectedGallery] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -55,7 +56,7 @@ const GalleryTable = () => {
               <Table.HeadCell>Delete</Table.HeadCell>
             </Table.Head>
             <Table.Body>
-              {galleries.map((gallery) => (
+              {galleries.slice(0, displayedCount).map((gallery) => (
                 <Table.Row key={gallery._id} className="bg-white">
                   <Table.Cell>
                     {new Date(gallery.updatedAt).toLocaleDateString()}
@@ -83,6 +84,19 @@ const GalleryTable = () => {
               ))}
             </Table.Body>
           </Table>
+        </div>
+      )}
+
+      {/* Show More Button */}
+      {!showForm && displayedCount < galleries.length && (
+        <div className="flex justify-center mt-4">
+         
+          <button 
+              onClick={() => setDisplayedCount(displayedCount + 5)}
+              className="w-full text-teal-500 text-sm py-4 hover:underline"
+            >
+              Show more
+            </button>
         </div>
       )}
 
