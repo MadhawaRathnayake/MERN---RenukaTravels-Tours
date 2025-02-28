@@ -1,6 +1,6 @@
 import "../index.css";
 import { useEffect, useState } from "react";
-import { Datepicker, TextInput, Button, Modal } from "flowbite-react";
+import { Datepicker, TextInput, Button, Modal, Spinner } from "flowbite-react";
 import {
   APIProvider,
   Map,
@@ -8,12 +8,17 @@ import {
   useMap,
 } from "@vis.gl/react-google-maps";
 import SearchableDropdown from "../components/customizePage/SearchableDropdown";
+import { useNavigate } from "react-router-dom";
+import { color } from "framer-motion";
 
 export default function CustomizeForm() {
+  const navigate = useNavigate();
   const [selectedStar, setSelectedStar] = useState("");
   const [selectedType, setSelectedType] = useState("");
   const [loading, setLoading] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState(null);
+  const [showErrorModal, setShowErrorModal] = useState(false);
   const [zoom, setZoom] = useState(7.9);
   const position = { lat: 7.87, lng: 80.77 };
   const [mapHeight, setMapHeight] = useState("80vh");
@@ -90,9 +95,32 @@ export default function CustomizeForm() {
       // Reset form
       form.reset();
       setSelectedDestinations([]);
+      setLoading(false);
+      setShowSuccessModal(true);
     } catch (error) {
-      setError(error.message);
-    } finally {
+      setShowErrorModal(true);
+      console.log("Error submitting form:", error.message);
+
+      let errorMessage = "Please fill in the following required fields:\n";
+
+      if (error.message.includes("validation failed")) {
+        const matches = [...error.message.matchAll(/`([^`]*)` is required/g)];
+        const fieldNames = matches.map((match) => match[1]);
+
+        // Convert field names to a readable format
+        const formattedFields = fieldNames.map((field) => {
+          return field
+            .replace(/([A-Z])/g, " $1") // Add spaces before uppercase letters
+            .replace(/\b([a-z])/, (char) => char.toUpperCase()); // Capitalize first letter
+        });
+
+        errorMessage += formattedFields.join(", ");
+      } else {
+        errorMessage = error.message;
+      }
+
+      setError(errorMessage);
+
       setLoading(false);
     }
   };
@@ -179,6 +207,11 @@ export default function CustomizeForm() {
 
   return (
     <form onSubmit={(e) => e.preventDefault()}>
+      {loading && (
+        <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75 z-50">
+          <Spinner size="xl" />
+        </div>
+      )}
       <div className="py-8 basic-struture shadow-xl">
         <h3 className="py-2 yellow-bg text-xl text-white text-center">
           Location Information
@@ -379,7 +412,7 @@ export default function CustomizeForm() {
           <div className={commonStyles.gridItem}>
             <p className={commonStyles.label}>Accommodation Type:</p>
             <select
-              id="start"
+              id="star"
               name="accommodationType"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
               value={selectedStar}
@@ -412,6 +445,7 @@ export default function CustomizeForm() {
               name="accommodationPreference"
               placeholder="Describe Any Preference"
               className="flex-1"
+              autoComplete="off"
             />
           </div>
         </div>
@@ -422,7 +456,7 @@ export default function CustomizeForm() {
           <div className={commonStyles.gridItem}>
             <p className={commonStyles.label}>Vehicle Type:</p>
             <select
-              id="start"
+              id="vehicle"
               name="vehicleType"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
               value={selectedType}
@@ -457,6 +491,7 @@ export default function CustomizeForm() {
               name="transportPreference"
               placeholder="Describe Any Preference"
               className="flex-1"
+              autoComplete="off"
             />
           </div>
         </div>
@@ -489,6 +524,7 @@ export default function CustomizeForm() {
               name="email"
               placeholder="Email"
               className="flex-1"
+              autoComplete="on"
             />
           </div>
         </div>
@@ -529,12 +565,63 @@ export default function CustomizeForm() {
             onClick={() => {
               setShowConfirmModal(false);
               handleSubmit();
+              setLoading(true);
             }}
           >
             Yes, Submit
           </Button>
           <Button color="gray" onClick={() => setShowConfirmModal(false)}>
             Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showSuccessModal} onClose={() => setShowSuccessModal(false)}>
+        <Modal.Header className="justify-center text-center">
+          Plan has created successfully! 🎉
+        </Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6">
+            <p className="text-center leading-relaxed text-gray-500 dark:text-gray-400">
+              Thank you for submitting your travel plan. We have received your
+              inquiry and will contact you soon using the contact information
+              you have provided for further confirmation. You can see your
+              submitted plans in the dashboard.
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="justify-center">
+          <Button
+            className="bg-[#F4AC20] hover:bg-[#f49120] px-4"
+            onClick={() => {
+              setShowSuccessModal(false);
+              navigate("/");
+            }}
+          >
+            Ok
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal show={showErrorModal} onClose={() => setShowErrorModal(false)}>
+        <Modal.Header className="justify-center text-center">
+          <span className="text-4xl">⚠️</span> Plan has Not being created!
+        </Modal.Header>
+        <Modal.Body>
+          <div className="space-y-6">
+            <p className="text-center leading-relaxed text-gray-500 dark:text-gray-400">
+              {error}
+            </p>
+          </div>
+        </Modal.Body>
+        <Modal.Footer className="justify-center">
+          <Button
+            className="bg-red-600 px-4"
+            onClick={() => {
+              setShowErrorModal(false);
+            }}
+          >
+            Ok
           </Button>
         </Modal.Footer>
       </Modal>
