@@ -19,9 +19,9 @@ const sendTripPlanEmail = async (tripPlanData) => {
   try {
     const userEmail = await getUserEmail(tripPlanData.userId); // Fetch the user's email
 
-    const defaultUserEmail = userEmail;
-    if (userEmail != tripPlanData.email) {
-      defaultUserEmail = tripPlanData.email;
+    let defaultUserEmail = tripPlanData.email;
+    if (tripPlanData.email == null) {
+      defaultUserEmail = userEmail;
     }
 
     const mailOptions = {
