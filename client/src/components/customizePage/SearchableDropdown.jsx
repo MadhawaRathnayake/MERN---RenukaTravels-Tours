@@ -33,6 +33,7 @@ const SearchableDropdown = ({ destinations, handleSelectDestination }) => {
     <div className="relative w-full" ref={dropdownRef}>
       {/* Search Input */}
       <input
+        id="search"
         type="text"
         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
         placeholder="&#x1F50D; Search or select"

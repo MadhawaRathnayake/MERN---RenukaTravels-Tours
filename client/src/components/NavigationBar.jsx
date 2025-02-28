@@ -7,6 +7,12 @@ import { signoutSuccess } from "../redux/user/userSlice";
 import "../index.css";
 
 export default function NavigationBar() {
+  const commonStyles = {
+    lgButton:
+      "rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium transition-colors duration-200 ease-in-out",
+    smButton: `block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium transition-colors duration-200 ease-in-out`,
+  };
+
   const dispatch = useDispatch();
 
   const handleSignout = async () => {
@@ -100,40 +106,22 @@ export default function NavigationBar() {
               {" "}
               {/* Show links based on menu state */}
               <div className="flex lg:space-x-4">
-                <Link
-                  to="/"
-                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
-                >
+                <Link to="/" className={commonStyles.lgButton}>
                   Home
                 </Link>
-                <Link
-                  to="/destinations"
-                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
-                >
+                <Link to="/destinations" className={commonStyles.lgButton}>
                   Destinations
                 </Link>
-                <Link
-                  to="/tours"
-                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
-                >
+                <Link to="/tours" className={commonStyles.lgButton}>
                   Featured Tours
                 </Link>
-                <Link
-                  to="/gallery"
-                  className="rounded-md text-gray-500  yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
-                >
+                <Link to="/gallery" className={commonStyles.lgButton}>
                   Gallery
                 </Link>
-                <Link
-                  to="/services"
-                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
-                >
+                <Link to="/services" className={commonStyles.lgButton}>
                   Our Services
                 </Link>
-                <Link
-                  to="/about"
-                  className="rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 md:text-base sm:text-sm font-medium"
-                >
+                <Link to="/about" className={commonStyles.lgButton}>
                   About Us
                 </Link>
               </div>
@@ -193,46 +181,42 @@ export default function NavigationBar() {
       {menuOpen && (
         <div className={`sm:hidden`} id="mobile-menu">
           <div className={`space-y-1 px-2 pb-3 pt-2`}>
-            <Link
-              to="/"
-              onClick={closeMenu}
-              className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
-            >
+            <Link to="/" onClick={closeMenu} className={commonStyles.smButton}>
               Home
             </Link>
 
             <Link
               to="/destinations"
               onClick={closeMenu}
-              className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+              className={commonStyles.smButton}
             >
               Destinations
             </Link>
             <Link
               to="/tours"
               onClick={closeMenu}
-              className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+              className={commonStyles.smButton}
             >
               Featured Tours
             </Link>
             <Link
               to="/gallery"
               onClick={closeMenu}
-              className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+              className={commonStyles.smButton}
             >
               Gallery
             </Link>
             <Link
               to="/services"
               onClick={closeMenu}
-              className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+              className={commonStyles.smButton}
             >
               Our Services
             </Link>
             <Link
               to="/about"
               onClick={closeMenu}
-              className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+              className={commonStyles.smButton}
             >
               About Us
             </Link>
@@ -240,7 +224,7 @@ export default function NavigationBar() {
               <Link
                 to="/signin"
                 onClick={closeMenu}
-                className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+                className={commonStyles.smButton}
               >
                 Log In
               </Link>
@@ -250,14 +234,14 @@ export default function NavigationBar() {
                 <Link
                   to="/dashboard?tab=dash"
                   onClick={closeMenu}
-                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+                  className={commonStyles.smButton}
                 >
                   Dashboard
                 </Link>
                 <Link
                   to="/dashboard?tab=profile"
                   onClick={closeMenu}
-                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+                  className={commonStyles.smButton}
                 >
                   Profile
                 </Link>
@@ -266,7 +250,7 @@ export default function NavigationBar() {
                     closeMenu();
                     handleSignout();
                   }}
-                  className={`block rounded-md text-gray-500 yellow-bg-hover hover:shadow-lg hover:text-white px-3 py-2 text-base font-medium`}
+                  className={commonStyles.smButton}
                 >
                   Log Out
                 </Link>

@@ -162,7 +162,7 @@ export default function Section01() {
         </div>
         <div className="py-4 lg:py-6">
           <a href="/customize">
-            <button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg hover:bg-[#f49120]">
+            <button className="bg-[#F4AC20] text-white py-4 px-6 rounded-lg hover:bg-[#f49120] transition-colors duration-1000 ease-in-out">
               <b className="text-xl">Customize Your Own Plan</b>
             </button>
           </a>
