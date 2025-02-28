@@ -14,22 +14,20 @@ const transporter = nodemailer.createTransport({
   },
 });
 
-// transporter.verify(function (error, success) {
-//   if (error) {
-//     console.log("SMTP connection error:", error);
-//   } else {
-//     console.log("Server is ready to take our messages");
-//   }
-// });
-
 // Function to send the trip plan data as an email
 const sendTripPlanEmail = async (tripPlanData) => {
   try {
     const userEmail = await getUserEmail(tripPlanData.userId); // Fetch the user's email
 
+    const defaultUserEmail = userEmail;
+    if (userEmail != tripPlanData.email) {
+      defaultUserEmail = tripPlanData.email;
+    }
+
     const mailOptions = {
       from: "renukatoursandtravels1@gmail.com", // Sender's email
       to: "renukatours94@gmail.com", // The recipient's email (can be dynamic)
+      cc: defaultUserEmail,
       subject: `New Trip Plan Created by User ${tripPlanData.userId}`,
       text: `A new trip plan has been created with the following details:\n\n
         User: ${tripPlanData.userId}\n
@@ -56,6 +54,12 @@ const sendTripPlanEmail = async (tripPlanData) => {
               <td style="padding: 10px; border: 1px solid #ddd;">${
                 tripPlanData.userId
               }</td>
+            </tr>
+            <tr>
+              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Created At:</strong></td>
+              <td style="padding: 10px; border: 1px solid #ddd;">${new Date(
+                tripPlanData.createdAt
+              ).toLocaleString()}</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>User Email:</strong></td>
@@ -172,17 +176,38 @@ export const getTripPlans = async (req, res, next) => {
   try {
     const startIndex = parseInt(req.query.startIndex) || 0;
     const limit = parseInt(req.query.limit) || 10;
-    const sortDirection = req.query.order === "asc" ? 1 : -1;
 
     const tripPlans = await TripPlan.find({
       ...(req.query.userId && { userId: req.query.userId }),
       ...(req.query.status && { status: req.query.status }),
     })
-      .sort({ updatedAt: sortDirection })
+      .sort({ updatedAt: -1 }) // Always sort newest first
       .skip(startIndex)
       .limit(limit);
 
     const totalTripPlans = await TripPlan.countDocuments();
+
+    res.status(200).json({
+      tripPlans,
+      totalTripPlans,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getUserTripPlans = async (req, res, next) => {
+  try {
+    const startIndex = parseInt(req.query.startIndex) || 0;
+    const limit = parseInt(req.query.limit) || 10;
+    const userId = req.user.id; // Get the current user's ID from the request
+
+    const tripPlans = await TripPlan.find({ userId }) // Filter by userId
+      .sort({ updatedAt: -1 })
+      .skip(startIndex)
+      .limit(limit);
+
+    const totalTripPlans = await TripPlan.countDocuments({ userId }); // Count only user's plans
 
     res.status(200).json({
       tripPlans,

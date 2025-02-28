@@ -13,6 +13,7 @@ import DashBookings from "../components/DashBookings";
 import DashCreateVehicle from "../components/VehicleComp/DashCreateVehicle";
 import DashGallery from "../components/DashGallery";
 import DashReviews from "../components/DashReviews";
+import DashMyTravelPlan from "../components/DashTravelPlan";
 
 function Dashboard() {
   const location = useLocation();
@@ -29,7 +30,6 @@ function Dashboard() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
 
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
@@ -63,8 +63,10 @@ function Dashboard() {
         return <DashBookings />;
       case "gallery":
         return <DashGallery />;
-        case "reviews":
+      case "reviews":
         return <DashReviews />;
+      case "travel-plans":
+        return <DashMyTravelPlan />;
       default:
         return <DashboardComp />;
     }
@@ -91,7 +93,6 @@ function Dashboard() {
           <div className="flex-1 pl-4">{renderContent()}</div>
         </div>
       )}
-
     </div>
   );
 }
