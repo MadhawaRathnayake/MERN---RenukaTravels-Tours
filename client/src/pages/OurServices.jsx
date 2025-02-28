@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 
 // Import slide images
 import sec01 from "../images/sec01-01.jpg";
@@ -53,7 +54,7 @@ const images = {
 const services = [
   {
     id: "food",
-    title: "Food and beverages",
+    title: "Food and Beverages",
     icon: images.static.food,
     description:
       "Sri Lanka is a culinary paradise, offering a fusion of bold flavors and global cuisines. From spicy local curries and fresh seafood to Indian, Chinese, Italian, Western, and Thai delights, every meal is an experience. Our expert chefs and mixologists ensure a perfect blend of taste and tradition, making your journey even more memorable.",
@@ -96,7 +97,7 @@ const services = [
     title: "Personal Helicopters",
     icon: images.static.helicopter,
     description:
-      "Option for personal helicopters to make your travel experience quicker and more enjoyable. Not only do they save valuable time, but they also offer stunning aerial views of Sri Lanka’s breathtaking landscapes, allowing you to see the country's beauty from a whole new perspective.",
+      "Option for personal helicopters to make your travel experience quicker and more enjoyable. Not only do they save valuable time, but they also offer stunning aerial views of Sri Lanka's breathtaking landscapes, allowing you to see the country's beauty from a whole new perspective.",
     image: images.static.helicopter_jpg,
   },
 ];
@@ -104,64 +105,54 @@ const services = [
 const ServiceCard = ({ service, index, slideIndex }) => {
   const isEven = index % 2 === 0;
 
-  const imageContent = service.slideKey ? (
-    <div
-      style={{
-        backgroundImage: `url(${
-          images[service.slideKey][slideIndex[service.slideKey]]
-        })`,
-      }}
-      className={`w-full h-full bg-center bg-cover duration-1000 ${
-        isEven
-          ? "md:rounded-tr-2xl rounded-br-2xl"
-          : "md:rounded-tl-2xl rounded-bl-2xl"
-      }`}
-    />
-  ) : (
-    <div
-      style={{ backgroundImage: `url(${service.image})` }}
-      className={`w-full h-full bg-center bg-cover duration-1000 ${
-        isEven
-          ? "md:rounded-tr-2xl rounded-br-2xl"
-          : "md:rounded-tl-2xl rounded-bl-2xl"
-      }`}
-    />
-  );
-
-  const contentSection = (
-    <div
-      className={`w-full min-h-96  md:w-1/2 flex flex-col items-center text-center rounded-2xl md:rounded-none justify-center p-8 bg-yellow-300 duration-1000 ${
-        isEven
-          ? "md:rounded-tl-2xl md:rounded-bl-2xl"
-          : "md:rounded-tr-2xl md:rounded-br-2xl"
-      }`}
-    >
-      <img src={service.icon} alt={service.title} className="w-16" />
-      <h2 className="text-3xl font-bold text-gray-700 hover:text-[2rem] duration-1000">
-        {service.title}
-      </h2>
-      <blockquote className="border-l-4 border-yellow-300 italic text-xl hover:text-[1.26rem] duration-1000">
-        {service.description}
-      </blockquote>
-    </div>
-  );
-
-  const imageSection = (
-    <div className="w-full md:w-1/2 rounded-2xl flex items-center justify-center bg-white">
-      {imageContent}
-    </div>
-  );
+  const getImage = () => {
+    if (service.slideKey) {
+      return images[service.slideKey][slideIndex[service.slideKey]];
+    }
+    return service.image;
+  };
 
   return (
-    <div
+    <motion.div
       id={service.id}
-      className={`mt-8 flex flex-col ${
-        isEven ? "md:flex-row" : "md:flex-row-reverse"
-      } rounded-2xl shadow-xl hover:shadow-2xl duration-1000`}
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      viewport={{ once: true, margin: "-100px" }}
+      className="mb-12"
     >
-      {contentSection}
-      {imageSection}
-    </div>
+      <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+        <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
+          <div className="lg:w-1/2 relative">
+            <div className="lg:h-96 bg-center">
+              <img 
+                src={getImage()} 
+                alt={service.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/20 to-transparent" />
+          </div>
+          
+          <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
+            <div className="flex items-center mb-6">
+              <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center shadow-md">
+                <img src={service.icon} alt="" className="w-8 h-8 object-contain" />
+              </div>
+              <h2 className="text-2xl lg:text-3xl font-bold ml-4 text-gray-800">{service.title}</h2>
+            </div>
+            
+            <p className="text-gray-600 leading-relaxed">
+              {service.description}
+            </p>
+            
+            <button className="mt-8 self-start px-6 py-2 bg-amber-400 hover:bg-amber-500 text-white font-medium rounded-full transition-colors duration-300">
+              Learn More
+            </button>
+          </div>
+        </div>
+      </div>
+    </motion.div>
   );
 };
 
@@ -172,6 +163,7 @@ export default function OurServices() {
     slides3: 0,
     slides4: 0,
   });
+  const [activeService, setActiveService] = useState(null);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -186,6 +178,36 @@ export default function OurServices() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const observerOptions = {
+      root: null,
+      rootMargin: '0px',
+      threshold: 0.5,
+    };
+
+    const observerCallback = (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveService(entry.target.id);
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    
+    services.forEach((service) => {
+      const element = document.getElementById(service.id);
+      if (element) observer.observe(element);
+    });
+
+    return () => {
+      services.forEach((service) => {
+        const element = document.getElementById(service.id);
+        if (element) observer.unobserve(element);
+      });
+    };
+  }, []);
+
   const scrollToService = (id) => {
     const element = document.getElementById(id);
     if (element) {
@@ -197,46 +219,106 @@ export default function OurServices() {
   };
 
   return (
-    <section>
-      <div className="relative h-80 w-full">
+    <div className="bg-gradient-to-b from-amber-50 to-white min-h-screen">
+      {/* Hero Section */}
+      <div className="relative h-[70vh] w-full overflow-hidden">
         <div className="absolute inset-0">
-          <div
+          <motion.div 
+            animate={{ scale: 1.05 }}
+            transition={{ 
+              duration: 10, 
+              repeat: Infinity, 
+              repeatType: "reverse" 
+            }}
             style={{
               backgroundImage: `url(${images.slides1[slideIndex.slides1]})`,
             }}
-            className="w-full h-full bg-center bg-cover duration-1000"
+            className="w-full h-full bg-center bg-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 to-black/30" />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-transparent" />
         </div>
+        
         <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-center items-center h-full">
-            <h1 className="text-5xl font-bold text-white mb-4">Our Services</h1>
-            <div className="text-white text-lg flex flex-wrap justify-center gap-4 pt-1">
+          <div className="flex flex-col justify-center items-center h-full pt-16">
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              className="text-center"
+            >
+              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+                Our Premium <span className="text-amber-400">Services</span>
+              </h1>
+              <p className="text-white text-lg md:text-xl max-w-3xl mb-10">
+                Experience luxury travel throughout Sri Lanka with our comprehensive range of premium services tailored to your needs.
+              </p>
+            </motion.div>
+            
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="flex justify-center flex-wrap gap-3 max-w-4xl"
+            >
               {services.map((service) => (
                 <button
                   key={service.id}
                   onClick={() => scrollToService(service.id)}
-                  className="flex items-center space-x-2 cursor-pointer hover:text-yellow-300 transition-colors"
+                  className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
+                    activeService === service.id 
+                      ? "bg-amber-400 text-white shadow-lg transform scale-105" 
+                      : "bg-white/30 text-white hover:bg-white/40"
+                  }`}
                 >
-                  <span className="text-[#F4AC20]">•</span>
+                  <img src={service.icon} alt="" className="w-5 h-5 object-contain" />
                   <span>{service.title}</span>
                 </button>
               ))}
-            </div>
+            </motion.div>
           </div>
         </div>
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-amber-50 to-transparent"></div>
       </div>
 
-      <div className="basic-struture">
-        {services.map((service, index) => (
-          <ServiceCard
-            key={service.id}
-            service={service}
-            index={index}
-            slideIndex={slideIndex}
-          />
-        ))}
+      {/* Services Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div className="mb-16 text-center">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">Luxury Travel Made Simple</h2>
+          <p className="text-gray-600 max-w-3xl mx-auto">
+            Discover our comprehensive range of premium services designed to make your Sri Lankan journey unforgettable. From gourmet cuisine to luxury accommodations and transportation, we've got every aspect of your travel experience covered.
+          </p>
+        </div>
+
+        <div className="space-y-12">
+          {services.map((service, index) => (
+            <ServiceCard
+              key={service.id}
+              service={service}
+              index={index}
+              slideIndex={slideIndex}
+            />
+          ))}
+        </div>
+        
+        {/* Call to Action */}
+        <motion.div 
+          initial={{ opacity: 0, y: 30 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          viewport={{ once: true }}
+          className="mt-20 bg-gradient-to-r from-amber-500 to-amber-400 rounded-2xl p-8 md:p-12 text-center"
+        >
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Experience Luxury?</h2>
+          <p className="text-white text-lg mb-8 max-w-2xl mx-auto">
+            Contact us today to customize your perfect Sri Lankan journey with our premium services tailored to your preferences.
+          </p>
+          <a href="/customize">
+          <button className="bg-white text-amber-500 font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
+            Book Your Experience
+          </button>
+          </a>
+        </motion.div>
       </div>
-    </section>
+    </div>
   );
 }
