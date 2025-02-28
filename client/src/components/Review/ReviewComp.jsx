@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import { useSelector } from "react-redux";
-import { useNavigate } from 'react-router-dom';
-import WriteReview from './write';
+import { useNavigate } from "react-router-dom";
+import WriteReview from "./write";
 
 const ReviewsSection = () => {
   const navigate = useNavigate();
@@ -33,12 +33,18 @@ const ReviewsSection = () => {
 
   const fetchReviews = async () => {
     try {
-      const response = await axios.get('/api/review/getReviews');
+      const response = await axios.get("/api/review/getReviews");
       const reviewsData = response.data.reviews;
 
       // Overall average rating
-      const totalRating = reviewsData.reduce((sum, review) => sum + review.rating, 0);
-      const avgRating = reviewsData.length > 0 ? (totalRating / reviewsData.length).toFixed(1) : 0;
+      const totalRating = reviewsData.reduce(
+        (sum, review) => sum + review.rating,
+        0
+      );
+      const avgRating =
+        reviewsData.length > 0
+          ? (totalRating / reviewsData.length).toFixed(1)
+          : 0;
       setAverageRating(avgRating);
 
       // Rating distribution
@@ -72,7 +78,9 @@ const ReviewsSection = () => {
           (sum, review) => sum + review.rating,
           0
         );
-        const avgLastMonth = (totalLastMonthRating / lastMonthReviews.length).toFixed(1);
+        const avgLastMonth = (
+          totalLastMonthRating / lastMonthReviews.length
+        ).toFixed(1);
         setLastMonthRating(avgLastMonth);
       } else {
         setLastMonthRating(0);
@@ -92,7 +100,7 @@ const ReviewsSection = () => {
 
       setReviewUsers(usersMap);
     } catch (error) {
-      console.error('Error fetching reviews:', error);
+      console.error("Error fetching reviews:", error);
     }
   };
 
@@ -120,9 +128,7 @@ const ReviewsSection = () => {
           fill={i < rating ? "#FBBF24" : "#E5E7EB"}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <path
-            d="M14.1033 2.56698C14.4701 1.82374 15.5299 1.82374 15.8967 2.56699L19.1757 9.21093C19.3214 9.50607 19.6029 9.71064 19.9287 9.75797L27.2607 10.8234C28.0809 10.9426 28.4084 11.9505 27.8149 12.5291L22.5094 17.7007C22.2737 17.9304 22.1662 18.2614 22.2218 18.5858L23.4743 25.8882C23.6144 26.7051 22.7569 27.3281 22.0233 26.9424L15.4653 23.4946C15.174 23.3415 14.826 23.3415 14.5347 23.4946L7.9767 26.9424C7.24307 27.3281 6.38563 26.7051 6.52574 25.8882L7.7782 18.5858C7.83384 18.2614 7.72629 17.9304 7.49061 17.7007L2.1851 12.5291C1.59159 11.9505 1.91909 10.9426 2.73931 10.8234L10.0713 9.75797C10.3971 9.71064 10.6786 9.50607 10.8243 9.21093L14.1033 2.56698Z"
-          />
+          <path d="M14.1033 2.56698C14.4701 1.82374 15.5299 1.82374 15.8967 2.56699L19.1757 9.21093C19.3214 9.50607 19.6029 9.71064 19.9287 9.75797L27.2607 10.8234C28.0809 10.9426 28.4084 11.9505 27.8149 12.5291L22.5094 17.7007C22.2737 17.9304 22.1662 18.2614 22.2218 18.5858L23.4743 25.8882C23.6144 26.7051 22.7569 27.3281 22.0233 26.9424L15.4653 23.4946C15.174 23.3415 14.826 23.3415 14.5347 23.4946L7.9767 26.9424C7.24307 27.3281 6.38563 26.7051 6.52574 25.8882L7.7782 18.5858C7.83384 18.2614 7.72629 17.9304 7.49061 17.7007L2.1851 12.5291C1.59159 11.9505 1.91909 10.9426 2.73931 10.8234L10.0713 9.75797C10.3971 9.71064 10.6786 9.50607 10.8243 9.21093L14.1033 2.56698Z" />
         </svg>
       );
     }
@@ -167,7 +173,8 @@ const ReviewsSection = () => {
       <div className="w-full max-w-7xl px-4 md:px-5 lg:px-6 mx-auto">
         <div>
           <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-10 text-black mb-8 text-center">
-            Customer <span className="text-yellow-400">reviews</span> &amp; rating
+            Customer <span className="text-yellow-400">reviews</span> &amp;
+            rating
           </h2>
 
           <div className="grid grid-cols-12 mb-11">
@@ -179,7 +186,9 @@ const ReviewsSection = () => {
                     onClick={() => handleFilterRating(rating)}
                     className="flex items-center w-full cursor-pointer"
                   >
-                    <p className="font-medium text-lg py-[1px] text-black mr-[2px]">{rating}</p>
+                    <p className="font-medium text-lg py-[1px] text-black mr-[2px]">
+                      {rating}
+                    </p>
                     <svg
                       width="20"
                       height="20"
@@ -196,7 +205,9 @@ const ReviewsSection = () => {
                       <div
                         className="h-full rounded-[30px] bg-indigo-500"
                         style={{
-                          width: `${(ratingDistribution[rating] / reviews.length) * 100}%`,
+                          width: `${
+                            (ratingDistribution[rating] / reviews.length) * 100
+                          }%`,
                         }}
                       ></div>
                     </div>
@@ -211,9 +222,9 @@ const ReviewsSection = () => {
             {/* Toggle between summary view and WriteReview form */}
             <div className="col-span-12 max-xl:mt-8 xl:col-span-8 xl:pl-8 w-full min-h-[230px]">
               {isWriteReviewMode ? (
-                <WriteReview 
-                  onCancel={() => setIsWriteReviewMode(false)} 
-                  onReviewSubmitted={addReview} 
+                <WriteReview
+                  onCancel={() => setIsWriteReviewMode(false)}
+                  onReviewSubmitted={addReview}
                 />
               ) : (
                 <div className="grid grid-cols-12 h-full px-8 max-lg:py-8 rounded-3xl bg-gray-100 w-full max-xl:max-w-3xl max-xl:mx-auto">
@@ -248,16 +259,16 @@ const ReviewsSection = () => {
                       <button
                         onClick={() => {
                           if (!currentUser) {
-                            navigate('/signin');
+                            navigate("/signin");
                           } else {
                             setIsWriteReviewMode(true);
                           }
                         }}
-                        className="rounded-full px-6 py-4 bg-yellow-400 font-semibold text-lg text-white whitespace-nowrap mb-6 w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-700 hover:shadow-indigo-400"
+                        className="rounded-full px-6 py-4 bg-[#F4AC20] font-semibold text-lg text-white whitespace-nowrap mb-6 w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-[#f49120]"
                       >
                         Write A Review
                       </button>
-                      <button 
+                      <button
                         onClick={() => setReviewsLimit(4)}
                         className="rounded-full px-6 py-4 bg-white font-semibold text-lg text-indigo-600 whitespace-nowrap w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200"
                       >
@@ -288,7 +299,10 @@ const ReviewsSection = () => {
                   <div className="flex sm:items-center flex-col min-[400px]:flex-row justify-between gap-5 mb-4">
                     <div className="flex items-center gap-3">
                       <img
-                        src={reviewUser.profilePicture || "https://via.placeholder.com/150"}
+                        src={
+                          reviewUser.profilePicture ||
+                          "https://via.placeholder.com/150"
+                        }
                         alt={reviewUser.username}
                         className="w-8 h-8 rounded-full object-cover"
                       />
@@ -325,13 +339,15 @@ const ReviewsSection = () => {
           <div className="flex justify-center mt-6">
             {reviewsLimit < filteredReviews.length ? (
               <button
-                onClick={() => setReviewsLimit(prev => prev + 2)}
+                onClick={() => setReviewsLimit((prev) => prev + 2)}
                 className="rounded-full px-6 py-4 border border-indigo-600 font-semibold text-lg text-indigo-600 whitespace-nowrap text-center shadow-sm transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200"
               >
                 Load More
               </button>
             ) : (
-              <p className="text-lg font-semibold text-indigo-600">You reached all the reviews</p>
+              <p className="text-lg font-semibold text-indigo-600">
+                You reached all the reviews
+              </p>
             )}
           </div>
 
@@ -428,7 +444,8 @@ const ReviewsSection = () => {
           <button
             onClick={() =>
               setModalCurrentIndex(
-                (modalCurrentIndex - 1 + modalImages.length) % modalImages.length
+                (modalCurrentIndex - 1 + modalImages.length) %
+                  modalImages.length
               )
             }
             className="absolute left-5 text-white text-3xl"
