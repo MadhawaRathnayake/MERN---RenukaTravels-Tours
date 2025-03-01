@@ -129,14 +129,14 @@ export default function CustomizeForm() {
   useEffect(() => {
     const fetchVehicles = async () => {
       try {
-        const response = await fetch('/api/vehicles/getvehicles');
+        const response = await fetch("/api/vehicles/getvehicles");
         const data = await response.json();
         setVehicles(data.vehicles || []);
       } catch (error) {
-        console.error('Error fetching vehicles:', error);
+        console.error("Error fetching vehicles:", error);
       }
     };
-  
+
     fetchVehicles();
   }, []);
 
@@ -355,7 +355,10 @@ export default function CustomizeForm() {
         </h3>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Arrival Date:</p>
+            <p className={commonStyles.label}>
+              Arrival Date:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <Datepicker
               name="arrivalDate"
               className={commonStyles.datepickerClass}
@@ -363,7 +366,10 @@ export default function CustomizeForm() {
             />
           </div>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Departure Date:</p>
+            <p className={commonStyles.label}>
+              Departure Date:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <Datepicker
               name="departureDate"
               className={commonStyles.datepickerClass}
@@ -382,7 +388,10 @@ export default function CustomizeForm() {
         </div>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Number of people:</p>
+            <p className={commonStyles.label}>
+              Number of people:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <TextInput
               type="text"
               name="numberOfPeople"
@@ -425,7 +434,10 @@ export default function CustomizeForm() {
         </h3>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Accommodation Type:</p>
+            <p className={commonStyles.label}>
+              Accommodation Type:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <select
               id="star"
               name="accommodationType"
@@ -465,28 +477,28 @@ export default function CustomizeForm() {
           </div>
         </div>
         <h3 className="py-2 mt-4 yellow-bg text-xl text-white text-center">
-  Transport
-</h3>
-<div className={commonStyles.gridContainer}>
-<div className={commonStyles.gridItem}>
-  <p className={commonStyles.label}>Vehicle Type:</p>
-  <select
-    id="vehicle"
-    name="vehicleType"
-    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
-    value={selectedType}
-    onChange={(e) => setSelectedType(e.target.value)}
-  >
-    <option value="" disabled>
-      Select a Type
-    </option>
-    {vehicles.map((vehicle) => (
-      <option key={vehicle._id} value={vehicle.title}>
-        {vehicle.title}
-      </option>
-    ))}
-  </select>
-</div>
+          Transport
+        </h3>
+        <div className={commonStyles.gridContainer}>
+          <div className={commonStyles.gridItem}>
+            <p className={commonStyles.label}>Vehicle Type:</p>
+            <select
+              id="vehicle"
+              name="vehicleType"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+              value={selectedType}
+              onChange={(e) => setSelectedType(e.target.value)}
+            >
+              <option value="" disabled>
+                Select a Type
+              </option>
+              {vehicles.map((vehicle) => (
+                <option key={vehicle._id} value={vehicle.title}>
+                  {vehicle.title}
+                </option>
+              ))}
+            </select>
+          </div>
           <div className={commonStyles.gridItem}>
             <p className={commonStyles.label}>Number of Vehicles:</p>
             <TextInput
@@ -514,7 +526,10 @@ export default function CustomizeForm() {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Mobile No:</p>
+            <p className={commonStyles.label}>
+              Mobile No:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <TextInput
               type="text"
               name="mobileNumber"
