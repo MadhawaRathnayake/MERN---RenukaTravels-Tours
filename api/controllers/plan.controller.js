@@ -24,6 +24,17 @@ const sendTripPlanEmail = async (tripPlanData) => {
       defaultUserEmail = userEmail;
     }
 
+    const generateTableRow = (label, value) => {
+      return value
+        ? `
+        <tr>
+          <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>${label}:</strong></td>
+          <td style="padding: 10px; border: 1px solid #ddd;">${value}</td>
+        </tr>
+      `
+        : "";
+    };
+
     const mailOptions = {
       from: "renukatoursandtravels1@gmail.com", // Sender's email
       to: "renukatours94@gmail.com", // The recipient's email (can be dynamic)
@@ -49,98 +60,51 @@ const sendTripPlanEmail = async (tripPlanData) => {
           <h1 style="color: #333; text-align: center;">New Trip Plan Created</h1>
           <p style="font-size: 16px; color: #555;">A new trip plan has been created with the following details:</p>
           <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>User:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.userId
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Created At:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${new Date(
-                tripPlanData.createdAt
-              ).toLocaleString()}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>User Email:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${userEmail}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>User Entered Email:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.email
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Mobile Number:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.mobileNumber
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>WhatsApp Number:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.whatsappNumber
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Arrival Date:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">
-              ${new Date(tripPlanData.arrivalDate).toLocaleDateString()}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Departure Date:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">
-              ${new Date(tripPlanData.departureDate).toLocaleDateString()}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Number of People:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.numberOfPeople
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Number of Adults:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.numberOfAdults
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Number of Children:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.numberOfChildren
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Selected Destinations:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${tripPlanData.selectedDestinations.join(
-                ", "
-              )}</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Accommodation Type:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.accommodationType
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Vehicle Type:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.vehicleType
-              }</td>
-            </tr>
-            <tr>
-              <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Status:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.status
-              }</td>
-            </tr>
+            ${generateTableRow("User", tripPlanData.userId)}
+            ${generateTableRow(
+              "Created At",
+              new Date(tripPlanData.createdAt).toLocaleString()
+            )}
+            ${generateTableRow("User Email", userEmail)}
+            ${generateTableRow("User Entered Email", tripPlanData.email)}
+            ${generateTableRow("Mobile Number", tripPlanData.mobileNumber)}
+            ${generateTableRow("WhatsApp Number", tripPlanData.whatsappNumber)}
+            ${generateTableRow(
+              "Arrival Date",
+              tripPlanData.arrivalDate
+                ? new Date(tripPlanData.arrivalDate).toLocaleDateString()
+                : null
+            )}
+            ${generateTableRow(
+              "Departure Date",
+              tripPlanData.departureDate
+                ? new Date(tripPlanData.departureDate).toLocaleDateString()
+                : null
+            )}
+            ${generateTableRow("Number of People", tripPlanData.numberOfPeople)}
+            ${generateTableRow("Number of Adults", tripPlanData.numberOfAdults)}
+            ${generateTableRow(
+              "Number of Children",
+              tripPlanData.numberOfChildren
+            )}
+            ${generateTableRow(
+              "Selected Destinations",
+              tripPlanData.selectedDestinations?.length
+                ? tripPlanData.selectedDestinations.join(", ")
+                : null
+            )}
+            ${generateTableRow(
+              "Accommodation Type",
+              tripPlanData.accommodationType
+            )}
+            ${generateTableRow("Vehicle Type", tripPlanData.vehicleType)}
+            ${generateTableRow("Status", tripPlanData.status)}
           </table>
           <p style="font-size: 16px; color: #555; margin-top: 20px;">Thank you for using Renuka Tours and Travels!</p>
-              <div style="text-align: center; margin-top: 20px;">
+          <div style="text-align: center; margin-top: 20px;">
             <img src="https://firebasestorage.googleapis.com/v0/b/renuka-travels.appspot.com/o/logo.png?alt=media&token=e001d6db-fd7c-4f41-a230-eab2e5f00cd9" alt="Logo" style="max-width: 100px; height: auto;">
           </div>
-          </div>
+        </div>
       `,
     };
 
