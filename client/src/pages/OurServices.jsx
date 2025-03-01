@@ -146,9 +146,13 @@ const ServiceCard = ({ service, index, slideIndex }) => {
               {service.description}
             </p>
             
-            <button className="mt-8 self-start px-6 py-2 bg-amber-400 hover:bg-amber-500 text-white font-medium rounded-full transition-colors duration-300">
-              Learn More
-            </button>
+            <div className="mt-8 self-start">
+  {service.id === "vehicles" ? (
+    <button className="px-6 py-2 bg-amber-400 hover:bg-amber-500 text-white font-medium rounded-full transition-colors duration-300">
+      Learn More
+    </button>
+  ) : null}
+</div>
           </div>
         </div>
       </div>
@@ -266,7 +270,7 @@ export default function OurServices() {
                   onClick={() => scrollToService(service.id)}
                   className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
                     activeService === service.id 
-                      ? "bg-amber-400 text-white shadow-lg transform scale-105" 
+                      ? "bg-white/30 text-white  hover:bg-white/40 shadow-lg transform scale-105" 
                       : "bg-white/30 text-white hover:bg-white/40"
                   }`}
                 >
