@@ -1,14 +1,32 @@
-
+import { useState, useEffect } from 'react';
 import { ArrowRight } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import TourCard from '../shared/TourCard';
-import useFetch from '../../hooks/useFetch';
 import { BASE_URL } from '../../utils/config';
 
 const FeaturedTourList = () => {
   const navigate = useNavigate();
-  const { data: response, loading, error } = useFetch(`${BASE_URL}/tours/gettours`);
-  const tours = response?.tours || [];
+  const [tours, setTours] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  // Similar to your fetchReviews function
+  const fetchTours = async () => {
+    try {
+      const response = await axios.get("api/tours/gettours");
+      setTours(response.data.tours || []);
+    } catch (err) {
+      console.error('Fetch error:', err);
+      setError('Failed to fetch tours');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTours();
+  }, []);
 
   // Only take the first 4 tours
   const featuredTours = tours.slice(0, 4);
@@ -33,13 +51,13 @@ const FeaturedTourList = () => {
             <p className="text-lg font-semibold">Loading...</p>
           </div>
         )}
-        
+
         {error && (
           <div className="w-full text-center py-5">
             <p className="text-lg font-semibold text-red-500">{error}</p>
           </div>
         )}
-        
+
         {!loading && !error && featuredTours.map((tour) => (
           <div className="w-full sm:w-1/2 lg:w-1/4 px-2 mb-4" key={tour._id}>
             <TourCard tour={tour} />
