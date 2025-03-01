@@ -15,7 +15,7 @@ export default function Section02() {
         <div className="text-center lg:text-left lg:mb-0 pr-4 px-8">
           <p className="text-[#F4AC20] pb-4">What we serve</p>
           <h2 className="text-5xl font-Aclonica pb-4">
-            The Best And Most trusted
+            The Best And Most Trusted
             <span className="text-[#F4AC20]"> Service</span>
           </h2>
           <p className="text-gray-700 text-lg text-center lg:text-left pb-4">
