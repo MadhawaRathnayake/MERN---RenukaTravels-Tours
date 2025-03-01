@@ -21,6 +21,7 @@
     "@vis.gl/react-google-maps": "^1.2.0",
     "apexcharts": "^4.3.0",
     "axios": "^1.7.7",
+    "caniuse-lite": "^1.0.30001701",
     "chart.js": "^4.4.7",
     "firebase": "^10.13.2",
     "flowbite-react": "^0.10.2",
