@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { color } from "framer-motion";
 
 export default function CustomizeForm() {
+  const [vehicles, setVehicles] = useState([]);
   const navigate = useNavigate();
   const [selectedStar, setSelectedStar] = useState("");
   const [selectedType, setSelectedType] = useState("");
@@ -124,6 +125,20 @@ export default function CustomizeForm() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch('/api/vehicles/getvehicles');
+        const data = await response.json();
+        setVehicles(data.vehicles || []);
+      } catch (error) {
+        console.error('Error fetching vehicles:', error);
+      }
+    };
+  
+    fetchVehicles();
+  }, []);
 
   useEffect(() => {
     const fetchDestinations = async () => {
@@ -450,6 +465,28 @@ export default function CustomizeForm() {
           </div>
         </div>
         <h3 className="py-2 mt-4 yellow-bg text-xl text-white text-center">
+  Transport
+</h3>
+<div className={commonStyles.gridContainer}>
+<div className={commonStyles.gridItem}>
+  <p className={commonStyles.label}>Vehicle Type:</p>
+  <select
+    id="vehicle"
+    name="vehicleType"
+    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+    value={selectedType}
+    onChange={(e) => setSelectedType(e.target.value)}
+  >
+    <option value="" disabled>
+      Select a Type
+    </option>
+    {vehicles.map((vehicle) => (
+      <option key={vehicle._id} value={vehicle.title}>
+        {vehicle.title}
+      </option>
+    ))}
+  </select>
+</div>
           Transport
         </h3>
         <div className={commonStyles.gridContainer}>
