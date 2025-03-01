@@ -1,4 +1,4 @@
-@keyframes fall {
+/* @keyframes fall {
     0% {
       top: -50px;
       opacity: 0;
@@ -11,4 +11,4 @@
   
   .animate-fall {
     animation: fall 1s ease-out forwards;
-  }
+  } */

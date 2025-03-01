@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 
 export default function About() {
   return (
-    <div className="bg-gradient-to-b from-amber-50 to-white min-h-screen">
+    <div className="bg-gradient-to-b from-[#fcf5f1] to-amber-50 min-h-screen">
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         {/* Hero Section */}
         <motion.div 
@@ -16,7 +16,7 @@ export default function About() {
             Discover <span className="text-amber-500">Sri Lanka</span> with Us
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-            Creating unforgettable journeys since 2015
+            Creating unforgettable journeys <b>since 2015</b>
           </p>
         </motion.div>
 
