@@ -15,7 +15,7 @@ export default function Section03() {
             We ensure that you’ll embark on a perfectly planned, safe vacation
             at a price you can afford.
           </p>
-          <div className="py-4 lg:py-6 sm:flex sm:justify-center md:justify-start">
+          <div className="py-4 lg:py-6 flex justify-center md:justify-start">
             <a href="/about">
               <button className="text-[#F4AC20] py-2 px-4 border border-[#F4AC20] rounded-lg">
                 <b className="text-sm">Learn More</b>
@@ -25,7 +25,7 @@ export default function Section03() {
         </div>
         {/* column02 */}
         <div className="md:p-4 md:border-l border-gray-300">
-          <div className="sm:flex sm:justify-center md:justify-start">
+          <div className="flex justify-center md:justify-start">
             <img src={badge} alt="" className="h-14" />
           </div>
           <h3 className="text-xl md:mb-2 md:mt-2 font-Aclonica text-center md:text-left">
@@ -38,7 +38,7 @@ export default function Section03() {
         </div>
         {/* column03 */}
         <div className="md:p-4 md:border-l border-gray-300">
-          <div className="sm:flex sm:justify-center md:justify-start">
+          <div className="flex justify-center md:justify-start">
             <img src={coin} alt="" className="h-14" />
           </div>
           <h3 className="text-xl md:mb-2 md:mt-2 font-Aclonica text-center md:text-left">
@@ -51,7 +51,7 @@ export default function Section03() {
         </div>
         {/* column04 */}
         <div className="md:p-4 md:border-l border-gray-300">
-          <div className="sm:flex sm:justify-center md:justify-start">
+          <div className="flex justify-center md:justify-start">
             <img src={globe} alt="" className="h-14" />
           </div>
           <h3 className="text-xl md:mb-2 md:mt-2 font-Aclonica text-center md:text-left">
