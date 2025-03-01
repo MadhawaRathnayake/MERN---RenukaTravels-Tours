@@ -10,7 +10,7 @@ export default function NewHomePage() {
   return (
     <section>
       {/* basic-structure is the style for making the width of the page maximum-7xl and centered*/}
-      <div className="basic-struture">
+      <div className="">
         <Section01 />
       </div>
       <div className="bg-blue-50 my-12 p-0">
