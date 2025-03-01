@@ -17,7 +17,6 @@ const tripPlanSchema = new mongoose.Schema(
     },
     arrivalTime: {
       type: String,
-      required: true,
     },
     numberOfPeople: {
       type: Number,
@@ -25,15 +24,12 @@ const tripPlanSchema = new mongoose.Schema(
     },
     numberOfAdults: {
       type: Number,
-      required: true,
     },
     numberOfChildren: {
       type: Number,
-      required: true,
     },
     dateComments: {
       type: String,
-      default: "",
     },
     // Location Information
     selectedDestinations: [
@@ -44,7 +40,6 @@ const tripPlanSchema = new mongoose.Schema(
     ],
     additionalLocations: {
       type: String,
-      default: "",
     },
     // Accommodation
     accommodationType: {
@@ -54,21 +49,19 @@ const tripPlanSchema = new mongoose.Schema(
     },
     numberOfBedrooms: {
       type: Number,
-      required: true,
+      default: "Not specified",
     },
     accommodationPreference: {
       type: String,
-      default: "",
     },
     // Transport
     vehicleType: {
       type: String,
-      enum: ["Sedan", "Sedan-VIP", "SUV", "SUV-VIP", "High-Roof-Van", "Bus"],
       required: true,
     },
     numberOfVehicles: {
       type: Number,
-      required: true,
+      default: "Not specified",
     },
     transportPreference: {
       type: String,
@@ -80,11 +73,9 @@ const tripPlanSchema = new mongoose.Schema(
     },
     whatsappNumber: {
       type: String,
-      required: true,
     },
     email: {
       type: String,
-      required: true,
     },
     status: {
       type: String,

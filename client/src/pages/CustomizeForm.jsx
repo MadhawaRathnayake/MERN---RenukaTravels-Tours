@@ -12,6 +12,7 @@ import { useNavigate } from "react-router-dom";
 import { color } from "framer-motion";
 
 export default function CustomizeForm() {
+  const [vehicles, setVehicles] = useState([]);
   const navigate = useNavigate();
   const [selectedStar, setSelectedStar] = useState("");
   const [selectedType, setSelectedType] = useState("");
@@ -124,6 +125,20 @@ export default function CustomizeForm() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      try {
+        const response = await fetch("/api/vehicles/getvehicles");
+        const data = await response.json();
+        setVehicles(data.vehicles || []);
+      } catch (error) {
+        console.error("Error fetching vehicles:", error);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
 
   useEffect(() => {
     const fetchDestinations = async () => {
@@ -340,7 +355,10 @@ export default function CustomizeForm() {
         </h3>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Arrival Date:</p>
+            <p className={commonStyles.label}>
+              Arrival Date:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <Datepicker
               name="arrivalDate"
               className={commonStyles.datepickerClass}
@@ -348,7 +366,10 @@ export default function CustomizeForm() {
             />
           </div>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Departure Date:</p>
+            <p className={commonStyles.label}>
+              Departure Date:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <Datepicker
               name="departureDate"
               className={commonStyles.datepickerClass}
@@ -367,7 +388,10 @@ export default function CustomizeForm() {
         </div>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Number of people:</p>
+            <p className={commonStyles.label}>
+              Number of people:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <TextInput
               type="text"
               name="numberOfPeople"
@@ -410,7 +434,10 @@ export default function CustomizeForm() {
         </h3>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Accommodation Type:</p>
+            <p className={commonStyles.label}>
+              Accommodation Type:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <select
               id="star"
               name="accommodationType"
@@ -465,12 +492,11 @@ export default function CustomizeForm() {
               <option value="" disabled>
                 Select a Type
               </option>
-              <option value="Sedan">Sedan</option>
-              <option value="Sedan-VIP">Sedan-VIP</option>
-              <option value="SUV">SUV</option>
-              <option value="SUV-VIP">SUV-VIP</option>
-              <option value="High-Roof-Van">High Roof Van</option>
-              <option value="Bus">Bus</option>
+              {vehicles.map((vehicle) => (
+                <option key={vehicle._id} value={vehicle.title}>
+                  {vehicle.title}
+                </option>
+              ))}
             </select>
           </div>
           <div className={commonStyles.gridItem}>
@@ -500,7 +526,10 @@ export default function CustomizeForm() {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Mobile No:</p>
+            <p className={commonStyles.label}>
+              Mobile No:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <TextInput
               type="text"
               name="mobileNumber"
