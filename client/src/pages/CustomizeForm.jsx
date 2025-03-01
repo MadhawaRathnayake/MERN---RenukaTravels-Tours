@@ -340,7 +340,7 @@ export default function CustomizeForm() {
         </h3>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Arrival Date:</p>
+            <p className={commonStyles.label}>Arrival Date:<span className="text-red-600 text-xs"> (*required)</span></p>
             <Datepicker
               name="arrivalDate"
               className={commonStyles.datepickerClass}
@@ -348,7 +348,7 @@ export default function CustomizeForm() {
             />
           </div>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Departure Date:</p>
+            <p className={commonStyles.label}>Departure Date:<span className="text-red-600 text-xs"> (*required)</span></p>
             <Datepicker
               name="departureDate"
               className={commonStyles.datepickerClass}
@@ -367,7 +367,7 @@ export default function CustomizeForm() {
         </div>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Number of people:</p>
+            <p className={commonStyles.label}>Number of people:<span className="text-red-600 text-xs"> (*required)</span></p>
             <TextInput
               type="text"
               name="numberOfPeople"
@@ -410,7 +410,7 @@ export default function CustomizeForm() {
         </h3>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Accommodation Type:</p>
+            <p className={commonStyles.label}>Accommodation Type:<span className="text-red-600 text-xs"> (*required)</span></p>
             <select
               id="star"
               name="accommodationType"
@@ -454,7 +454,7 @@ export default function CustomizeForm() {
         </h3>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Vehicle Type:</p>
+            <p className={commonStyles.label}>Vehicle Type:<span className="text-red-600 text-xs"> (*required)</span></p>
             <select
               id="vehicle"
               name="vehicleType"
@@ -500,7 +500,7 @@ export default function CustomizeForm() {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 px-4">
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Mobile No:</p>
+            <p className={commonStyles.label}>Mobile No:<span className="text-red-600 text-xs"> (*required)</span></p>
             <TextInput
               type="text"
               name="mobileNumber"
