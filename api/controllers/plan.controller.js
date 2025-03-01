@@ -85,15 +85,13 @@ const sendTripPlanEmail = async (tripPlanData) => {
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Arrival Date:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.arrivalDate
-              }</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">
+              ${new Date(tripPlanData.arrivalDate).toLocaleDateString()}</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Departure Date:</strong></td>
-              <td style="padding: 10px; border: 1px solid #ddd;">${
-                tripPlanData.departureDate
-              }</td>
+              <td style="padding: 10px; border: 1px solid #ddd;">
+              ${new Date(tripPlanData.departureDate).toLocaleDateString()}</td>
             </tr>
             <tr>
               <td style="padding: 10px; border: 1px solid #ddd; background-color: #f9f9f9;"><strong>Number of People:</strong></td>
