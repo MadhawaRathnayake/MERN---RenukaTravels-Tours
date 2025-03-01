@@ -91,7 +91,7 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
       )}
       <button
         onClick={handleSendEmail}
-        className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md"
+        className="bg-amber-400 hover:bg-amber-500 text-white px-4 py-2 rounded-md"
       >
         {isSending ? 'Sending...' : 'Send to Email'}
       </button>
