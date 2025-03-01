@@ -63,7 +63,6 @@ const tripPlanSchema = new mongoose.Schema(
     // Transport
     vehicleType: {
       type: String,
-      enum: ["Sedan", "Sedan-VIP", "SUV", "SUV-VIP", "High-Roof-Van", "Bus"],
       required: true,
     },
     numberOfVehicles: {
