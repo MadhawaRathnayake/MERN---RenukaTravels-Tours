@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +30,11 @@ const ReviewsSection = () => {
 
   // New state for filtering by star rating (null means no filter)
   const [filterRating, setFilterRating] = useState(null);
+  
+  // Add missing states for the slider functionality
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const sliderRef = useRef(null);
 
   const fetchReviews = async () => {
     try {
@@ -111,6 +116,25 @@ const ReviewsSection = () => {
     return () => clearInterval(interval);
   }, []);
 
+  // Add navigation functions for the slider
+  const nextSlide = () => {
+    if (currentSlide < sortedReviews.length - 1) {
+      setCurrentSlide(currentSlide + 1);
+      if (sliderRef.current) {
+        sliderRef.current.style.transform = `translateX(-${(currentSlide + 1) * 100}%)`;
+      }
+    }
+  };
+
+  const prevSlide = () => {
+    if (currentSlide > 0) {
+      setCurrentSlide(currentSlide - 1);
+      if (sliderRef.current) {
+        sliderRef.current.style.transform = `translateX(-${(currentSlide - 1) * 100}%)`;
+      }
+    }
+  };
+
   // This callback is passed to WriteReview to add the new review immediately.
   const addReview = (newReview) => {
     setReviews((prevReviews) => [newReview, ...prevReviews]);
@@ -169,7 +193,7 @@ const ReviewsSection = () => {
   const displayedReviews = sortedReviews.slice(0, reviewsLimit);
 
   return (
-    <section className="py-24 relative">
+    <section className="py-12 relative">
       <div className="w-full max-w-7xl px-4 md:px-5 lg:px-6 mx-auto">
         <div>
           <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-10 text-black mb-8 text-center">
@@ -206,7 +230,7 @@ const ReviewsSection = () => {
                         className="h-full rounded-[30px] bg-indigo-500"
                         style={{
                           width: `${
-                            (ratingDistribution[rating] / reviews.length) * 100
+                            reviews.length ? (ratingDistribution[rating] / reviews.length) * 100 : 0
                           }%`,
                         }}
                       ></div>
@@ -269,7 +293,7 @@ const ReviewsSection = () => {
                         Write A Review
                       </button>
                       <button
-                        onClick={() => setReviewsLimit(4)}
+                        onClick={() => setIsExpanded(true)}
                         className="rounded-full px-6 py-4 bg-white font-semibold text-lg text-indigo-600 whitespace-nowrap w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200"
                       >
                         See All Reviews
@@ -281,153 +305,150 @@ const ReviewsSection = () => {
             </div>
           </div>
 
-          {/* Latest Reviews */}
-          <div className="pb-8 border-b border-gray-200 max-xl:max-w-3xl max-xl:mx-auto">
-            <h4 className="font-manrope font-semibold text-3xl leading-10 text-black mb-6">
-              Latest Reviews
-            </h4>
-            {displayedReviews.map((review) => {
-              const reviewUser = reviewUsers[review.userId] || {};
-              return (
-                <div
-                  key={review._id}
-                  className="pt-11 pb-8 border-b border-gray-100 max-xl:max-w-2xl max-xl:mx-auto"
-                >
-                  <div className="flex items-center gap-3 mb-4">
-                    {renderStars(review.rating)}
+           {/* Reviews Slider Section */}
+           <div className="mb-12">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-manrope font-semibold text-2xl text-black">
+                {filterRating ? `${filterRating}-Star Reviews` : "Latest Reviews"}
+              </h3>
+              
+              {!isExpanded && sortedReviews.length > 1 && (
+                <div className="flex items-center space-x-3">
+                  <span className="text-gray-500 text-sm">
+                    {currentSlide + 1}/{sortedReviews.length}
+                  </span>
+                  <div className="flex space-x-2">
+                    <button 
+                      onClick={prevSlide}
+                      disabled={currentSlide === 0}
+                      className={`rounded-full w-10 h-10 flex items-center justify-center ${currentSlide === 0 ? 'text-gray-300 bg-gray-100' : 'text-gray-700 bg-white border border-gray-200 hover:bg-gray-50'}`}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M15 18L9 12L15 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
+                    <button 
+                      onClick={nextSlide}
+                      disabled={currentSlide >= sortedReviews.length - 1}
+                      className={`rounded-full w-10 h-10 flex items-center justify-center ${currentSlide >= sortedReviews.length - 1 ? 'text-gray-300 bg-gray-100' : 'text-gray-700 bg-white border border-gray-200 hover:bg-gray-50'}`}
+                    >
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 6L15 12L9 18" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    </button>
                   </div>
-                  <div className="flex sm:items-center flex-col min-[400px]:flex-row justify-between gap-5 mb-4">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={
-                          reviewUser.profilePicture ||
-                          "https://via.placeholder.com/150"
-                        }
-                        alt={reviewUser.username}
-                        className="w-8 h-8 rounded-full object-cover"
-                      />
-                      <h6 className="font-semibold text-lg leading-8 text-indigo-600">
-                        {reviewUser.username || "Anonymous"}
-                      </h6>
-                    </div>
-                    <p className="font-normal text-lg leading-8 text-gray-400">
-                      {new Date(review.createdAt).toLocaleDateString()}
-                    </p>
-                  </div>
-                  <p className="font-normal text-lg leading-8 text-gray-400 max-xl:text-justify">
-                    {review.comment}
-                  </p>
-                  {review.images && review.images.length > 0 && (
-                    <div className="mt-4 flex gap-2">
-                      {review.images.map((imgUrl, index) => (
-                        <img
-                          key={index}
-                          src={imgUrl}
-                          alt={`Review image ${index + 1}`}
-                          className="w-16 h-16 object-cover cursor-pointer rounded"
-                          onClick={() => openModal(review.images, index)}
-                        />
-                      ))}
-                    </div>
-                  )}
                 </div>
-              );
-            })}
-          </div>
+              )}
+            </div>
 
-          {/* Load More / You reached all the reviews */}
-          <div className="flex justify-center mt-6">
-            {reviewsLimit < filteredReviews.length ? (
-              <button
-                onClick={() => setReviewsLimit((prev) => prev + 2)}
-                className="rounded-full px-6 py-4 border border-indigo-600 font-semibold text-lg text-indigo-600 whitespace-nowrap text-center shadow-sm transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200"
+            {/* Reviews slider container */}
+            <div className={`${isExpanded ? '' : 'overflow-hidden'} relative rounded-2xl`}>
+              <div 
+                ref={sliderRef}
+                className={`${isExpanded ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : 'flex transition-transform duration-500 ease-in-out'}`}
+                style={{
+                  transform: isExpanded ? 'none' : `translateX(-${currentSlide * 100}%)`
+                }}
               >
-                Load More
-              </button>
-            ) : (
-              <p className="text-lg font-semibold text-indigo-600">
-                You reached all the reviews
-              </p>
+                {sortedReviews.length > 0 ? (
+                  sortedReviews.map((review, index) => {
+                    const reviewUser = reviewUsers[review.userId] || {};
+                    
+                    return (
+                      <div
+                        key={review._id || index}
+                        className={`${isExpanded ? '' : 'min-w-full pr-6'}`}
+                      >
+                        <div className="bg-white rounded-2xl p-6 shadow-sm h-full">
+                          <div className="flex items-center gap-1 mb-4">
+                            {renderStars(review.rating)}
+                          </div>
+                          
+                          <div className="flex justify-between items-center mb-4">
+                            <div className="flex items-center gap-3">
+                              <img
+                                src={reviewUser.profilePicture || "https://via.placeholder.com/150"}
+                                alt={reviewUser.username || "User"}
+                                className="w-10 h-10 rounded-full object-cover"
+                              />
+                              <div>
+                                <h6 className="font-semibold text-indigo-600">
+                                  {reviewUser.username || "Anonymous"}
+                                </h6>
+                                <p className="text-xs text-gray-500">
+                                  {new Date(review.createdAt).toLocaleDateString(undefined, {
+                                    year: 'numeric',
+                                    month: 'short',
+                                    day: 'numeric'
+                                  })}
+                                </p>
+                              </div>
+                            </div>
+                          </div>
+                          
+                          <p className="text-gray-600 mb-4 line-clamp-3">
+                            {review.comment}
+                          </p>
+                          
+                          {review.images && review.images.length > 0 && (
+                            <div className="flex gap-2 mt-4 flex-wrap">
+                              {review.images.map((imgUrl, imgIndex) => (
+                                <img
+                                  key={imgIndex}
+                                  src={imgUrl}
+                                  alt={`Review image ${imgIndex + 1}`}
+                                  className="w-16 h-16 object-cover cursor-pointer rounded-lg hover:opacity-90 transition-opacity"
+                                  onClick={() => openModal(review.images, imgIndex)}
+                                />
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    );
+                  })
+                ) : (
+                  <div className="bg-white rounded-2xl p-8 text-center w-full shadow-sm">
+                    <p className="text-gray-500">No reviews available</p>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Expanded view controls */}
+            {isExpanded && sortedReviews.length > 2 && (
+              <div className="mt-8 text-center">
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="rounded-full px-8 py-3 bg-yellow-400 font-semibold text-white shadow-sm transition-all duration-300 hover:bg-indigo-700"
+                >
+                  Show Less
+                </button>
+              </div>
             )}
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between pt-8 max-xl:max-w-3xl max-xl:mx-auto">
-            <p className="font-normal text-lg py-[1px] text-black">
-              {reviews.length} reviews
+          {/* Review statistics and sorting controls */}
+          <div className="flex flex-col sm:flex-row items-center justify-between pt-4 border-t border-gray-200">
+            <p className="font-normal text-gray-600 mb-4 sm:mb-0">
+              {reviews.length} {reviews.length === 1 ? 'review' : 'reviews'}
+              {filterRating ? ` (${filteredReviews.length} with ${filterRating} stars)` : ''}
             </p>
-            <form>
-              <div className="flex">
-                <div className="relative">
-                  <div className="absolute -left-0 px-2 top-0 py-2">
-                    <p className="font-normal text-lg leading-8 text-gray-500">
-                      Sort by:
-                    </p>
-                  </div>
-                  <input
-                    type="text"
-                    className="block w-60 h-11 pr-4 pl-20 py-2.5 text-lg leading-8 font-medium rounded-full cursor-pointer shadow-xs text-black bg-transparent placeholder-black focus:outline-gray-200"
-                    placeholder="Most Relevant"
-                  />
-                  <div
-                    id="dropdown-button"
-                    data-target="dropdown"
-                    className="dropdown-toggle flex-shrink-0 cursor-pointer z-10 inline-flex items-center py-2.5 px-4 text-base font-medium text-center text-gray-900 bg-transparent absolute right-0 top-2 pl-2"
-                    type="button"
-                  >
-                    <svg
-                      className="ml-2"
-                      width="12"
-                      height="7"
-                      viewBox="0 0 12 7"
-                      fill="none"
-                      xmlns="http://www.w3.org/2000/svg"
-                    >
-                      <path
-                        d="M1 1.5L4.58578 5.08578C5.25245 5.75245 5.58579 6.08579 6 6.08579C6.41421 6.08579 6.74755 5.75245 7.41421 5.08579L11 1.5"
-                        stroke="#6B7280"
-                        strokeWidth="1.5"
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                      />
-                    </svg>
-                  </div>
-                  <div
-                    id="dropdown"
-                    className="absolute top-9 right-0 z-10 hidden bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700"
-                  >
-                    <ul
-                      className="py-2 text-sm text-gray-700 dark:text-gray-200"
-                      aria-labelledby="dropdown-button"
-                    >
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                        >
-                          Most Relevant
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                        >
-                          Last week
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="#"
-                          className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                        >
-                          Oldest
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
+            
+            <div className="relative">
+              <label className="font-normal text-gray-600 mr-3">Sort by:</label>
+              <select className="py-2 pl-3 pr-10 border border-gray-300 rounded-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 appearance-none cursor-pointer">
+                <option value="relevance">Most Relevant</option>
+                <option value="newest">Newest First</option>
+                <option value="highest">Highest Rated</option>
+                <option value="lowest">Lowest Rated</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
               </div>
-            </form>
+            </div>
           </div>
         </div>
       </div>
@@ -435,36 +456,46 @@ const ReviewsSection = () => {
       {/* Image Modal */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center z-50">
-          <button
-            className="absolute top-5 right-5 text-white text-3xl"
-            onClick={closeModal}
-          >
-            &times;
-          </button>
-          <button
-            onClick={() =>
-              setModalCurrentIndex(
-                (modalCurrentIndex - 1 + modalImages.length) %
-                  modalImages.length
-              )
-            }
-            className="absolute left-5 text-white text-3xl"
-          >
-            &#8249;
-          </button>
-          <img
-            src={modalImages[modalCurrentIndex]}
-            alt="Review"
-            className="max-h-full max-w-full"
-          />
-          <button
-            onClick={() =>
-              setModalCurrentIndex((modalCurrentIndex + 1) % modalImages.length)
-            }
-            className="absolute right-5 text-white text-3xl"
-          >
-            &#8250;
-          </button>
+          <div className="relative w-full max-w-4xl max-h-screen p-4">
+            <button
+              className="absolute top-0 right-0 text-white text-3xl bg-black bg-opacity-50 w-10 h-10 flex items-center justify-center rounded-full z-10"
+              onClick={closeModal}
+            >
+              &times;
+            </button>
+            
+            <div className="relative">
+              <button
+                onClick={() => setModalCurrentIndex((modalCurrentIndex - 1 + modalImages.length) % modalImages.length)}
+                className="absolute left-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 w-12 h-12 flex items-center justify-center rounded-full"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M15 18L9 12L15 6" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+              
+              <img
+                src={modalImages[modalCurrentIndex]}
+                alt="Review"
+                className="max-h-[80vh] mx-auto object-contain rounded-lg"
+              />
+              
+              <button
+                onClick={() => setModalCurrentIndex((modalCurrentIndex + 1) % modalImages.length)}
+                className="absolute right-4 top-1/2 transform -translate-y-1/2 text-white bg-black bg-opacity-50 w-12 h-12 flex items-center justify-center rounded-full"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M9 6L15 12L9 18" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </button>
+            </div>
+            
+            <div className="mt-4 text-center">
+              <p className="text-white">
+                {modalCurrentIndex + 1} / {modalImages.length}
+              </p>
+            </div>
+          </div>
         </div>
       )}
     </section>
