@@ -162,3 +162,16 @@ export const getUserEmail = async (userId) => {
     throw error;
   }
 };
+
+export const getUserName = async (userId) => {
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+    return user.username;
+  } catch (error) {
+    console.error("Error fetching user name:", error);
+    throw error;
+  }
+};

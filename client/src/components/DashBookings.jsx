@@ -117,7 +117,9 @@ export default function DashBookings() {
                 <Table.Body className="divide-y">
                   {bookingList.map((booking) => (
                     <Table.Row key={booking._id} className="bg-white">
-                      <Table.Cell>{booking.email}</Table.Cell>
+                      <Table.Cell>
+                        {booking.email ? booking.email : booking.userEmail}
+                      </Table.Cell>
                       <Table.Cell>{booking.mobileNumber}</Table.Cell>
                       <Table.Cell>
                         {booking.selectedDestinations.join(", ")}

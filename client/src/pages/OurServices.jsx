@@ -122,37 +122,47 @@ const ServiceCard = ({ service, index, slideIndex }) => {
       className="mb-12"
     >
       <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
-        <div className={`flex flex-col ${isEven ? "lg:flex-row" : "lg:flex-row-reverse"}`}>
+        <div
+          className={`flex flex-col ${
+            isEven ? "lg:flex-row" : "lg:flex-row-reverse"
+          }`}
+        >
           <div className="lg:w-1/2 relative">
             <div className="lg:h-96 bg-center">
-              <img 
-                src={getImage()} 
+              <img
+                src={getImage()}
                 alt={service.title}
                 className="w-full h-full object-cover"
               />
             </div>
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/20 to-transparent" />
           </div>
-          
+
           <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
             <div className="flex items-center mb-6">
               <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center shadow-md">
-                <img src={service.icon} alt="" className="w-8 h-8 object-contain" />
+                <img
+                  src={service.icon}
+                  alt=""
+                  className="w-8 h-8 object-contain"
+                />
               </div>
-              <h2 className="text-2xl lg:text-3xl font-bold ml-4 text-gray-800">{service.title}</h2>
+              <h2 className="text-2xl lg:text-3xl font-bold ml-4 text-gray-800">
+                {service.title}
+              </h2>
             </div>
-            
+
             <p className="text-gray-600 leading-relaxed">
               {service.description}
             </p>
-            
+
             <div className="mt-8 self-start">
-  {service.id === "vehicles" ? (
-    <button className="px-6 py-2 bg-amber-400 hover:bg-amber-500 text-white font-medium rounded-full transition-colors duration-300">
-      Learn More
-    </button>
-  ) : null}
-</div>
+              {service.id === "vehicles" ? (
+                <button className="px-6 py-2 bg-amber-400 hover:bg-amber-500 text-white font-medium rounded-full transition-colors duration-300">
+                  Learn More
+                </button>
+              ) : null}
+            </div>
           </div>
         </div>
       </div>
@@ -185,7 +195,7 @@ export default function OurServices() {
   useEffect(() => {
     const observerOptions = {
       root: null,
-      rootMargin: '0px',
+      rootMargin: "0px",
       threshold: 0.5,
     };
 
@@ -197,8 +207,11 @@ export default function OurServices() {
       });
     };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
-    
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
+
     services.forEach((service) => {
       const element = document.getElementById(service.id);
       if (element) observer.observe(element);
@@ -227,12 +240,12 @@ export default function OurServices() {
       {/* Hero Section */}
       <div className="relative h-[70vh] w-full overflow-hidden">
         <div className="absolute inset-0">
-          <motion.div 
+          <motion.div
             animate={{ scale: 1.05 }}
-            transition={{ 
-              duration: 10, 
-              repeat: Infinity, 
-              repeatType: "reverse" 
+            transition={{
+              duration: 10,
+              repeat: Infinity,
+              repeatType: "reverse",
             }}
             style={{
               backgroundImage: `url(${images.slides1[slideIndex.slides1]})`,
@@ -241,7 +254,7 @@ export default function OurServices() {
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-transparent" />
         </div>
-        
+
         <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col justify-center items-center h-full pt-16">
             <motion.div
@@ -254,10 +267,11 @@ export default function OurServices() {
                 Our Premium <span className="text-amber-400">Services</span>
               </h1>
               <p className="text-white text-lg md:text-xl max-w-3xl mb-10">
-                Experience luxury travel throughout Sri Lanka with our comprehensive range of premium services tailored to your needs.
+                Experience luxury travel throughout Sri Lanka with our
+                comprehensive range of premium services tailored to your needs.
               </p>
             </motion.div>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -269,12 +283,17 @@ export default function OurServices() {
                   key={service.id}
                   onClick={() => scrollToService(service.id)}
                   className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
-                    activeService === service.id 
-                      ? "bg-white/30 text-white  hover:bg-white/40 shadow-lg transform scale-105" 
-                      : "bg-white/30 text-white hover:bg-white/40"
+                    activeService === service.id
+                      ? "bg-white/30 text-white  hover:bg-amber-300 shadow-lg transform scale-105"
+                      : "bg-white/30 text-white hover:bg-amber-300"
                   }`}
                 >
-                  <img src={service.icon} alt="" className="w-5 h-5 object-contain" />
+                  <img
+                    src={service.icon}
+                    alt=""
+                    className="w-8 h-8 object-contain filter invert sepia brightness-0 hue-rotate-180"
+                  />
+
                   <span>{service.title}</span>
                 </button>
               ))}
@@ -287,9 +306,14 @@ export default function OurServices() {
       {/* Services Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="mb-16 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">Luxury Travel Made Simple</h2>
+          <h2 className="text-3xl font-bold text-gray-800 mb-4">
+            Luxury Travel Made Simple
+          </h2>
           <p className="text-gray-600 max-w-3xl mx-auto">
-            Discover our comprehensive range of premium services designed to make your Sri Lankan journey unforgettable. From gourmet cuisine to luxury accommodations and transportation, we've got every aspect of your travel experience covered.
+            Discover our comprehensive range of premium services designed to
+            make your Sri Lankan journey unforgettable. From gourmet cuisine to
+            luxury accommodations and transportation, we've got every aspect of
+            your travel experience covered.
           </p>
         </div>
 
@@ -303,23 +327,26 @@ export default function OurServices() {
             />
           ))}
         </div>
-        
+
         {/* Call to Action */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
           className="mt-20 bg-gradient-to-r from-amber-500 to-amber-400 rounded-2xl p-8 md:p-12 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">Ready to Experience Luxury?</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+            Ready to Experience Luxury?
+          </h2>
           <p className="text-white text-lg mb-8 max-w-2xl mx-auto">
-            Contact us today to customize your perfect Sri Lankan journey with our premium services tailored to your preferences.
+            Contact us today to customize your perfect Sri Lankan journey with
+            our premium services tailored to your preferences.
           </p>
           <a href="/customize">
-          <button className="bg-white text-amber-500 font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
-            Book Your Experience
-          </button>
+            <button className="bg-white text-amber-500 font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
+              Book Your Experience
+            </button>
           </a>
         </motion.div>
       </div>
