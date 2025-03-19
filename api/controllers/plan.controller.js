@@ -1,7 +1,7 @@
 import TripPlan from "../models/plan.model.js";
 import nodemailer from "nodemailer";
 import { errorHandler } from "../utils/error.js";
-import { getUserEmail } from "./user.controller.js";
+import { getUserEmail, getUserName } from "./user.controller.js";
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -18,11 +18,8 @@ const transporter = nodemailer.createTransport({
 const sendTripPlanEmail = async (tripPlanData) => {
   try {
     const userEmail = await getUserEmail(tripPlanData.userId); // Fetch the user's email
-
-    let defaultUserEmail = tripPlanData.email;
-    if (tripPlanData.email == null) {
-      defaultUserEmail = userEmail;
-    }
+    const userName = await getUserName(tripPlanData.userId);
+    const userEnteredEmail = tripPlanData.email;
 
     const generateTableRow = (label, value) => {
       return value
@@ -38,14 +35,15 @@ const sendTripPlanEmail = async (tripPlanData) => {
     const mailOptions = {
       from: "renukatoursandtravels1@gmail.com", // Sender's email
       to: "renukatours94@gmail.com", // The recipient's email (can be dynamic)
-      cc: defaultUserEmail,
+      cc: userEnteredEmail ? userEnteredEmail : userEmail,
       subject: `New Trip Plan Created by User ${tripPlanData.userId}`,
       text: `A new trip plan has been created with the following details:\n\n
-        User: ${tripPlanData.userId}\n
+        User: ${userName}\n
         User Email: ${userEmail}\n
         User Entered Email: ${tripPlanData.email}\n
         Mobile Number: ${tripPlanData.mobileNumber}\n
-        WhatsApp Number: ${tripPlanData.whatsappNumber}\n
+        WhatsApp/Telegram/WeChat: ${tripPlanData.comType}\n
+        WhatsApp/Telegram/WeChat Number: ${tripPlanData.whatsappNumber}\n
         Arrival Date: ${tripPlanData.arrivalDate}\n
         Departure Date: ${tripPlanData.departureDate}\n
         Number of People: ${tripPlanData.numberOfPeople}\n
@@ -53,6 +51,7 @@ const sendTripPlanEmail = async (tripPlanData) => {
         Number of Children: ${tripPlanData.numberOfChildren}\n
         Selected Destinations: ${tripPlanData.selectedDestinations.join(", ")}\n
         Accommodation Type: ${tripPlanData.accommodationType}\n
+        Meal Plan: ${tripPlanData.mealPlan}\n
         Vehicle Type: ${tripPlanData.vehicleType}\n
         Status: ${tripPlanData.status}\n`,
       html: `
@@ -60,7 +59,7 @@ const sendTripPlanEmail = async (tripPlanData) => {
           <h1 style="color: #333; text-align: center;">New Trip Plan Created</h1>
           <p style="font-size: 16px; color: #555;">A new trip plan has been created with the following details:</p>
           <table style="width: 100%; border-collapse: collapse; margin-top: 20px;">
-            ${generateTableRow("User", tripPlanData.userId)}
+            ${generateTableRow("User", userName)}
             ${generateTableRow(
               "Created At",
               new Date(tripPlanData.createdAt).toLocaleString()
@@ -68,7 +67,10 @@ const sendTripPlanEmail = async (tripPlanData) => {
             ${generateTableRow("User Email", userEmail)}
             ${generateTableRow("User Entered Email", tripPlanData.email)}
             ${generateTableRow("Mobile Number", tripPlanData.mobileNumber)}
-            ${generateTableRow("WhatsApp Number", tripPlanData.whatsappNumber)}
+            ${generateTableRow(
+              tripPlanData.comType,
+              tripPlanData.whatsappNumber
+            )}
             ${generateTableRow(
               "Arrival Date",
               tripPlanData.arrivalDate
@@ -94,10 +96,33 @@ const sendTripPlanEmail = async (tripPlanData) => {
                 : null
             )}
             ${generateTableRow(
+              "Location Preferences",
+              tripPlanData.additionalLocations
+                ? tripPlanData.additionalLocations
+                : null
+            )}
+            ${generateTableRow(
               "Accommodation Type",
               tripPlanData.accommodationType
             )}
+            ${generateTableRow("Meal Plan", tripPlanData.mealPlan)}
+            ${generateTableRow(
+              "Accommodation Preferences",
+              tripPlanData.accommodationPreference
+                ? tripPlanData.accommodationPreference
+                : null
+            )}
             ${generateTableRow("Vehicle Type", tripPlanData.vehicleType)}
+            ${generateTableRow(
+              "Number of Vehicles",
+              tripPlanData.numberOfVehicles
+            )}
+            ${generateTableRow(
+              "Transport Preferences",
+              tripPlanData.transportPreference
+                ? tripPlanData.transportPreference
+                : null
+            )}
             ${generateTableRow("Status", tripPlanData.status)}
           </table>
           <p style="font-size: 16px; color: #555; margin-top: 20px;">Thank you for using Renuka Tours and Travels!</p>
