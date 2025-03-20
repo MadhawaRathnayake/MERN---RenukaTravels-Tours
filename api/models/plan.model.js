@@ -6,6 +6,10 @@ const tripPlanSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    userName: {
+      type: String,
+      required: true,
+    },
     // General Information
     arrivalDate: {
       type: Date,
@@ -77,6 +81,7 @@ const tripPlanSchema = new mongoose.Schema(
     },
     email: {
       type: String,
+      required: true,
     },
     status: {
       type: String,

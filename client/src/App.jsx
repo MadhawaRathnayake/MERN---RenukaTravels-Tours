@@ -27,6 +27,7 @@ import OurServices from "./pages/OurServices";
 import DestinationHome from "./pages/DestinationsHome";
 import WriteReview from "./components/Review/write";
 import ReviewsSection from "./components/Review/ReviewComp";
+import BookingDetails from "./pages/BookingDetails";
 
 export default function App() {
   return (
@@ -48,6 +49,7 @@ export default function App() {
           ></Route>
           <Route element={<PrivateRoute />}>
             <Route path="/dashboard" element={<Dashboard />}></Route>
+            <Route path="/dashboard/booking/:id" element={<BookingDetails />} />
             <Route path="/customize" element={<CustomizeForm />}></Route>
           </Route>
           <Route element={<OnlyAdminPrivateRoute />}>
