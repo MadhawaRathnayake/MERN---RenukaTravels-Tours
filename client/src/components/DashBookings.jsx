@@ -3,26 +3,9 @@ import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 import React from "react";
-import {
-  Alert,
-  Button,
-  TextInput,
-  Table,
-  Modal,
-  FileInput,
-} from "flowbite-react";
-import ReactQuill from "react-quill";
-import {
-  getDownloadURL,
-  getStorage,
-  ref,
-  uploadBytesResumable,
-} from "firebase/storage";
+import { Button, Table, Modal } from "flowbite-react";
 import "react-quill/dist/quill.snow.css";
-import { app } from "../firebase";
-import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { useNavigate } from "react-router-dom";
 
 export default function DashBookings() {
   const { currentUser } = useSelector((state) => state.user);
@@ -93,6 +76,13 @@ export default function DashBookings() {
     }
   };
 
+  const fetchBookingEmail = async (userId, currentEmail) => {
+    if (!currentEmail) {
+      return await getUserEmail(userId);
+    }
+    return currentEmail;
+  };
+
   return (
     <>
       <div className="w-full flex flex-col sm:flex-row justify-between items-center px-4 sm:px-16 my-4 gap-4">
@@ -107,23 +97,29 @@ export default function DashBookings() {
             <div className="min-w-full">
               <Table hoverable className="shadow-md">
                 <Table.Head>
+                  <Table.HeadCell>Booking ID</Table.HeadCell>
                   <Table.HeadCell>User Email</Table.HeadCell>
                   <Table.HeadCell>Contact Number</Table.HeadCell>
-                  <Table.HeadCell>Destinations</Table.HeadCell>
                   <Table.HeadCell>Arrival Date</Table.HeadCell>
                   <Table.HeadCell>Status</Table.HeadCell>
                   <Table.HeadCell>Actions</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
                   {bookingList.map((booking) => (
-                    <Table.Row key={booking._id} className="bg-white">
+                    <Table.Row
+                      key={booking._id}
+                      className="bg-white hover:bg-gray-100 cursor-pointer"
+                    >
                       <Table.Cell>
-                        {booking.email ? booking.email : booking.userEmail}
+                        <Link
+                          to={`/dashboard/booking/${booking._id}`}
+                          className="text-blue-500 hover:underline"
+                        >
+                          {booking._id}
+                        </Link>
                       </Table.Cell>
+                      <Table.Cell>{booking.email}</Table.Cell>
                       <Table.Cell>{booking.mobileNumber}</Table.Cell>
-                      <Table.Cell>
-                        {booking.selectedDestinations.join(", ")}
-                      </Table.Cell>
                       <Table.Cell>
                         {new Date(booking.arrivalDate).toLocaleDateString()}
                       </Table.Cell>
@@ -141,17 +137,15 @@ export default function DashBookings() {
                         </span>
                       </Table.Cell>
                       <Table.Cell>
-                        <div className="flex gap-2">
-                          <span
-                            onClick={() => {
-                              setShowModal(true);
-                              setBookingIdToDelete(booking._id);
-                            }}
-                            className="font-medium text-red-500 hover:underline cursor-pointer"
-                          >
-                            Delete
-                          </span>
-                        </div>
+                        <span
+                          onClick={() => {
+                            setShowModal(true);
+                            setBookingIdToDelete(booking._id);
+                          }}
+                          className="font-medium text-red-500 hover:underline cursor-pointer"
+                        >
+                          Delete
+                        </span>
                       </Table.Cell>
                     </Table.Row>
                   ))}
