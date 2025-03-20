@@ -50,6 +50,7 @@ export default function CustomizeForm() {
     try {
       const form = document.querySelector("form");
       const formData = {
+        userName: form.userName.value,
         // General Information
         arrivalDate: form.arrivalDate.value,
         departureDate: form.departureDate.value,
@@ -353,6 +354,18 @@ export default function CustomizeForm() {
         <h3 className="py-2 yellow-bg text-xl text-white text-center">
           General Information
         </h3>
+        <div className={commonStyles.gridItem}>
+          <p className={commonStyles.label}>
+            Your Name:{" "}
+            <span className="text-red-600 text-xs"> (*required)</span>
+          </p>
+          <TextInput
+            type="text"
+            name="userName"
+            placeholder=""
+            className="flex-1 px-4"
+          />
+        </div>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
             <p className={commonStyles.label}>
@@ -567,9 +580,9 @@ export default function CustomizeForm() {
                 value={selectedComType}
                 onChange={(e) => setSelectedComType(e.target.value)}
               >
-                <option value="whatsApp">WhatsApp</option>
-                <option value="telegram">Telegram</option>
-                <option value="weChat">WeChat</option>
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Telegram">Telegram</option>
+                <option value="WeChat">WeChat</option>
               </select>
               <TextInput
                 type="text"
@@ -580,7 +593,9 @@ export default function CustomizeForm() {
             </div>
           </div>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Email:</p>
+            <p className={commonStyles.label}>
+              Email: <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <TextInput
               type="text"
               name="email"
