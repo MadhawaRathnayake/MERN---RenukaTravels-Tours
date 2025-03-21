@@ -25,8 +25,12 @@ const ReviewsSection = () => {
   const [modalCurrentIndex, setModalCurrentIndex] = useState(0);
   const [isWriteReviewMode, setIsWriteReviewMode] = useState(false);
 
-  // New state to control how many reviews to display
+  // Modified state to control how many reviews to display - initially showing 2
   const [reviewsLimit, setReviewsLimit] = useState(2);
+  
+  // New state for incremental loading
+  const [loadIncrement, setLoadIncrement] = useState(2);
+  const [reachedEnd, setReachedEnd] = useState(false);
 
   // New state for filtering by star rating (null means no filter)
   const [filterRating, setFilterRating] = useState(null);
@@ -35,11 +39,15 @@ const ReviewsSection = () => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [currentSlide, setCurrentSlide] = useState(0);
   const sliderRef = useRef(null);
+  const autoSlideIntervalRef = useRef(null);
+
+  // Add sort state
+  const [sortOption, setSortOption] = useState("newest");
 
   const fetchReviews = async () => {
     try {
       const response = await axios.get("/api/review/getReviews");
-      const reviewsData = response.data.reviews;
+      const reviewsData = response.data.reviews || [];
 
       // Overall average rating
       const totalRating = reviewsData.reduce(
@@ -55,7 +63,9 @@ const ReviewsSection = () => {
       // Rating distribution
       const distribution = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
       reviewsData.forEach((review) => {
-        distribution[review.rating]++;
+        if (review && typeof review.rating === 'number') {
+          distribution[review.rating]++;
+        }
       });
       setRatingDistribution(distribution);
 
@@ -72,6 +82,7 @@ const ReviewsSection = () => {
         lastMonthYear = now.getFullYear();
       }
       const lastMonthReviews = reviewsData.filter((review) => {
+        if (!review || !review.createdAt) return false;
         const reviewDate = new Date(review.createdAt);
         return (
           reviewDate.getMonth() === lastMonth &&
@@ -92,29 +103,79 @@ const ReviewsSection = () => {
       }
 
       // Fetch user data for each review
-      const userPromises = reviewsData.map(async (review) => {
-        const userResponse = await axios.get(`/api/user/${review.userId}`);
-        return { userId: review.userId, data: userResponse.data };
-      });
+      if (reviewsData.length > 0) {
+        const userPromises = reviewsData
+          .filter(review => review && review.userId) // Filter out undefined or invalid reviews
+          .map(async (review) => {
+            try {
+              const userResponse = await axios.get(`/api/user/${review.userId}`);
+              return { userId: review.userId, data: userResponse.data };
+            } catch (error) {
+              console.error(`Error fetching user data for userId: ${review.userId}`, error);
+              // Return a default user object if fetching fails
+              return { userId: review.userId, data: { username: "Unknown User", profilePicture: null } };
+            }
+          });
 
-      const users = await Promise.all(userPromises);
-      const usersMap = users.reduce((acc, { userId, data }) => {
-        acc[userId] = data;
-        return acc;
-      }, {});
+        const users = await Promise.all(userPromises);
+        const usersMap = users.reduce((acc, { userId, data }) => {
+          if (userId) {
+            acc[userId] = data;
+          }
+          return acc;
+        }, {});
 
-      setReviewUsers(usersMap);
+        setReviewUsers(usersMap);
+      }
     } catch (error) {
       console.error("Error fetching reviews:", error);
+      // Set reviews to empty array if fetch fails
+      setReviews([]);
     }
   };
 
   useEffect(() => {
     fetchReviews();
     // Optionally, set up polling for real-time updates:
-    const interval = setInterval(fetchReviews, 10000); // every 10 seconds
+    const interval = setInterval(fetchReviews, 8000); // every 8 seconds
     return () => clearInterval(interval);
   }, []);
+
+  // Auto slide functionality
+  useEffect(() => {
+    if (!isExpanded && sortedReviews && sortedReviews.length > 0) {
+      // Start auto slide
+      startAutoSlide();
+      
+      // Clear interval when component unmounts or when expanded
+      return () => {
+        if (autoSlideIntervalRef.current) {
+          clearInterval(autoSlideIntervalRef.current);
+        }
+      };
+    }
+  }, [isExpanded, reviews, filterRating, sortOption]); // Added sortOption to dependencies
+
+  const startAutoSlide = () => {
+    // Clear any existing interval
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+    }
+    
+    // Set new interval for auto sliding
+    autoSlideIntervalRef.current = setInterval(() => {
+      if (!isExpanded && sortedReviews.length > 0) {
+        // Advance to next slide or go back to first
+        const nextSlideIndex = (currentSlide + 1) % sortedReviews.length;
+        setCurrentSlide(nextSlideIndex);
+        
+        // Update slider position
+        if (sliderRef.current) {
+          sliderRef.current.style.transform = `translateX(-${nextSlideIndex * 100}%)`;
+        }
+      }
+    }, 5000); // Auto slide every 5 seconds
+  };
 
   // Add navigation functions for the slider
   const nextSlide = () => {
@@ -124,6 +185,8 @@ const ReviewsSection = () => {
         sliderRef.current.style.transform = `translateX(-${(currentSlide + 1) * 100}%)`;
       }
     }
+    // Reset auto slide timer when manually navigating
+    startAutoSlide();
   };
 
   const prevSlide = () => {
@@ -133,6 +196,8 @@ const ReviewsSection = () => {
         sliderRef.current.style.transform = `translateX(-${(currentSlide - 1) * 100}%)`;
       }
     }
+    // Reset auto slide timer when manually navigating
+    startAutoSlide();
   };
 
   // This callback is passed to WriteReview to add the new review immediately.
@@ -163,12 +228,22 @@ const ReviewsSection = () => {
     setModalImages(images);
     setModalCurrentIndex(index);
     setIsModalOpen(true);
+    
+    // Pause auto slide when modal is open
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+    }
   };
 
   const closeModal = () => {
     setIsModalOpen(false);
     setModalImages([]);
     setModalCurrentIndex(0);
+    
+    // Resume auto slide when modal is closed
+    if (!isExpanded) {
+      startAutoSlide();
+    }
   };
 
   // Handler for filtering reviews by star rating.
@@ -181,24 +256,101 @@ const ReviewsSection = () => {
     }
     // Reset the reviews limit when filter changes.
     setReviewsLimit(2);
+    setReachedEnd(false);
+    setCurrentSlide(0);
+    
+    // Reset auto slide timer when filter changes
+    startAutoSlide();
+  };
+
+  // Handler for "See All Reviews" button
+  const handleSeeAllReviews = () => {
+    setIsExpanded(true);
+    setReviewsLimit(4); // Initially show 4 reviews when expanded
+    setReachedEnd(sortedReviews.length <= 4); // Set reached end if there are 4 or fewer reviews
+    
+    // Pause auto slide when expanded view is active
+    if (autoSlideIntervalRef.current) {
+      clearInterval(autoSlideIntervalRef.current);
+    }
+  };
+
+  // Handler for "Load More" button
+  const handleLoadMore = () => {
+    const newLimit = reviewsLimit + 2;
+    setReviewsLimit(newLimit);
+    
+    // Check if we've reached the end of the reviews
+    if (newLimit >= sortedReviews.length) {
+      setReachedEnd(true);
+    }
+  };
+
+  // Handler for "Show Less" button
+  const handleShowLess = () => {
+    setIsExpanded(false);
+    setReviewsLimit(2);
+    setReachedEnd(false);
+    setCurrentSlide(0);
+    
+    // Resume auto slide when going back to collapsed view
+    startAutoSlide();
+  };
+
+  // Handler for sort option change
+  const handleSortChange = (e) => {
+    setSortOption(e.target.value);
+    setCurrentSlide(0);
+    
+    // Reset auto slide timer when sort changes
+    if (!isExpanded) {
+      startAutoSlide();
+    }
   };
 
   // Apply filtering based on the selected star rating.
   const filteredReviews = filterRating
-    ? reviews.filter((review) => review.rating === filterRating)
+    ? reviews.filter((review) => review && review.rating === filterRating)
     : reviews;
-  const sortedReviews = [...filteredReviews].sort(
-    (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-  );
-  const displayedReviews = sortedReviews.slice(0, reviewsLimit);
+  
+  // Apply sorting based on the selected sort option
+  const sortedReviews = [...filteredReviews]
+    .filter(review => review && review.rating) // Make sure we only have valid reviews
+    .sort((a, b) => {
+      switch (sortOption) {
+        case "newest":
+          return new Date(b.createdAt || 0) - new Date(a.createdAt || 0);
+        case "oldest":
+          return new Date(a.createdAt || 0) - new Date(b.createdAt || 0);
+        case "highest":
+          return b.rating - a.rating;
+        case "lowest":
+          return a.rating - b.rating;
+        case "relevance":
+        default:
+          // For relevance, we can combine recency and rating
+          const dateA = new Date(a.createdAt || 0);
+          const dateB = new Date(b.createdAt || 0);
+          const now = new Date();
+          // Calculate a relevance score - higher is more relevant
+          // Weight recent reviews and high ratings more
+          const scoreA = (a.rating * 0.6) + (1 - ((now - dateA) / (1000 * 60 * 60 * 24 * 30))) * 0.4;
+          const scoreB = (b.rating * 0.6) + (1 - ((now - dateB) / (1000 * 60 * 60 * 24 * 30))) * 0.4;
+          return scoreB - scoreA;
+      }
+    });
+  
+  const displayedReviews = isExpanded 
+    ? sortedReviews.slice(0, reviewsLimit)
+    : sortedReviews; // Remove slice in non-expanded mode
 
   return (
     <section className="py-12 relative">
       <div className="w-full max-w-7xl px-4 md:px-5 lg:px-6 mx-auto">
         <div>
           <h2 className="font-manrope font-bold text-3xl sm:text-4xl leading-10 text-black mb-8 text-center">
-            Customer <span className="text-yellow-400">reviews</span> &amp;
-            rating
+            Customer <span className="text-yellow-400">Reviews</span> &amp;
+            Rating
           </h2>
 
           <div className="grid grid-cols-12 mb-11">
@@ -293,7 +445,7 @@ const ReviewsSection = () => {
                         Write A Review
                       </button>
                       <button
-                        onClick={() => setIsExpanded(true)}
+                        onClick={handleSeeAllReviews}
                         className="rounded-full px-6 py-4 bg-white font-semibold text-lg text-indigo-600 whitespace-nowrap w-full text-center shadow-sm shadow-transparent transition-all duration-500 hover:bg-indigo-100 hover:shadow-indigo-200"
                       >
                         See All Reviews
@@ -314,9 +466,7 @@ const ReviewsSection = () => {
               
               {!isExpanded && sortedReviews.length > 1 && (
                 <div className="flex items-center space-x-3">
-                  <span className="text-gray-500 text-sm">
-                    {currentSlide + 1}/{sortedReviews.length}
-                  </span>
+                  
                   <div className="flex space-x-2">
                     <button 
                       onClick={prevSlide}
@@ -341,23 +491,28 @@ const ReviewsSection = () => {
               )}
             </div>
 
-            {/* Reviews slider container */}
+           {/* Reviews slider container */}
             <div className={`${isExpanded ? '' : 'overflow-hidden'} relative rounded-2xl`}>
               <div 
                 ref={sliderRef}
                 className={`${isExpanded ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : 'flex transition-transform duration-500 ease-in-out'}`}
                 style={{
-                  transform: isExpanded ? 'none' : `translateX(-${currentSlide * 100}%)`
+                  transform: isExpanded ? 'none' : `translateX(-${currentSlide * 50}%)`
                 }}
               >
                 {sortedReviews.length > 0 ? (
-                  sortedReviews.map((review, index) => {
+                  displayedReviews.map((review, index) => {
+                    // Check if review and userId exist before trying to access them
+                    if (!review || !review.userId) {
+                      return null; // Skip invalid reviews
+                    }
+                    
                     const reviewUser = reviewUsers[review.userId] || {};
                     
                     return (
                       <div
                         key={review._id || index}
-                        className={`${isExpanded ? '' : 'min-w-full pr-6'}`}
+                        className={`${isExpanded ? '' : 'min-w-[50%] pr-6'}`}
                       >
                         <div className="bg-white rounded-2xl p-6 shadow-sm h-full">
                           <div className="flex items-center gap-1 mb-4">
@@ -376,18 +531,18 @@ const ReviewsSection = () => {
                                   {reviewUser.username || "Anonymous"}
                                 </h6>
                                 <p className="text-xs text-gray-500">
-                                  {new Date(review.createdAt).toLocaleDateString(undefined, {
+                                  {review.createdAt ? new Date(review.createdAt).toLocaleDateString(undefined, {
                                     year: 'numeric',
                                     month: 'short',
                                     day: 'numeric'
-                                  })}
+                                  }) : "Unknown date"}
                                 </p>
                               </div>
                             </div>
                           </div>
                           
                           <p className="text-gray-600 mb-4 line-clamp-3">
-                            {review.comment}
+                            {review.comment || "No comment provided"}
                           </p>
                           
                           {review.images && review.images.length > 0 && (
@@ -415,15 +570,29 @@ const ReviewsSection = () => {
               </div>
             </div>
 
-            {/* Expanded view controls */}
-            {isExpanded && sortedReviews.length > 2 && (
+            {/* Load More / Show Less Controls */}
+            {isExpanded && sortedReviews.length > 0 && (
               <div className="mt-8 text-center">
-                <button
-                  onClick={() => setIsExpanded(false)}
-                  className="rounded-full px-8 py-3 bg-yellow-400 font-semibold text-white shadow-sm transition-all duration-300 hover:bg-indigo-700"
-                >
-                  Show Less
-                </button>
+                {reachedEnd ? (
+                  <>
+                    <p className="text-gray-500 mb-4">You've reached all the reviews</p>
+                    <button
+                      onClick={handleShowLess}
+                      className="rounded-full px-8 py-3 bg-yellow-400 font-semibold text-white shadow-sm transition-all duration-300 hover:bg-indigo-700"
+                    >
+                      Show Less
+                    </button>
+                  </>
+                ) : (
+                  displayedReviews.length < sortedReviews.length && (
+                    <button
+                      onClick={handleLoadMore}
+                      className="rounded-full px-8 py-3 bg-yellow-400 font-semibold text-white shadow-sm transition-all duration-300 hover:bg-indigo-700"
+                    >
+                      Load More
+                    </button>
+                  )
+                )}
               </div>
             )}
           </div>
@@ -437,7 +606,11 @@ const ReviewsSection = () => {
             
             <div className="relative">
               <label className="font-normal text-gray-600 mr-3">Sort by:</label>
-              <select className="py-2 pl-3 pr-10 border border-gray-300 rounded-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 appearance-none cursor-pointer">
+              <select 
+                className="py-2 pl-3 pr-10 border border-gray-300 rounded-full bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-300 appearance-none cursor-pointer"
+                value={sortOption}
+                onChange={handleSortChange}
+              >
                 <option value="relevance">Most Relevant</option>
                 <option value="newest">Newest First</option>
                 <option value="highest">Highest Rated</option>
