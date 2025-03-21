@@ -128,7 +128,7 @@ const ServiceCard = ({ service, index, slideIndex }) => {
           }`}
         >
           <div className="lg:w-1/2 relative">
-            <div className="lg:h-96 bg-center">
+            <div className="h-64 lg:h-96 bg-center">
               <img
                 src={getImage()}
                 alt={service.title}
@@ -138,27 +138,27 @@ const ServiceCard = ({ service, index, slideIndex }) => {
             <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-black/20 to-transparent" />
           </div>
 
-          <div className="lg:w-1/2 p-8 lg:p-12 flex flex-col justify-center">
-            <div className="flex items-center mb-6">
-              <div className="w-14 h-14 bg-amber-100 rounded-full flex items-center justify-center shadow-md">
+          <div className="lg:w-1/2 p-6 lg:p-12 flex flex-col justify-center">
+            <div className="flex items-center mb-4 lg:mb-6">
+              <div className="w-10 h-10 lg:w-14 lg:h-14 bg-amber-100 rounded-full flex items-center justify-center shadow-md">
                 <img
                   src={service.icon}
                   alt=""
-                  className="w-8 h-8 object-contain"
+                  className="w-6 h-6 lg:w-8 lg:h-8 object-contain"
                 />
               </div>
-              <h2 className="text-2xl lg:text-3xl font-bold ml-4 text-gray-800">
+              <h2 className="text-xl lg:text-3xl font-bold ml-3 lg:ml-4 text-gray-800">
                 {service.title}
               </h2>
             </div>
 
-            <p className="text-gray-600 leading-relaxed">
+            <p className="text-sm lg:text-base text-gray-600 leading-relaxed">
               {service.description}
             </p>
 
-            <div className="mt-8 self-start">
+            <div className="mt-6 lg:mt-8 self-start">
               {service.id === "vehicles" ? (
-                <button className="px-6 py-2 bg-amber-400 hover:bg-amber-500 text-white font-medium rounded-full transition-colors duration-300">
+                <button className="px-4 py-2 lg:px-6 lg:py-2 bg-amber-400 hover:bg-amber-500 text-white text-sm lg:text-base font-medium rounded-full transition-colors duration-300">
                   Learn More
                 </button>
               ) : null}
@@ -178,6 +178,7 @@ export default function OurServices() {
     slides4: 0,
   });
   const [activeService, setActiveService] = useState(null);
+  const [userTouched, setUserTouched] = useState(false);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -226,19 +227,27 @@ export default function OurServices() {
   }, []);
 
   const scrollToService = (id) => {
+    // Set touched state for mobile
+    setUserTouched(true);
+    
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
+      
+      // Clear touched state after scrolling
+      setTimeout(() => {
+        setUserTouched(false);
+      }, 1000);
     }
   };
 
   return (
     <div className="bg-gradient-to-b from-amber-50 to-white min-h-screen">
       {/* Hero Section */}
-      <div className="relative h-[70vh] w-full overflow-hidden">
+      <div className="relative h-[60vh] md:h-[70vh] w-full overflow-hidden">
         <div className="absolute inset-0">
           <motion.div
             animate={{ scale: 1.05 }}
@@ -256,27 +265,61 @@ export default function OurServices() {
         </div>
 
         <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-center items-center h-full pt-16">
+          <div className="flex flex-col justify-center items-center h-full pt-10 md:pt-16">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               className="text-center"
             >
-              <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
+              <h1 className="text-3xl md:text-6xl font-bold text-white mb-4 md:mb-6">
                 Our Premium <span className="text-amber-400">Services</span>
               </h1>
-              <p className="text-white text-lg md:text-xl max-w-3xl mb-10">
+              <p className="text-white text-base md:text-xl max-w-3xl mb-6 md:mb-10 px-2">
                 Experience luxury travel throughout Sri Lanka with our
                 comprehensive range of premium services tailored to your needs.
               </p>
             </motion.div>
 
+            {/* Mobile Service buttons (only shown on small screens) */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="flex justify-center flex-wrap gap-3 max-w-4xl"
+              className="md:hidden w-full px-2"
+            >
+              <div className="grid grid-cols-2 gap-2 w-full max-w-sm mx-auto">
+                {services.map((service) => (
+                  <button
+                    key={service.id}
+                    onClick={() => scrollToService(service.id)}
+                    onTouchStart={() => setUserTouched(true)}
+                    onTouchEnd={() => setTimeout(() => setUserTouched(false), 500)}
+                    className={`flex items-center justify-center space-x-1 px-2 py-1.5 rounded-full transition-all duration-300 ${
+                      activeService === service.id && !userTouched
+                        ? "bg-white/40 text-white shadow-lg"
+                        : "bg-white/30 text-white hover:bg-amber-300"
+                    }`}
+                  >
+                    <img
+                      src={service.icon}
+                      alt=""
+                      className="w-5 h-5 object-contain filter invert sepia brightness-0 hue-rotate-180"
+                    />
+                    <span className="text-xs whitespace-nowrap overflow-hidden text-ellipsis">
+                      {service.title}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Desktop Service buttons (only shown on medium and larger screens) */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.3 }}
+              className="hidden md:flex justify-center flex-wrap gap-3 max-w-4xl"
             >
               {services.map((service) => (
                 <button
@@ -284,7 +327,7 @@ export default function OurServices() {
                   onClick={() => scrollToService(service.id)}
                   className={`flex items-center space-x-2 px-4 py-2 rounded-full transition-all duration-300 ${
                     activeService === service.id
-                      ? "bg-white/30 text-white  hover:bg-amber-300 shadow-lg transform scale-105"
+                      ? "bg-white/30 text-white hover:bg-amber-300 shadow-lg transform scale-105"
                       : "bg-white/30 text-white hover:bg-amber-300"
                   }`}
                 >
@@ -293,7 +336,6 @@ export default function OurServices() {
                     alt=""
                     className="w-8 h-8 object-contain filter invert sepia brightness-0 hue-rotate-180"
                   />
-
                   <span>{service.title}</span>
                 </button>
               ))}
@@ -304,12 +346,12 @@ export default function OurServices() {
       </div>
 
       {/* Services Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="mb-16 text-center">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-16">
+        <div className="mb-12 md:mb-16 text-center">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
             Luxury Travel Made Simple
           </h2>
-          <p className="text-gray-600 max-w-3xl mx-auto">
+          <p className="text-sm md:text-base text-gray-600 max-w-3xl mx-auto">
             Discover our comprehensive range of premium services designed to
             make your Sri Lankan journey unforgettable. From gourmet cuisine to
             luxury accommodations and transportation, we've got every aspect of
@@ -317,7 +359,7 @@ export default function OurServices() {
           </p>
         </div>
 
-        <div className="space-y-12">
+        <div className="space-y-8 md:space-y-12">
           {services.map((service, index) => (
             <ServiceCard
               key={service.id}
@@ -334,17 +376,17 @@ export default function OurServices() {
           whileInView={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           viewport={{ once: true }}
-          className="mt-20 bg-gradient-to-r from-amber-500 to-amber-400 rounded-2xl p-8 md:p-12 text-center"
+          className="mt-16 md:mt-20 bg-gradient-to-r from-amber-500 to-amber-400 rounded-2xl p-6 md:p-12 text-center"
         >
-          <h2 className="text-3xl md:text-4xl font-bold text-white mb-6">
+          <h2 className="text-2xl md:text-4xl font-bold text-white mb-4 md:mb-6">
             Ready to Experience Luxury?
           </h2>
-          <p className="text-white text-lg mb-8 max-w-2xl mx-auto">
+          <p className="text-sm md:text-lg text-white mb-6 md:mb-8 max-w-2xl mx-auto">
             Contact us today to customize your perfect Sri Lankan journey with
             our premium services tailored to your preferences.
           </p>
           <a href="/customize">
-            <button className="bg-white text-amber-500 font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
+            <button className="bg-white text-amber-500 font-bold py-2.5 px-6 md:py-3 md:px-8 text-sm md:text-base rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
               Book Your Experience
             </button>
           </a>
