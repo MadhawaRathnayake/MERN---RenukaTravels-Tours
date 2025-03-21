@@ -442,9 +442,9 @@ export default function DestinationDetails() {
                 Browse Tours
               </button>
             </a>
-            <a href="/contact">
+            <a href="/customize">
               <button className="bg-transparent text-white border-2 border-white font-bold py-3 px-8 rounded-full hover:bg-white/10 transition-all duration-300">
-                Contact Us
+              Plan Your Journey
               </button>
             </a>
           </div>
