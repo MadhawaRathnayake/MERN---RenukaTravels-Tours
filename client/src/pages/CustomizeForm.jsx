@@ -15,7 +15,9 @@ export default function CustomizeForm() {
   const [vehicles, setVehicles] = useState([]);
   const navigate = useNavigate();
   const [selectedStar, setSelectedStar] = useState("");
+  const [selectedMeal, setSelectedMeal] = useState("");
   const [selectedType, setSelectedType] = useState("");
+  const [selectedComType, setSelectedComType] = useState("");
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [error, setError] = useState(null);
@@ -48,6 +50,7 @@ export default function CustomizeForm() {
     try {
       const form = document.querySelector("form");
       const formData = {
+        userName: form.userName.value,
         // General Information
         arrivalDate: form.arrivalDate.value,
         departureDate: form.departureDate.value,
@@ -63,7 +66,7 @@ export default function CustomizeForm() {
 
         // Accommodation
         accommodationType: form.accommodationType.value,
-        numberOfBedrooms: parseInt(form.numberOfBedrooms.value),
+        mealPlan: form.mealPlan.value,
         accommodationPreference: form.accommodationPreference.value,
 
         // Transport
@@ -73,11 +76,10 @@ export default function CustomizeForm() {
 
         //contact Information
         mobileNumber: form.mobileNumber.value,
+        comType: form.whatsappNumberType.value,
         whatsappNumber: form.whatsappNumber.value,
         email: form.email.value,
       };
-
-      console.log(formData);
 
       const res = await fetch("/api/trip-plan/create", {
         method: "POST",
@@ -93,7 +95,6 @@ export default function CustomizeForm() {
         throw new Error(data.message || "Something went wrong");
       }
 
-      // Reset form
       form.reset();
       setSelectedDestinations([]);
       setLoading(false);
@@ -353,6 +354,18 @@ export default function CustomizeForm() {
         <h3 className="py-2 yellow-bg text-xl text-white text-center">
           General Information
         </h3>
+        <div className={commonStyles.gridItem}>
+          <p className={commonStyles.label}>
+            Your Name:{" "}
+            <span className="text-red-600 text-xs"> (*required)</span>
+          </p>
+          <TextInput
+            type="text"
+            name="userName"
+            placeholder=""
+            className="flex-1 px-4"
+          />
+        </div>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
             <p className={commonStyles.label}>
@@ -441,27 +454,44 @@ export default function CustomizeForm() {
             <select
               id="star"
               name="accommodationType"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+              className="w-full px-3 py-2 border border-gray-300 bg-gray-50 rounded-lg focus:outline-none"
               value={selectedStar}
               onChange={(e) => setSelectedStar(e.target.value)}
             >
               <option value="" disabled>
-                Select the Hotel Star Class
+                Select the accommodation type
               </option>
               <option value="3_star">3 stars ⭐⭐⭐</option>
               <option value="4_star">4 stars ⭐⭐⭐⭐</option>
               <option value="5_star">5 stars ⭐⭐⭐⭐⭐</option>
               <option value="5+_star">5+ stars 🌟🌟🌟🌟🌟🌟</option>
+              <option value="Cabana">Cabana</option>
+              <option value="Tree_house">Tree House</option>
+              <option value="Beach_resort">Beach Resort</option>
+              <option value="Bungalows">Bungalows</option>
+              <option value="Villa">Villa</option>
+              <option value="Home_stays">Home stays</option>
             </select>
           </div>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Number of Bedrooms:</p>
-            <TextInput
-              type="text"
-              name="numberOfBedrooms"
-              placeholder="Number of Bedrooms"
-              className="flex-1"
-            />
+            <p className={commonStyles.label}>Meal Plans:</p>
+
+            <select
+              id="star"
+              name="mealPlan"
+              className="w-full px-3 py-2 border border-gray-300 bg-gray-50 rounded-lg focus:outline-none"
+              value={selectedMeal}
+              onChange={(e) => setSelectedMeal(e.target.value)}
+            >
+              <option value="" disabled>
+                Select a meal plan
+              </option>
+              <option value="Full_Board">Full Board</option>
+              <option value="Half_Board">Half Board</option>
+              <option value="Bed_and_Breakfast">Bed and Breakfast</option>
+              <option value="Room_Only">Room Only</option>
+              <option value="All_Inclusive">All-Inclusive</option>
+            </select>
           </div>
           <div className={commonStyles.gridItem}>
             <p className={commonStyles.label}>
@@ -477,15 +507,18 @@ export default function CustomizeForm() {
           </div>
         </div>
         <h3 className="py-2 mt-4 yellow-bg text-xl text-white text-center">
-          Transport
+          Transportation
         </h3>
         <div className={commonStyles.gridContainer}>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Vehicle Type:</p>
+            <p className={commonStyles.label}>
+              Vehicle Type:
+              <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <select
               id="vehicle"
               name="vehicleType"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+              className="w-full px-3 py-2 border border-gray-300 bg-gray-50 rounded-lg focus:outline-none"
               value={selectedType}
               onChange={(e) => setSelectedType(e.target.value)}
             >
@@ -537,17 +570,32 @@ export default function CustomizeForm() {
               className="flex-1"
             />
           </div>
-          <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>WhatsApp/Telegram:</p>
-            <TextInput
-              type="text"
-              name="whatsappNumber"
-              placeholder="WhatsApp/Telegram Number"
-              className="flex-1"
-            />
+          <div className="grid grid-rows-2">
+            <p className={commonStyles.label}>WhatsApp/Telegram/WeChat:</p>
+            <div className="flex">
+              <select
+                id="selectCommunication"
+                name="whatsappNumberType"
+                className="w-1/3 px-3 py-2 border border-gray-300 bg-gray-50 rounded-lg focus:outline-none"
+                value={selectedComType}
+                onChange={(e) => setSelectedComType(e.target.value)}
+              >
+                <option value="WhatsApp">WhatsApp</option>
+                <option value="Telegram">Telegram</option>
+                <option value="WeChat">WeChat</option>
+              </select>
+              <TextInput
+                type="text"
+                name="whatsappNumber"
+                placeholder="WhatsApp/Telegram/WeChat Number"
+                className="w-2/3"
+              />
+            </div>
           </div>
           <div className={commonStyles.gridItem}>
-            <p className={commonStyles.label}>Email:</p>
+            <p className={commonStyles.label}>
+              Email: <span className="text-red-600 text-xs"> (*required)</span>
+            </p>
             <TextInput
               type="text"
               name="email"

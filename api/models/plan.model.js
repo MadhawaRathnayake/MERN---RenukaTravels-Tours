@@ -6,6 +6,10 @@ const tripPlanSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    userName: {
+      type: String,
+      required: true,
+    },
     // General Information
     arrivalDate: {
       type: Date,
@@ -44,11 +48,10 @@ const tripPlanSchema = new mongoose.Schema(
     // Accommodation
     accommodationType: {
       type: String,
-      enum: ["3_star", "4_star", "5_star", "5+_star"],
       required: true,
     },
-    numberOfBedrooms: {
-      type: Number,
+    mealPlan: {
+      type: String,
       default: "Not specified",
     },
     accommodationPreference: {
@@ -65,17 +68,20 @@ const tripPlanSchema = new mongoose.Schema(
     },
     transportPreference: {
       type: String,
-      default: "",
     },
     mobileNumber: {
       type: String,
       required: true,
+    },
+    comType: {
+      type: String,
     },
     whatsappNumber: {
       type: String,
     },
     email: {
       type: String,
+      required: true,
     },
     status: {
       type: String,
