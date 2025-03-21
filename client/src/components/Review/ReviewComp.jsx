@@ -465,7 +465,7 @@ const ReviewsSection = () => {
               </h3>
               
               {!isExpanded && sortedReviews.length > 1 && (
-                <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-3 ">
                   
                   <div className="flex space-x-2">
                     <button 
@@ -492,83 +492,86 @@ const ReviewsSection = () => {
             </div>
 
            {/* Reviews slider container */}
-            <div className={`${isExpanded ? '' : 'overflow-hidden'} relative rounded-2xl`}>
-              <div 
-                ref={sliderRef}
-                className={`${isExpanded ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : 'flex transition-transform duration-500 ease-in-out'}`}
-                style={{
-                  transform: isExpanded ? 'none' : `translateX(-${currentSlide * 50}%)`
-                }}
-              >
-                {sortedReviews.length > 0 ? (
-                  displayedReviews.map((review, index) => {
-                    // Check if review and userId exist before trying to access them
-                    if (!review || !review.userId) {
-                      return null; // Skip invalid reviews
-                    }
+<div className={`${isExpanded ? '' : 'overflow-hidden'} relative rounded-2xl`}>
+  <div 
+    ref={sliderRef}
+    className={`${isExpanded ? 'grid grid-cols-1 md:grid-cols-2 gap-6' : 'flex transition-transform duration-500 ease-in-out'}`}
+    style={{
+      transform: isExpanded ? 'none' : `translateX(-${currentSlide * 50}%)`
+    }}
+  >
+    {sortedReviews.length > 0 ? (
+      displayedReviews.map((review, index) => {
+        // Check if review and userId exist before trying to access them
+        if (!review || !review.userId) {
+          return null; // Skip invalid reviews
+        }
                     
-                    const reviewUser = reviewUsers[review.userId] || {};
+        const reviewUser = reviewUsers[review.userId] || {};
                     
-                    return (
-                      <div
-                        key={review._id || index}
-                        className={`${isExpanded ? '' : 'min-w-[50%] pr-6'}`}
-                      >
-                        <div className="bg-white rounded-2xl p-6 shadow-sm h-full">
-                          <div className="flex items-center gap-1 mb-4">
-                            {renderStars(review.rating)}
-                          </div>
-                          
-                          <div className="flex justify-between items-center mb-4">
-                            <div className="flex items-center gap-3">
-                              <img
-                                src={reviewUser.profilePicture || "https://via.placeholder.com/150"}
-                                alt={reviewUser.username || "User"}
-                                className="w-10 h-10 rounded-full object-cover"
-                              />
-                              <div>
-                                <h6 className="font-semibold text-indigo-600">
-                                  {reviewUser.username || "Anonymous"}
-                                </h6>
-                                <p className="text-xs text-gray-500">
-                                  {review.createdAt ? new Date(review.createdAt).toLocaleDateString(undefined, {
-                                    year: 'numeric',
-                                    month: 'short',
-                                    day: 'numeric'
-                                  }) : "Unknown date"}
-                                </p>
-                              </div>
-                            </div>
-                          </div>
-                          
-                          <p className="text-gray-600 mb-4 line-clamp-3">
-                            {review.comment || "No comment provided"}
-                          </p>
-                          
-                          {review.images && review.images.length > 0 && (
-                            <div className="flex gap-2 mt-4 flex-wrap">
-                              {review.images.map((imgUrl, imgIndex) => (
-                                <img
-                                  key={imgIndex}
-                                  src={imgUrl}
-                                  alt={`Review image ${imgIndex + 1}`}
-                                  className="w-16 h-16 object-cover cursor-pointer rounded-lg hover:opacity-90 transition-opacity"
-                                  onClick={() => openModal(review.images, imgIndex)}
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                    );
-                  })
-                ) : (
-                  <div className="bg-white rounded-2xl p-8 text-center w-full shadow-sm">
-                    <p className="text-gray-500">No reviews available</p>
-                  </div>
-                )}
+        // When not expanded, use full width on mobile and half width on medium+ screens.
+        return (
+          <div
+            key={review._id || index}
+            className={`${isExpanded ? '' : 'min-w-full md:min-w-[50%] pr-6'}`}
+          >
+            <div className="bg-white rounded-2xl p-6 shadow-sm h-full">
+              <div className="flex items-center gap-1 mb-4">
+                {renderStars(review.rating)}
               </div>
+              
+              <div className="flex justify-between items-center mb-4">
+                <div className="flex items-center gap-3">
+                  <img
+                    src={reviewUser.profilePicture || "https://via.placeholder.com/150"}
+                    alt={reviewUser.username || "User"}
+                    className="w-10 h-10 rounded-full object-cover"
+                  />
+                  <div>
+                    <h6 className="font-semibold text-indigo-600">
+                      {reviewUser.username || "Anonymous"}
+                    </h6>
+                    <p className="text-xs text-gray-500">
+                      {review.createdAt
+                        ? new Date(review.createdAt).toLocaleDateString(undefined, {
+                            year: 'numeric',
+                            month: 'short',
+                            day: 'numeric'
+                          })
+                        : "Unknown date"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              <p className="text-gray-600 mb-4 line-clamp-3">
+                {review.comment || "No comment provided"}
+              </p>
+              
+              {review.images && review.images.length > 0 && (
+                <div className="flex gap-2 mt-4 flex-wrap">
+                  {review.images.map((imgUrl, imgIndex) => (
+                    <img
+                      key={imgIndex}
+                      src={imgUrl}
+                      alt={`Review image ${imgIndex + 1}`}
+                      className="w-16 h-16 object-cover cursor-pointer rounded-lg hover:opacity-90 transition-opacity"
+                      onClick={() => openModal(review.images, imgIndex)}
+                    />
+                  ))}
+                </div>
+              )}
             </div>
+          </div>
+        );
+      })
+    ) : (
+      <div className="bg-white rounded-2xl p-8 text-center w-full shadow-sm">
+        <p className="text-gray-500">No reviews available</p>
+      </div>
+    )}
+  </div>
+</div>
 
             {/* Load More / Show Less Controls */}
             {isExpanded && sortedReviews.length > 0 && (
