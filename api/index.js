@@ -13,6 +13,7 @@ import reviewRoutes from "./routes/review.route.js";
 import cors from "cors";
 import path from "path";
 import cookieParser from "cookie-parser";
+import bookingRoutes from "./routes/booking.route.js";
 
 dotenv.config();
 
@@ -33,7 +34,7 @@ app.use(cors({ origin: "http://localhost:3000" }));
 app.use(cors({ origin: "https://lh3.googleusercontent.com" }));
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '20mb' }));
 app.use(cookieParser());
 
 app.use("/api/user", userRoutes);
@@ -45,6 +46,7 @@ app.use("/api/tours", tourRoutes);
 app.use("/api/gallery", galleryRoutes);
 app.use("/api/review", reviewRoutes);
 app.use("/api/trip-plan", tripPlanRoutes);
+app.use("/api/bookings", bookingRoutes);
 
 app.use(express.static(path.join(__dirname, "/client/dist")));
 

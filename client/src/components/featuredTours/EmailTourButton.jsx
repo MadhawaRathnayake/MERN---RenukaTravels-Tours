@@ -6,10 +6,44 @@ import { BASE_URL } from '../../utils/config';
 
 const EmailTourButton = ({ tour, destinationList, bookingData }) => {
   const [isSending, setSending] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(''); // State for error message
+  const [errorMessage, setErrorMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState('');
 
-  // Grab email from bookingData
-  const userEmail = bookingData?.email || '';
+  // Map booking data to match the schema structure
+  const mapBookingDataToSchema = (bookingData, tour) => {
+    if (!bookingData) return null;
+    
+    // Extract destination IDs from the tour
+    const selectedDestinations = tour?.destinations || [];
+    
+    return {
+      // Required fields with fallbacks to prevent schema validation errors
+      userId: bookingData.userId || "guest-user",
+      userName: bookingData.fullName || bookingData.name || "Guest User",
+      arrivalDate: bookingData.bookAt || new Date(),
+      departureDate: bookingData.departureDate || new Date(),
+      numberOfPeople: parseInt(bookingData.numberOfPeople || bookingData.totalPeople || "1", 10),
+      accommodationType: bookingData.accommodationType || "Not specified",
+      vehicleType: bookingData.vehicleType || "Not specified",
+      mobileNumber: bookingData.mobileNumber || bookingData.phone || "Not provided",
+      email: bookingData.email || "Not provided",
+      
+      // Optional fields
+      arrivalTime: bookingData.arrivalTime || "",
+      numberOfAdults: parseInt(bookingData.numberOfAdults || bookingData.adults || "0", 10),
+      numberOfChildren: parseInt(bookingData.numberOfChildren || bookingData.children || "0", 10),
+      dateComments: bookingData.dateComments || bookingData.comments || "",
+      selectedDestinations: selectedDestinations,
+      additionalLocations: bookingData.additionalLocations || "",
+      mealPlan: bookingData.mealPlan || "Not specified",
+      accommodationPreference: bookingData.accommodationPreference || "",
+      numberOfVehicles: parseInt(bookingData.numberOfVehicles || "1", 10),
+      transportPreference: bookingData.transportPreference || "",
+      comType: bookingData.comType || "email",
+      whatsappNumber: bookingData.whatsappNumber || bookingData.mobileNumber || "",
+      status: "pending"
+    };
+  };
 
   const generatePdfBase64 = async (pdfDoc) => {
     try {
@@ -30,31 +64,53 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
   };
 
   const handleSendEmail = async () => {
-    // Reset error message
     setErrorMessage('');
-
-    // Check if userEmail is provided
+    setSuccessMessage('');
+    
+    const userEmail = bookingData?.email || '';
+    
     if (!userEmail) {
-      setErrorMessage('Email address is required'); // Set error message
+      setErrorMessage('Email address is required');
       return;
     }
 
     try {
       setSending(true);
 
-      // Generate PDF document
+      // 1. Map booking data to schema structure
+      const mappedBookingData = mapBookingDataToSchema(bookingData, tour);
+      
+      if (!mappedBookingData) {
+        throw new Error('Invalid booking data');
+      }
+
+      // 2. Create booking in the backend
+      const bookingRes = await fetch(`${BASE_URL}/bookings`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(mappedBookingData),
+      });
+
+      const bookingResData = await bookingRes.json();
+
+      if (!bookingRes.ok) {
+        throw new Error(bookingResData.message || 'Booking failed');
+      }
+
+      // 3. Generate PDF
       const pdfDoc = (
         <TourPDFDocument 
           tour={tour} 
           destinationList={destinationList} 
-          bookingData={bookingData} 
+          bookingData={mappedBookingData} 
         />
       );
 
-      // Convert to base64
       const base64data = await generatePdfBase64(pdfDoc);
 
-      // Send email
+      // 4. Send email
       const response = await fetch(`${BASE_URL}/tours/send-email`, {
         method: 'POST',
         headers: {
@@ -64,21 +120,21 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
           email: userEmail,
           tour,
           destinationList,
-          bookingData,
-          pdfBuffer: base64data
+          bookingData: mappedBookingData,
+          pdfBuffer: base64data,
         }),
       });
 
       const data = await response.json();
 
       if (!response.ok) {
-        throw new Error(data.message || 'Server error occurred');
+        throw new Error(data.message || 'Server error occurred during email sending');
       }
 
-      alert('Tour details sent to your email successfully!');
+      setSuccessMessage('Booking created and tour details sent to your email successfully!');
     } catch (error) {
-      console.error('Email sending error:', error);
-      alert(error.message || 'Failed to send email. Please try again.');
+      console.error('Error:', error);
+      setErrorMessage(error.message || 'Something went wrong. Please try again.');
     } finally {
       setSending(false);
     }
@@ -87,15 +143,18 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
   return (
     <div>
       {errorMessage && (
-        <p className="text-red-500 mb-2">{errorMessage}</p> // Display error message in red
+        <p className="text-red-500 mb-2">{errorMessage}</p>
+      )}
+      {successMessage && (
+        <p className="text-green-500 mb-2">{successMessage}</p>
       )}
       <button
         onClick={handleSendEmail}
         className="bg-amber-400 hover:bg-amber-500 text-white px-4 py-2 rounded-md mr-2"
+        disabled={isSending}
       >
         {isSending ? 'Sending...' : 'Submit'}
       </button>
-      
     </div>
   );
 };
