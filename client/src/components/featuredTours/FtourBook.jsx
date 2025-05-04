@@ -105,7 +105,7 @@ const FtourBooking = ({ tour, onBookingUpdate }) => {
 
         <Form className="p-4 border border-gray-300 rounded-lg space-y-4" onSubmit={handleSubmit}>
           <FormGroup>
-            <label htmlFor="fullName" className="text-sm text-gray-600">Full Name</label>
+            <label htmlFor="fullName" className="text-sm text-gray-600">Name</label>
             <input type="text" id="fullName" required onChange={handleChange}
               className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
           </FormGroup>
