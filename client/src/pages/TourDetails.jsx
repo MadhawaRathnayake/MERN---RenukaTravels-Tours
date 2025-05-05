@@ -91,7 +91,7 @@ const TourDetails = () => {
                       Loading PDF...
                     </button>
                   ) : (
-                    <button className="bg-blue-500 text-white px-4 py-2 rounded-md inline-flex items-center space-x-2">
+                    <button className="bg-blue-500 text-white ml-4 px-4 py-2 rounded-md inline-flex items-center space-x-2">
                     <span>Tour Details</span>
                     <MdOutlineFileDownload className="w-5 h-5" />
                     </button>

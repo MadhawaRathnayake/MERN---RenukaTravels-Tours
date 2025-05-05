@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { pdf } from '@react-pdf/renderer';
 import TourPDFDocument from './TourPdfDoc';
 import { BASE_URL } from '../../utils/config';
@@ -8,20 +8,38 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
   const [isSending, setSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+  const [destinationNames, setDestinationNames] = useState([]);
+
+  // Set up the global reference to receive destination names from TimelineComponent
+  useEffect(() => {
+    window.setSelectedDestinationNames = (names) => {
+      setDestinationNames(names);
+    };
+
+    // Cleanup function
+    return () => {
+      delete window.setSelectedDestinationNames;
+    };
+  }, []);
 
   // Map booking data to match the schema structure
   const mapBookingDataToSchema = (bookingData, tour) => {
     if (!bookingData) return null;
     
-    // Extract destination IDs from the tour
-    const selectedDestinations = tour?.destinations || [];
+    // Get destination IDs from the tour
+    const destinationIds = tour?.destinations || [];
     
+    const arrivalDate = new Date(bookingData.bookAt);
+    const numberOfDays = parseInt(tour.days || 0, 10);
+    const departureDate = new Date(arrivalDate);
+    departureDate.setDate(arrivalDate.getDate() + numberOfDays);
+
     return {
       // Required fields with fallbacks to prevent schema validation errors
       userId: bookingData.userId || "guest-user",
       userName: bookingData.fullName || bookingData.name || "Guest User",
       arrivalDate: bookingData.bookAt || new Date(),
-      departureDate: bookingData.departureDate || new Date(),
+      departureDate: departureDate || new Date(),
       numberOfPeople: parseInt(bookingData.numberOfPeople || bookingData.totalPeople || "1", 10),
       accommodationType: bookingData.accommodationType || "Not specified",
       vehicleType: bookingData.vehicleType || "Not specified",
@@ -33,7 +51,12 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
       numberOfAdults: parseInt(bookingData.numberOfAdults || bookingData.adults || "0", 10),
       numberOfChildren: parseInt(bookingData.numberOfChildren || bookingData.children || "0", 10),
       dateComments: bookingData.dateComments || bookingData.comments || "",
-      selectedDestinations: selectedDestinations,
+      // Use actual destination names instead of IDs
+      selectedDestinations: destinationNames.length > 0 ? destinationNames : 
+        destinationIds.map(id => {
+          const dest = destinationList.find(d => d._id === (typeof id === 'object' ? id._id : id));
+          return dest ? dest.destinationName : 'Unknown Destination';
+        }),
       additionalLocations: bookingData.additionalLocations || "",
       mealPlan: bookingData.mealPlan || "Not specified",
       accommodationPreference: bookingData.accommodationPreference || "",
