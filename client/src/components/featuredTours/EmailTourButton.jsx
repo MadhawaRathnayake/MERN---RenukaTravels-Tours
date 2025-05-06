@@ -34,23 +34,44 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
     const departureDate = new Date(arrivalDate);
     departureDate.setDate(arrivalDate.getDate() + numberOfDays);
 
-    return {
+    // Create a consistent data object that combines all possible field names
+    const formattedData = {
       // Required fields with fallbacks to prevent schema validation errors
       userId: bookingData.userId || "guest-user",
+      // Handle both possible name field variants
       userName: bookingData.fullName || bookingData.name || "Guest User",
-      arrivalDate: bookingData.bookAt || new Date(),
-      departureDate: departureDate || new Date(),
-      numberOfPeople: parseInt(bookingData.numberOfPeople || bookingData.totalPeople || "1", 10),
+      fullName: bookingData.fullName || bookingData.name || "Guest User", // Add this for the email template
+      name: bookingData.name || bookingData.fullName || "Guest User", // Add this for the email template
+      
+      // Date fields
+      arrivalDate: arrivalDate,
+      bookAt: bookingData.bookAt || new Date().toISOString(),
+      departureDate: departureDate,
+      
+      // Contact info
+      mobileNumber: bookingData.mobileNumber || bookingData.phone || "Not provided",
+      phone: bookingData.phone || bookingData.mobileNumber || "Not provided", // Add for compatibility
+      email: bookingData.email || "Not provided",
+      
+      // Guest info
+      numberOfPeople: parseInt(bookingData.numberOfPeople || bookingData.totalPeople || bookingData.guestSize || "1", 10),
+      totalPeople: parseInt(bookingData.totalPeople || bookingData.numberOfPeople || bookingData.guestSize || "1", 10),
+      guestSize: parseInt(bookingData.guestSize || bookingData.numberOfPeople || bookingData.totalPeople || "1", 10),
+      
+      // Accommodation
       accommodationType: bookingData.accommodationType || "Not specified",
       vehicleType: bookingData.vehicleType || "Not specified",
-      mobileNumber: bookingData.mobileNumber || bookingData.phone || "Not provided",
-      email: bookingData.email || "Not provided",
       
       // Optional fields
       arrivalTime: bookingData.arrivalTime || "",
       numberOfAdults: parseInt(bookingData.numberOfAdults || bookingData.adults || "0", 10),
+      adults: parseInt(bookingData.adults || bookingData.numberOfAdults || "0", 10),
       numberOfChildren: parseInt(bookingData.numberOfChildren || bookingData.children || "0", 10),
-      dateComments: bookingData.dateComments || bookingData.comments || "",
+      children: parseInt(bookingData.children || bookingData.numberOfChildren || "0", 10),
+      dateComments: bookingData.dateComments || bookingData.comments || bookingData.preferences || "",
+      comments: bookingData.comments || bookingData.dateComments || bookingData.preferences || "",
+      preferences: bookingData.preferences || bookingData.comments || bookingData.dateComments || "",
+      
       // Use actual destination names instead of IDs
       selectedDestinations: destinationNames.length > 0 ? destinationNames : 
         destinationIds.map(id => {
@@ -60,12 +81,16 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
       additionalLocations: bookingData.additionalLocations || "",
       mealPlan: bookingData.mealPlan || "Not specified",
       accommodationPreference: bookingData.accommodationPreference || "",
-      numberOfVehicles: parseInt(bookingData.numberOfVehicles || "1", 10),
+      numberOfVehicles: parseInt(bookingData.numberOfVehicles || bookingData.vehicles || "1", 10),
+      vehicles: parseInt(bookingData.vehicles || bookingData.numberOfVehicles || "1", 10),
       transportPreference: bookingData.transportPreference || "",
       comType: bookingData.comType || "email",
-      whatsappNumber: bookingData.whatsappNumber || bookingData.mobileNumber || "",
-      status: "pending"
+      whatsappNumber: bookingData.whatsappNumber || bookingData.mobileNumber || bookingData.phone || "",
+      status: "pending",
+      bedrooms: parseInt(bookingData.bedrooms || "1", 10)
     };
+
+    return formattedData;
   };
 
   const generatePdfBase64 = async (pdfDoc) => {
@@ -86,14 +111,37 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
     }
   };
 
+  // Check if any required field is empty
+  const hasEmptyRequiredFields = (data) => {
+    // Check if any required field is missing
+    if (
+      (!data.fullName && !data.name) ||
+      !data.email ||
+      !/\S+@\S+\.\S+/.test(data.email) ||
+      (!data.phone && !data.mobileNumber) ||
+      !data.bookAt ||
+      (!data.guestSize && !data.numberOfPeople && !data.totalPeople) ||
+      !data.vehicleType ||
+      (!data.vehicles && !data.numberOfVehicles) ||
+      !data.accommodationType ||
+      !data.bedrooms
+    ) {
+      return true;
+    }
+    
+    return false;
+  };
+
   const handleSendEmail = async () => {
     setErrorMessage('');
     setSuccessMessage('');
     
-    const userEmail = bookingData?.email || '';
+    // Validate and log booking data to help with debugging
+    console.log('Original booking data:', bookingData);
     
-    if (!userEmail) {
-      setErrorMessage('Email address is required');
+    // Check if any required field is empty
+    if (hasEmptyRequiredFields(bookingData || {})) {
+      setErrorMessage('Please fill all required fields');
       return;
     }
 
@@ -106,6 +154,9 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
       if (!mappedBookingData) {
         throw new Error('Invalid booking data');
       }
+      
+      // Log the mapped data for debugging
+      console.log('Mapped booking data:', mappedBookingData);
 
       // 2. Create booking in the backend
       const bookingRes = await fetch(`${BASE_URL}/bookings`, {
@@ -122,7 +173,7 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
         throw new Error(bookingResData.message || 'Booking failed');
       }
 
-      // 3. Generate PDF
+      // 3. Generate PDF with the complete data
       const pdfDoc = (
         <TourPDFDocument 
           tour={tour} 
@@ -133,14 +184,14 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
 
       const base64data = await generatePdfBase64(pdfDoc);
 
-      // 4. Send email
+      // 4. Send email with the complete data
       const response = await fetch(`${BASE_URL}/tours/send-email`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: userEmail,
+          email: mappedBookingData.email,
           tour,
           destinationList,
           bookingData: mappedBookingData,
@@ -166,11 +217,17 @@ const EmailTourButton = ({ tour, destinationList, bookingData }) => {
   return (
     <div>
       {errorMessage && (
-        <p className="text-red-500 mb-2">{errorMessage}</p>
+        <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-md">
+          <p className="text-red-500">{errorMessage}</p>
+        </div>
       )}
+      
       {successMessage && (
-        <p className="text-green-500 mb-2">{successMessage}</p>
+        <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-md">
+          <p className="text-green-500">{successMessage}</p>
+        </div>
       )}
+      
       <button
         onClick={handleSendEmail}
         className="bg-amber-400 hover:bg-amber-500 text-white px-4 py-2 rounded-md mr-2"
