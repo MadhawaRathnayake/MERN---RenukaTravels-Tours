@@ -20,8 +20,44 @@ spec:
           ports:
             - containerPort: 3000
           imagePullPolicy: Always
+          # Explicitly set critical environment variables
+          env:
+            - name: FIREBASE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: FIREBASE_API_KEY
+            - name: VITE_FIREBASE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: VITE_FIREBASE_API_KEY
+            - name: GOOGLE_MAP_API
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: GOOGLE_MAP_API
+            - name: VITE_GOOGLE_MAP_API
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: VITE_GOOGLE_MAP_API
+            - name: MAP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: MAP_ID
+            - name: VITE_MAP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: VITE_MAP_ID
+          # Keep the rest of your env variables
+          envFrom:
+            - secretRef:
+                name: travelapp-secrets
       imagePullSecrets:
-        - name: acr-auth  # This references the secret created for ACR authentication
+        - name: acr-auth
 
 ---
 

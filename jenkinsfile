@@ -3,10 +3,10 @@ pipeline {
 
     environment {
         AZURE_CREDENTIALS = credentials('azurecredentials')
-        AZ_TENANT_ID = '4f7d0492-1764-4824-8f60-f15e6d51cd70'
-        ACR_NAME = 'TravelWebApp'
-        ACR_LOGIN_SERVER = "travelwebapp.azurecr.io"
-        IMAGE_NAME = "travelapp-image"
+        AZ_TENANT_ID      = '4f7d0492-1764-4824-8f60-f15e6d51cd70'
+        ACR_NAME          = 'TravelWebApp'
+        ACR_LOGIN_SERVER  = "travelwebapp.azurecr.io"
+        IMAGE_NAME        = "travelapp-image"
     }
 
     stages {
@@ -21,7 +21,16 @@ pipeline {
             steps {
                 script {
                     // Use Azure CLI to login to ACR
-                    bat "az acr login --name %ACR_NAME%"
+                    sh '''
+                        # Log in using service principal
+                        az login --service-principal -u $AZURE_CREDENTIALS_USR -p $AZURE_CREDENTIALS_PSW --tenant $AZ_TENANT_ID
+                        az acr login -n $ACR_NAME --expose-token
+
+                        # Get admin credentials and login to Docker
+                        ACR_USER=$(az acr credential show -n $ACR_NAME --query "username" -o tsv)
+                        ACR_PWD=$(az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv)
+                        docker login $ACR_LOGIN_SERVER -u $ACR_USER -p $ACR_PWD
+                    '''
                 }
             }
         }
@@ -30,9 +39,9 @@ pipeline {
             steps {
                 script {
                     // Build the Docker image and push it to ACR
-                    bat '''
-                        docker build -t %ACR_LOGIN_SERVER%/%IMAGE_NAME% .
-                        docker push %ACR_LOGIN_SERVER%/%IMAGE_NAME%
+                    sh '''
+                        docker build -t $ACR_LOGIN_SERVER/$IMAGE_NAME .
+                        docker push $ACR_LOGIN_SERVER/$IMAGE_NAME
                     '''
                 }
             }
@@ -40,7 +49,7 @@ pipeline {
 
         stage('Get AKS Credentials') {
             steps {
-                bat '''
+                sh '''
                     az aks get-credentials --resource-group Travel_Agency --name TravelWebApp --overwrite-existing
                 '''
             }
@@ -48,27 +57,29 @@ pipeline {
 
         stage('Create Kubernetes Secret for ACR') {
             steps {
-                bat '''
-                    FOR /F "tokens=*" %%u IN ('az acr credential show -n %ACR_NAME% --query "username" -o tsv') DO (
-                        FOR /F "tokens=*" %%p IN ('az acr credential show -n %ACR_NAME% --query "passwords[0].value" -o tsv') DO (
-                            kubectl create secret docker-registry acr-auth ^
-                                --docker-server=%ACR_LOGIN_SERVER% ^
-                                --docker-username=%%u ^
-                                --docker-password=%%p ^
-                                --dry-run=client -o yaml | kubectl apply -f -
-                        )
-                    )
+                sh '''
+                    # Fetch the ACR username and password
+                    USERNAME=$(az acr credential show -n $ACR_NAME --query "username" -o tsv)
+                    PASSWORD=$(az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv)
+
+                    # Create or update the Kubernetes docker-registry secret
+                    kubectl create secret docker-registry acr-auth \
+                      --docker-server=$ACR_LOGIN_SERVER \
+                      --docker-username=$USERNAME \
+                      --docker-password=$PASSWORD \
+                      --dry-run=client -o yaml | kubectl apply -f -
                 '''
             }
         }
 
         stage('Apply Kubernetes Deployment') {
             steps {
-                bat '''
+                sh '''
                     kubectl apply -f kubernetes/deployment.yml
                     kubectl get deployments
                     kubectl rollout restart deployment travelapp-deployment
                     kubectl rollout status deployment travelapp-deployment
+                    kubectl apply -f kubernetes/deployment.yml
                 '''
             }
         }
