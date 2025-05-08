@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travelapp-deployment
+  labels:
+    app: travelapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: travelapp
+  template:
+    metadata:
+      labels:
+        app: travelapp
+    spec:
+      containers:
+        - name: travelapp-container
+          image: travelwebapp.azurecr.io/travelapp-image:latest
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+      imagePullSecrets:
+        - name: acr-auth  # This references the secret created for ACR authentication
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: travelapp-service
+  annotations:
+    # Optional: use this if you want to bind a static public IP created in Azure
+    # service.beta.kubernetes.io/azure-load-balancer-resource-group: Travel_Agency
+    # service.beta.kubernetes.io/azure-load-balancer-ipv4: travelapp-public-ip
+spec:
+  type: LoadBalancer
+  selector:
+    app: travelapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
