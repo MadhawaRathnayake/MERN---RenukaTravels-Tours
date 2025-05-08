@@ -1,15 +1,15 @@
 import { Button, Modal, Table } from "flowbite-react";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { HiOutlineExclamationCircle } from 'react-icons/hi';
-import { FaCheck, FaTimes } from 'react-icons/fa';
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { FaCheck, FaTimes } from "react-icons/fa";
 
 export default function DashUsers() {
   const { currentUser } = useSelector((state) => state.user);
   const [users, setUsers] = useState([]);
   const [showMore, setShowMore] = useState(true);
   const [showModal, setShowModal] = useState(false);
-  const [userIdToDelete, setUserIdToDelete] = useState('');
+  const [userIdToDelete, setUserIdToDelete] = useState("");
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -54,7 +54,7 @@ export default function DashUsers() {
     setShowModal(false);
     try {
       const res = await fetch(`/api/user/delete/${userIdToDelete}`, {
-        method: 'DELETE',
+        method: "DELETE",
       });
       const data = await res.json();
       if (!res.ok) {
@@ -69,7 +69,6 @@ export default function DashUsers() {
 
   return (
     <div className="p-3 lg:mr-28 w-full overflow-x-auto md:mx-auto scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-500">
-      
       {/* Heading */}
       <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 mb-5 text-center md:text-left">
         <span className="text-[#F4AC20]">USER</span> MANAGEMENT
@@ -89,10 +88,15 @@ export default function DashUsers() {
               </Table.Head>
               <Table.Body>
                 {users.map((user) => (
-                  <Table.Row key={user._id} className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                    <Table.Cell className="text-sm">{new Date(user.createdAt).toLocaleDateString()}</Table.Cell>
+                  <Table.Row
+                    key={user._id}
+                    className="bg-white dark:border-gray-700 dark:bg-gray-800"
+                  >
+                    <Table.Cell className="text-sm">
+                      {new Date(user.createdAt).toLocaleDateString()}
+                    </Table.Cell>
                     <Table.Cell>
-                      <img 
+                      <img
                         src={user.profilePicture}
                         alt={user.username}
                         className="w-10 h-10 object-cover bg-gray-500 rounded-full"
@@ -101,14 +105,18 @@ export default function DashUsers() {
                     <Table.Cell className="text-sm">{user.username}</Table.Cell>
                     <Table.Cell className="text-sm">{user.email}</Table.Cell>
                     <Table.Cell>
-                      {user.isAdmin ? <FaCheck className="text-green-500"/> : <FaTimes className="text-red-500"/>}
+                      {user.isAdmin ? (
+                        <FaCheck className="text-green-500" />
+                      ) : (
+                        <FaTimes className="text-red-500" />
+                      )}
                     </Table.Cell>
                     <Table.Cell>
-                      <span 
+                      <span
                         onClick={() => {
                           setShowModal(true);
                           setUserIdToDelete(user._id);
-                        }} 
+                        }}
                         className="font-medium text-red-500 hover:underline cursor-pointer"
                       >
                         Delete
@@ -121,8 +129,8 @@ export default function DashUsers() {
           </div>
 
           {showMore && (
-            <button 
-              onClick={handleShowMore} 
+            <button
+              onClick={handleShowMore}
               className="w-full text-teal-500 text-sm py-4 hover:underline"
             >
               Show more
@@ -130,11 +138,16 @@ export default function DashUsers() {
           )}
         </>
       ) : (
-        <p className="text-center text-gray-500">You have no users yet</p>
+        <p className="text-center text-lg py-4 animate-pulse">Loading...!</p>
       )}
 
       {/* Delete Confirmation Modal */}
-      <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
@@ -143,10 +156,18 @@ export default function DashUsers() {
               Are you sure you want to delete this user?
             </h3>
             <div className="flex flex-col sm:flex-row justify-center gap-3">
-              <Button color="failure" className="w-full sm:w-auto" onClick={handleDeleteUser}>
+              <Button
+                color="failure"
+                className="w-full sm:w-auto"
+                onClick={handleDeleteUser}
+              >
                 Yes, I'm Sure
               </Button>
-              <Button color="gray" className="w-full sm:w-auto" onClick={() => setShowModal(false)}>
+              <Button
+                color="gray"
+                className="w-full sm:w-auto"
+                onClick={() => setShowModal(false)}
+              >
                 No, Cancel
               </Button>
             </div>

@@ -101,7 +101,6 @@ export default function DashBookings() {
                   <Table.HeadCell>User Email</Table.HeadCell>
                   <Table.HeadCell>Contact Number</Table.HeadCell>
                   <Table.HeadCell>Arrival Date</Table.HeadCell>
-                  <Table.HeadCell>Status</Table.HeadCell>
                   <Table.HeadCell>Actions</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className="divide-y">
@@ -123,19 +122,7 @@ export default function DashBookings() {
                       <Table.Cell>
                         {new Date(booking.arrivalDate).toLocaleDateString()}
                       </Table.Cell>
-                      <Table.Cell>
-                        <span
-                          className={`px-2 py-1 rounded-full text-sm ${
-                            booking.status === "pending"
-                              ? "bg-yellow-100 text-yellow-800"
-                              : booking.status === "confirmed"
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }`}
-                        >
-                          {booking.status}
-                        </span>
-                      </Table.Cell>
+
                       <Table.Cell>
                         <span
                           onClick={() => {
@@ -162,7 +149,7 @@ export default function DashBookings() {
             )}
           </>
         ) : (
-          <p className="text-center py-4">You have no bookings yet!</p>
+          <p className="text-center text-lg py-4 animate-pulse">Loading...!</p>
         )}
       </div>
 
