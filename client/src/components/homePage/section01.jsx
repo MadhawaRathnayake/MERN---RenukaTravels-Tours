@@ -76,7 +76,7 @@ export default function Section01() {
             >
               <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4 sm:mb-6 px-2">
                 It's a Big World Out There,{" "}
-                <span className="text-amber-400">Go Explore</span>
+                <span className="text-amber-400">Go Explore Updated</span>
               </h1>
               <p className="text-white text-base  sm:text-lg md:text-xl  mb-6 sm:mb-10 px-3">
                 Dreaming of an unforgettable trip to Sri Lanka? Discover hidden
