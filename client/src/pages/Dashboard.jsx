@@ -73,7 +73,7 @@ function Dashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 py-4 mb-8 sm:px-6 lg:px-8 r">
       {/* Mobile Layout */}
       {isMobile && (
         <div className="flex flex-col w-full">
@@ -90,7 +90,7 @@ function Dashboard() {
           <div className="w-56">
             <DashSidebar />
           </div>
-          <div className="flex-1 pl-4">{renderContent()}</div>
+          <div className="flex-1 min-h-[50vh] pl-4">{renderContent()}</div>
         </div>
       )}
     </div>

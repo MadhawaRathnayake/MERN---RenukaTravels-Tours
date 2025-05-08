@@ -167,7 +167,7 @@ export default function DashTravelPlan() {
             </div>
           </>
         ) : (
-          <p className="text-center py-4">You have no bookings yet!</p>
+          <p className="text-center text-lg py-4 animate-pulse">Loading...!</p>
         )}
       </div>
 
