@@ -1,5 +1,5 @@
 /* eslint-disable react/prop-types */
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { Form, FormGroup, Button } from 'reactstrap';
 import { BASE_URL } from '../../utils/config';
@@ -25,6 +25,27 @@ const FtourBooking = ({ tour, onBookingUpdate }) => {
   const [selectedType, setSelectedType] = useState('');
   const [selectedStar, setSelectedStar] = useState('');
   const [error, setError] = useState('');
+  const [vehicles, setVehicles] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch vehicles from API when component mounts
+  useEffect(() => {
+    const fetchVehicles = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${BASE_URL}/vehicles/getvehicles`);
+        const data = await response.json();
+        setVehicles(data.vehicles || []);
+      } catch (error) {
+        console.error("Error fetching vehicles:", error);
+        setError("Failed to load vehicle options. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchVehicles();
+  }, []);
 
   // Function to update form state on change
   const handleChange = (e) => {
@@ -62,7 +83,6 @@ const FtourBooking = ({ tour, onBookingUpdate }) => {
     setError('');
     return true;
   };
-  
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -93,7 +113,7 @@ const FtourBooking = ({ tour, onBookingUpdate }) => {
   }, [booking, onBookingUpdate]);
 
   return (
-    <div >
+    <div>
       <div className="pb-6 border-b border-gray-300">
         <h3 className="text-2xl font-bold">{title}</h3>
       </div>
@@ -104,86 +124,108 @@ const FtourBooking = ({ tour, onBookingUpdate }) => {
         {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
         <Form className="p-4 border border-gray-300 rounded-lg space-y-4" onSubmit={handleSubmit}>
-          <FormGroup>
-            <label htmlFor="fullName" className="text-sm text-gray-600">Full Name</label>
-            <input type="text" id="fullName" required onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
-          </FormGroup>
+  <FormGroup>
+    <label htmlFor="fullName" className="text-sm text-gray-600">Name <span className="text-red-500">*</span></label>
+    <input type="text" id="fullName" required onChange={handleChange}
+      className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
+  </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="phone" className="text-sm text-gray-600">Phone</label>
-            <input type="number" id="phone" required onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
-          </FormGroup>
+  <FormGroup>
+  <label htmlFor="phone" className="text-sm text-gray-600">
+    Phone <span className="text-red-500">*</span>
+  </label>
+  <input
+    type="tel"
+    id="phone"
+    required
+    onChange={handleChange}
+    inputMode="tel"
+    pattern="^\+?\d{7,15}$"
+    placeholder=""
+    className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none"
+  />
+</FormGroup>
 
-          <FormGroup>
-            <label htmlFor="email" className="text-sm text-gray-600">Email</label>
-            <input type="text" id="email" required onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
-          </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="bookAt" className="text-sm text-gray-600">Booking Date</label>
-            <input type="date" id="bookAt" required onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
-          </FormGroup>
+  <FormGroup>
+    <label htmlFor="email" className="text-sm text-gray-600">Email <span className="text-red-500">*</span></label>
+    <input type="text" id="email" required onChange={handleChange}
+      className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
+  </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="guestSize" className="text-sm text-gray-600">Number of Guests</label>
-            <input type="number" id="guestSize" min="1" required onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
-          </FormGroup>
+  <FormGroup>
+    <label htmlFor="bookAt" className="text-sm text-gray-600">Booking Date <span className="text-red-500">*</span></label>
+    <input type="date" id="bookAt" required onChange={handleChange}
+      className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
+  </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="vehicleType" className="text-sm text-gray-600">Vehicle Type</label>
-            <select id="vehicleType" name="vehicleType" value={selectedType} onChange={handleSelectChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none">
-              <option value="" disabled>Select a Vehicle Type</option>
-              <option value="Sedan">Sedan</option>
-              <option value="Sedan-VIP">Sedan-VIP</option>
-              <option value="SUV">SUV</option>
-              <option value="SUV-VIP">SUV-VIP</option>
-              <option value="High-Roof-Van">High Roof Van</option>
-              <option value="Bus">Bus</option>
-            </select>
-          </FormGroup>
+  <FormGroup>
+    <label htmlFor="guestSize" className="text-sm text-gray-600">Number of Guests <span className="text-red-500">*</span></label>
+    <input type="number" id="guestSize" min="1" required onChange={handleChange}
+      className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
+  </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="vehicles" className="text-sm text-gray-600">Number of Vehicles</label>
-            <input type="number" id="vehicles" min="1" required onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
-          </FormGroup>
+  <FormGroup>
+    <label htmlFor="vehicleType" className="text-sm text-gray-600">Vehicle Type <span className="text-red-500">*</span></label>
+    <select 
+      id="vehicleType" 
+      name="vehicleType" 
+      value={selectedType} 
+      onChange={handleSelectChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+      required
+      disabled={loading}
+    >
+      <option value="" disabled>
+        {loading ? "Loading vehicles..." : "Select a Vehicle Type"}
+      </option>
+      {vehicles.map((vehicle) => (
+        <option key={vehicle._id} value={vehicle.title}>
+          {vehicle.title}
+        </option>
+      ))}
+    </select>
+  </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="accommodationType" className="text-sm text-gray-600">Hotel Star Class</label>
-            <select id="accommodationType" name="accommodationType" value={selectedStar} onChange={handleSelectChange}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none">
-              <option value="" disabled>Select Accommodation Type</option>
-              <option value="other">Other (please specify)</option>
-              <option value="1_star">1 Star ⭐</option>
-              <option value="2_star">2 Stars ⭐⭐</option>
-              <option value="3_star">3 Stars ⭐⭐⭐</option>
-              <option value="4_star">4 Stars ⭐⭐⭐⭐</option>
-              <option value="5_star">5 Stars ⭐⭐⭐⭐⭐</option>
-            </select>
-          </FormGroup>
+  <FormGroup>
+    <label htmlFor="vehicles" className="text-sm text-gray-600">Number of Vehicles <span className="text-red-500">*</span></label>
+    <input type="number" id="vehicles" min="1" required onChange={handleChange}
+      className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
+  </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="bedrooms" className="text-sm text-gray-600">Number of Bedrooms</label>
-            <input type="number" id="bedrooms" min="1" required onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
-          </FormGroup>
+  <FormGroup>
+    <label htmlFor="accommodationType" className="text-sm text-gray-600">Hotel Star Class <span className="text-red-500">*</span></label>
+    <select id="accommodationType" name="accommodationType" value={selectedStar} onChange={handleSelectChange}
+      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none"
+      required>
+      <option value="" disabled>Select Accommodation Type</option>
+      <option value="3_star">3 stars ⭐⭐⭐</option>
+      <option value="4_star">4 stars ⭐⭐⭐⭐</option>
+      <option value="5_star">5 stars ⭐⭐⭐⭐⭐</option>
+      <option value="5+_star">5+ stars 🌟🌟🌟🌟🌟🌟</option>
+      <option value="Cabana">Cabana</option>
+      <option value="Tree_house">Tree House</option>
+      <option value="Beach_resort">Beach Resort</option>
+      <option value="Bungalows">Bungalows</option>
+      <option value="Villa">Villa</option>
+      <option value="Home_stays">Home stays</option>
+    </select>
+  </FormGroup>
 
-          <FormGroup>
-            <label htmlFor="preferences" className="text-sm text-gray-600">Preferences</label>
-            <textarea id="preferences" rows="4" placeholder="Enter special requests" required onChange={handleChange}
-              className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none"></textarea>
-          </FormGroup>
+  <FormGroup>
+    <label htmlFor="bedrooms" className="text-sm text-gray-600">Number of Bedrooms <span className="text-red-500">*</span></label>
+    <input type="number" id="bedrooms" min="1" required onChange={handleChange}
+      className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none" />
+  </FormGroup>
 
-          {/* <Button type="submit" className="w-full mt-4 bg-[#F4AC20] text-white font-semibold py-2 rounded-lg hover:bg-blue-700 transition">
-            Inquire Now
-          </Button> */}
-        </Form>
+  <FormGroup>
+    <label htmlFor="preferences" className="text-sm text-gray-600">Preferences</label>
+    <textarea id="preferences" rows="4" placeholder="Enter special requests" onChange={handleChange}
+      className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none"></textarea>
+  </FormGroup>
+
+  
+</Form>
       </div>
     </div>
   );

@@ -120,15 +120,22 @@ export default function UpdatePost() {
             value={formData.title}
           />
         </div>
-        <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3">
+        <div className="flex gap-4 items-center justify-between border-4 border-teal-500 border-dotted p-3" style={{ borderColor: '#F4AC20' }}>
           <FileInput type='file' accept='image/*' onChange={(e) => setFile(e.target.files[0])} />
-          <Button type='button' gradientDuoTone='purpleToBlue' size='sm' outline onClick={handleUploadImage} disabled={imageUploadProgress}>
-            {imageUploadProgress ? (
-              <div className="w-16 h-16">
-                <CircularProgressbar value={imageUploadProgress} text={`${imageUploadProgress || 0}%`} />
-              </div>
-            ) : ("Upload Image")}
-          </Button>
+          <Button 
+  type='button' 
+  style={{ backgroundColor: '#F4AC20', color: '#FFF', }}
+  size='sm' 
+  outline 
+  onClick={handleUploadImage} 
+  disabled={imageUploadProgress}
+>
+  {imageUploadProgress ? (
+    <div className="w-16 h-16">
+      <CircularProgressbar value={imageUploadProgress} text={`${imageUploadProgress || 0}%`} />
+    </div>
+  ) : ("Upload Image")}
+</Button>
         </div>
         {imageUploadError && <Alert color='failure'>{imageUploadError}</Alert>}
         {formData.image && (
