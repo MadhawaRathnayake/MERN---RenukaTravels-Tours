@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 
-import { Page, Text, View, Document, StyleSheet } from '@react-pdf/renderer';
+import { Page, Text, View, Document, StyleSheet ,Image } from '@react-pdf/renderer';
+import logo from '../../images/logo.png';
 
 const styles = StyleSheet.create({
   page: {
@@ -11,6 +12,11 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     borderBottom: '2 solid #E5E7EB',
     paddingBottom: 8,
+  },
+  logo: {
+    width: 120,
+    height: 50,
+    objectFit: 'contain', // Maintains aspect ratio
   },
   title: {
     fontSize: 24,
@@ -64,31 +70,31 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   timelineDayWrapper: {
-    marginBottom: 20, // Consistent spacing between days
+    marginBottom: 12, // More compact spacing
   },
   timelineItem: {
     paddingLeft: 15,
     borderLeft: '2 solid #3B82F6',
-    paddingBottom: 15, // Add padding at the bottom of each timeline item
+    paddingBottom: 8, // Reduced for space efficiency
   },
   timelineTitle: {
     fontSize: 14,
     fontWeight: 'bold',
-    marginBottom: 5,
+    marginBottom: 3, // Reduced 
     color: '#2563EB',
   },
   timelineSubtitle: {
     fontSize: 12,
     fontWeight: 'bold',
     color: '#4B5563',
-    marginBottom: 5,
+    marginBottom: 3, // Reduced
   },
   activityList: {
     marginLeft: 10,
   },
   activityItem: {
     fontSize: 11,
-    marginBottom: 3,
+    marginBottom: 2, // Reduced
     color: '#4B5563',
   },
   noActivities: {
@@ -109,13 +115,20 @@ const styles = StyleSheet.create({
   },
   timelineContent: {
     flex: 1,
-    paddingBottom: 40, // Add space for footer
+    paddingBottom: 25, // Minimal padding for footer
   },
+  pageHeader: {
+    marginBottom: 8,
+    paddingBottom: 5,
+    borderBottom: '1 solid #E5E7EB',
+  },
+  lastItemOnPage: {
+    marginBottom: 0,
+  }
 });
-
 const TourPDFDocument = ({ tour, destinationList, bookingData }) => {
-  const { title, days, destinations, desc } = tour || {};
-
+  const { title, days, destinations, desc  } = tour || {};
+  
   const idStrings = Array.isArray(destinations)
     ? destinations.map((item) => item._id)
     : [];
@@ -137,29 +150,46 @@ const TourPDFDocument = ({ tour, destinationList, bookingData }) => {
     });
   };
 
-  // Group destinations into pages (3 destinations per page)
-  const destinationsPerPage = 3;
-  const groupedDestinations = timelineDestinations.reduce((acc, dest, i) => {
-    const pageIndex = Math.floor(i / destinationsPerPage);
-    if (!acc[pageIndex]) acc[pageIndex] = [];
-    acc[pageIndex].push(dest);
-    return acc;
-  }, []);
+  // Calculate first page allocation based on content needs
+  // We estimate space consumption and allocate items accordingly
+  // Adjust space estimate based on whether booking data is present
+  const contentSizeEstimate = bookingData ? 200 : 100; // Less space used when no booking data
+  const timelineItemHeight = 95; // Estimated average height of a timeline item in pixels
+  const pageHeight = 750; // Estimated usable height of A4 page in pixels after margins
+  
+  // Calculate how many destination items we can fit on first page
+  const remainingFirstPageSpace = pageHeight - contentSizeEstimate;
+  const firstPageItems = Math.max(1, Math.floor(remainingFirstPageSpace / timelineItemHeight));
+
+  // First page destinations
+  const firstPageContent = timelineDestinations.slice(0, firstPageItems);
+  
+  // Remaining destinations
+  const remainingDestinations = timelineDestinations.slice(firstPageItems);
+  
+  // Calculate how many items can fit on subsequent pages
+  const subsequentPageContentSize = 50; // Header size estimate
+  const itemsPerSubsequentPage = Math.floor((pageHeight - subsequentPageContentSize) / timelineItemHeight);
+
+  // Create pages with maximum items per page
+  const subsequentPages = [];
+  for (let i = 0; i < remainingDestinations.length; i += itemsPerSubsequentPage) {
+    subsequentPages.push(remainingDestinations.slice(i, i + itemsPerSubsequentPage));
+  }
 
   const renderTimelineDay = (destination, index, totalDestinations, isLastOnPage) => {
     const travelRoute = index === 0
       ? `Airport → ${destination.destinationName}`
       : index === totalDestinations - 1
       ? `${destination.destinationName} → Airport`
-      : `${timelineDestinations[index - 1].destinationName} → ${destination.destinationName}`;
+      : `${timelineDestinations[index - 1]?.destinationName || 'Previous Location'} → ${destination.destinationName}`;
 
     return (
       <View 
         key={destination._id} 
         style={[
           styles.timelineDayWrapper,
-          // Remove margin bottom for last item on the page
-          isLastOnPage && { marginBottom: 0 }
+          isLastOnPage && styles.lastItemOnPage // No bottom margin for last item
         ]}
       >
         <View style={styles.timelineItem}>
@@ -190,10 +220,19 @@ const TourPDFDocument = ({ tour, destinationList, bookingData }) => {
   return (
     <Document>
       {/* First page with header info */}
-      <Page size="A4" style={styles.page}>
+      <Page size="A4" style={styles.page} wrap={true}>
         {/* Title and Basic Info Section */}
         <View style={styles.header}>
+        
+    <View style={styles.logoContainer}>
+      <Image
+        src={logo}
+        style={styles.logo}
+      />
+    </View>
+  
           <Text style={styles.title}>{title}</Text>
+          
           <View style={styles.infoGrid}>
             <View style={styles.infoItem}>
               <Text style={styles.text}>
@@ -204,13 +243,13 @@ const TourPDFDocument = ({ tour, destinationList, bookingData }) => {
             <View style={styles.infoItem}>
               <Text style={styles.text}>
                 <Text style={styles.boldText}>Destinations: </Text>
-                {destinations?.length || 0} locations
+                {timelineDestinations.length || 0} locations
               </Text>
             </View>
           </View>
         </View>
 
-        {/* Booking Details Section */}
+        {/* Booking Details Section - Only render if bookingData exists */}
         {bookingData && (
           <View style={styles.bookingSection}>
             <Text style={styles.subtitle}>Booking Details</Text>
@@ -263,8 +302,6 @@ const TourPDFDocument = ({ tour, destinationList, bookingData }) => {
                   {bookingData.bedrooms} bedroom(s)
                 </Text>
               </View>
-
-
             </View>
             {bookingData.preferences && (
               <View style={{ marginTop: 10 }}>
@@ -285,12 +322,12 @@ const TourPDFDocument = ({ tour, destinationList, bookingData }) => {
         <View style={styles.timelineSection}>
           <Text style={styles.subtitle}>Travel Itinerary</Text>
           <View style={styles.timelineContent}>
-            {groupedDestinations[0]?.map((destination, i) => 
+            {firstPageContent.map((destination, i) => 
               renderTimelineDay(
                 destination, 
                 i, 
                 timelineDestinations.length,
-                i === groupedDestinations[0].length - 1
+                i === firstPageContent.length - 1
               )
             )}
           </View>
@@ -301,23 +338,29 @@ const TourPDFDocument = ({ tour, destinationList, bookingData }) => {
         </View>
       </Page>
 
-      {/* Additional pages for remaining timeline items */}
-      {groupedDestinations.slice(1).map((pageDestinations, pageIndex) => (
-        <Page key={pageIndex + 1} size="A4" style={styles.page}>
+      {/* Subsequent pages with maximum timeline items */}
+      {subsequentPages.map((pageDestinations, pageIndex) => (
+        <Page key={pageIndex + 1} size="A4" style={styles.page} wrap={true}>
+          {/* Add page header for continuity */}
+          <View style={styles.pageHeader}>
+            <Text style={styles.subtitle}>Travel Itinerary (Continued)</Text>
+          </View>
+          
           <View style={styles.timelineSection}>
             <View style={styles.timelineContent}>
               {pageDestinations.map((destination, i) => 
                 renderTimelineDay(
                   destination,
-                  (pageIndex + 1) * destinationsPerPage + i,
+                  firstPageItems + (pageIndex * itemsPerSubsequentPage) + i,
                   timelineDestinations.length,
                   i === pageDestinations.length - 1
                 )
               )}
             </View>
           </View>
+          
           <View style={styles.pageFooter}>
-            <Text>Document generated on {formatDate(new Date().toISOString())}</Text>
+            <Text>Document generated on {formatDate(new Date().toISOString())} - Page {pageIndex + 2}</Text>
           </View>
         </Page>
       ))}
