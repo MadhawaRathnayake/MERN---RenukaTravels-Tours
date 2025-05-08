@@ -69,7 +69,7 @@ const TourDetails = () => {
                     <strong>Days:</strong> {days}
                   </span>
                   <span className="text-sm font-medium text-gray-600">
-                    <strong>Destinations:</strong> {destinations?.length || 0}
+                    <strong>Destinations:</strong> {destinations?.length -1 || 0}
                   </span>
                 </div>
                 <h5 className="text-lg font-semibold mb-2">Description</h5>
