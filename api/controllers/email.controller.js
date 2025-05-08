@@ -44,11 +44,11 @@ const formatDate = (dateString) => {
 export const sendTourEmail = async (req, res) => {
   try {
     const { email, tour, destinationList, bookingData, pdfBuffer } = req.body;
-    console.log(process.env.G_MAIL);
+    // console.log(process.env.G_MAIL);
 
-    console.log("Sending email to:", email);
-    console.log("Tour title:", tour?.title);
-    console.log("PDF buffer exists:", !!pdfBuffer);
+    // console.log("Sending email to:", email);
+    // console.log("Tour title:", tour?.title);
+    // console.log("PDF buffer exists:", !!pdfBuffer);
 
     if (!email || !tour || !pdfBuffer) {
       return res.status(400).json({
@@ -62,7 +62,7 @@ export const sendTourEmail = async (req, res) => {
 
     const mailOptions = {
       from: process.env.G_MAIL,
-      to: "renukatours94@gmail.com",
+      to: [email, "renukatours94@gmail.com"],
       subject: `Your Tour Itinerary: ${tour.title}`,
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
