@@ -96,115 +96,6 @@
 //     }
 // }
 
-// pipeline {
-//     agent any
-
-//     environment {
-//         AZURE_CREDENTIALS = credentials('azurecredentials')
-//         AZ_TENANT_ID      = '4f7d0492-1764-4824-8f60-f15e6d51cd70'
-//         ACR_NAME          = 'TravelWebApp'
-//         ACR_LOGIN_SERVER  = "travelwebapp.azurecr.io"
-//         IMAGE_NAME        = "travelapp-image"
-//     }
-
-//     stages {
-//         stage('Checkout Code') {
-//             steps {
-//                 deleteDir()
-//                 git url: 'https://github.com/MadhawaRathnayake/MERN---RenukaTravels-Tours.git', branch: 'main'
-//             }
-//         }
-
-//         // ✅ Securely Write .env files using Jenkins Credentials
-//         stage('Write Environment Files') {
-//             steps {
-//                 withCredentials([ 
-//                     string(credentialsId: 'env-backend', variable: 'BACK_ENV'),
-//                     string(credentialsId: 'env-frontend', variable: 'FRONT_ENV')
-//                 ]) {
-//                     writeFile file: '.env', text: "${BACK_ENV}"
-//                     writeFile file: 'client/.env', text: "${FRONT_ENV}"
-//                 }
-//             }
-//         }
-
-//         stage('Login to ACR') {
-//             steps {
-//                 script {
-//                     sh '''
-//                         az login --service-principal -u $AZURE_CREDENTIALS_USR -p $AZURE_CREDENTIALS_PSW --tenant $AZ_TENANT_ID
-//                         az acr login -n $ACR_NAME --expose-token
-
-//                         ACR_USER=$(az acr credential show -n $ACR_NAME --query "username" -o tsv)
-//                         ACR_PWD=$(az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv)
-//                         docker login $ACR_LOGIN_SERVER -u $ACR_USER -p $ACR_PWD
-//                     '''
-//                 }
-//             }
-//         }
-
-//         stage('Build and Push Docker Image') {
-//             steps {
-//                 script {
-//                     sh '''
-//                         docker build \
-//                             --build-arg BACK_ENV=${BACK_ENV} \
-//                             --build-arg FRONT_ENV=${FRONT_ENV} \
-//                             -t $ACR_LOGIN_SERVER/$IMAGE_NAME .
-//                         docker push $ACR_LOGIN_SERVER/$IMAGE_NAME
-//                     '''
-//                 }
-//             }
-//         }
-
-//         stage('Get AKS Credentials') {
-//             steps {
-//                 sh '''
-//                     az aks get-credentials --resource-group Travel_Agency --name TravelWebApp --overwrite-existing
-//                 '''
-//             }
-//         }
-
-//         stage('Create Kubernetes Secret for ACR') {
-//             steps {
-//                 sh '''
-//                     USERNAME=$(az acr credential show -n $ACR_NAME --query "username" -o tsv)
-//                     PASSWORD=$(az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv)
-
-//                     kubectl create secret docker-registry acr-auth \
-//                       --docker-server=$ACR_LOGIN_SERVER \
-//                       --docker-username=$USERNAME \
-//                       --docker-password=$PASSWORD \
-//                       --dry-run=client -o yaml | kubectl apply -f -
-//                 '''
-//             }
-//         }
-
-//         stage('Apply Kubernetes Deployment') {
-//             steps {
-//                 sh '''
-//                     kubectl apply -f kubernetes/deployment.yml
-//                     kubectl get deployments
-//                     kubectl rollout restart deployment travelapp-deployment
-//                     kubectl rollout status deployment travelapp-deployment
-//                     kubectl apply -f kubernetes/deployment.yml
-//                 '''
-//             }
-//         }
-
-//         stage('Post Actions') {
-//             steps {
-//                 script {
-//                     currentBuild.result = 'SUCCESS'
-//                     echo "Pipeline execution completed successfully."
-//                 }
-//             }
-//         }
-//     }
-// }
-
-
-// Jenkinsfile
 pipeline {
     agent any
 
@@ -224,16 +115,14 @@ pipeline {
             }
         }
 
-        // Write backend and frontend .env files from Jenkins credentials
+        // ✅ Securely Write .env files using Jenkins Credentials
         stage('Write Environment Files') {
             steps {
                 withCredentials([ 
                     string(credentialsId: 'env-backend', variable: 'BACK_ENV'),
                     string(credentialsId: 'env-frontend', variable: 'FRONT_ENV')
                 ]) {
-                    // backend .env for Node at runtime
                     writeFile file: '.env', text: "${BACK_ENV}"
-                    // frontend .env for Vite at build time
                     writeFile file: 'client/.env', text: "${FRONT_ENV}"
                 }
             }
@@ -241,23 +130,30 @@ pipeline {
 
         stage('Login to ACR') {
             steps {
-                sh '''
-                    az login --service-principal -u $AZURE_CREDENTIALS_USR -p $AZURE_CREDENTIALS_PSW --tenant $AZ_TENANT_ID
-                    az acr login -n $ACR_NAME --expose-token
-                    ACR_USER=$(az acr credential show -n $ACR_NAME --query "username" -o tsv)
-                    ACR_PWD=$(az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv)
-                    docker login $ACR_LOGIN_SERVER -u $ACR_USER -p $ACR_PWD
-                '''
+                script {
+                    sh '''
+                        az login --service-principal -u $AZURE_CREDENTIALS_USR -p $AZURE_CREDENTIALS_PSW --tenant $AZ_TENANT_ID
+                        az acr login -n $ACR_NAME --expose-token
+
+                        ACR_USER=$(az acr credential show -n $ACR_NAME --query "username" -o tsv)
+                        ACR_PWD=$(az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv)
+                        docker login $ACR_LOGIN_SERVER -u $ACR_USER -p $ACR_PWD
+                    '''
+                }
             }
         }
 
         stage('Build and Push Docker Image') {
             steps {
-                sh '''
-                    docker build \
-                        -t $ACR_LOGIN_SERVER/$IMAGE_NAME .
-                    docker push $ACR_LOGIN_SERVER/$IMAGE_NAME
-                '''
+                script {
+                    sh '''
+                        docker build \
+                            --build-arg BACK_ENV=${BACK_ENV} \
+                            --build-arg FRONT_ENV=${FRONT_ENV} \
+                            -t $ACR_LOGIN_SERVER/$IMAGE_NAME .
+                        docker push $ACR_LOGIN_SERVER/$IMAGE_NAME
+                    '''
+                }
             }
         }
 
@@ -274,6 +170,7 @@ pipeline {
                 sh '''
                     USERNAME=$(az acr credential show -n $ACR_NAME --query "username" -o tsv)
                     PASSWORD=$(az acr credential show -n $ACR_NAME --query "passwords[0].value" -o tsv)
+
                     kubectl create secret docker-registry acr-auth \
                       --docker-server=$ACR_LOGIN_SERVER \
                       --docker-username=$USERNAME \
@@ -283,13 +180,24 @@ pipeline {
             }
         }
 
-        stage('Deploy to AKS') {
+        stage('Apply Kubernetes Deployment') {
             steps {
                 sh '''
                     kubectl apply -f kubernetes/deployment.yml
+                    kubectl get deployments
                     kubectl rollout restart deployment travelapp-deployment
                     kubectl rollout status deployment travelapp-deployment
+                    kubectl apply -f kubernetes/deployment.yml
                 '''
+            }
+        }
+
+        stage('Post Actions') {
+            steps {
+                script {
+                    currentBuild.result = 'SUCCESS'
+                    echo "Pipeline execution completed successfully."
+                }
             }
         }
     }
