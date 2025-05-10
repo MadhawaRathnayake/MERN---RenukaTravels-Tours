@@ -472,7 +472,7 @@ export default function DashDestinations() {
                 )}
               </>
             ) : (
-              <p className="text-center py-4">You have no destinations yet!</p>
+              <p className="text-center text-lg py-4 animate-pulse">Loading...!</p>
             )}
           </div>
 

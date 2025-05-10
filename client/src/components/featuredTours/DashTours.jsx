@@ -63,7 +63,9 @@ export default function DashTours() {
       if (!res.ok) {
         console.log(data.message);
       } else {
-        setUserTours((prev) => prev.filter((tour) => tour._id !== tourIdToDelete));
+        setUserTours((prev) =>
+          prev.filter((tour) => tour._id !== tourIdToDelete)
+        );
       }
     } catch (error) {
       console.log(error.message);
@@ -73,7 +75,7 @@ export default function DashTours() {
   return (
     <div className="p-4 w-full overflow-x-auto">
       <div className="flex justify-between items-center mb-4">
-      <h2 className="text-lg md:text-3xl font-semibold text-gray-900 text-center">
+        <h2 className="text-lg md:text-3xl font-semibold text-gray-900 text-center">
           <span className="text-[#F4AC20]">ALL</span> TOURS
         </h2>
         <Link to="/dashboard?tab=createtour">
@@ -97,7 +99,9 @@ export default function DashTours() {
             {userTours.map((tour) => (
               <Table.Body key={tour._id} className="divide-y">
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
-                  <Table.Cell>{new Date(tour.updatedAt).toLocaleDateString()}</Table.Cell>
+                  <Table.Cell>
+                    {new Date(tour.updatedAt).toLocaleDateString()}
+                  </Table.Cell>
                   <Table.Cell>
                     <Link to={`/tour/${tour._id}`}>
                       <img
@@ -128,7 +132,10 @@ export default function DashTours() {
                     </span>
                   </Table.Cell>
                   <Table.Cell>
-                    <Link className="text-teal-500 hover:underline" to={`/update-tour/${tour._id}`}>
+                    <Link
+                      className="text-teal-500 hover:underline"
+                      to={`/update-tour/${tour._id}`}
+                    >
                       Edit
                     </Link>
                   </Table.Cell>
@@ -147,10 +154,15 @@ export default function DashTours() {
           )}
         </div>
       ) : (
-        <p className="text-center text-gray-600">You have no tours yet.</p>
+        <p className="text-center text-lg py-4 animate-pulse">Loading...!</p>
       )}
 
-      <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
+      <Modal
+        show={showModal}
+        onClose={() => setShowModal(false)}
+        popup
+        size="md"
+      >
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">

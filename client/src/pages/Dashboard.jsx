@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 import DashSidebar from "../components/DashSidebar";
 import DashProfile from "../components/DashProfile";
 import DashHotels from "../components/DashHotels";
@@ -17,9 +18,22 @@ import DashMyTravelPlan from "../components/DashTravelPlan";
 
 function Dashboard() {
   const location = useLocation();
+  const navigate = useNavigate();
   const [tab, setTab] = useState("");
-
+  const { currentUser } = useSelector((state) => state.user);
   const [isMobile, setIsMobile] = useState(false);
+
+  // Tabs that should be restricted to admin users
+  const adminTabs = [
+    "users",
+    "gallery",
+    "reviews",
+    "hotels",
+    "tours",
+    "destinations",
+    "createtour",
+    "createvehicle",
+  ];
 
   useEffect(() => {
     const handleResize = () => {
@@ -34,10 +48,18 @@ function Dashboard() {
   useEffect(() => {
     const urlParams = new URLSearchParams(location.search);
     const tabFromUrl = urlParams.get("tab");
+
     if (tabFromUrl) {
-      setTab(tabFromUrl);
+      // Check if non-admin is trying to access admin-only tab
+      if (adminTabs.includes(tabFromUrl) && !currentUser?.isAdmin) {
+        navigate("/dashboard?tab=dash", { replace: true }); // redirect to a safe tab
+      } else {
+        setTab(tabFromUrl);
+      }
+    } else {
+      setTab("dash"); // default fallback
     }
-  }, [location.search]);
+  }, [location.search, currentUser, navigate]);
 
   const renderContent = () => {
     switch (tab) {
@@ -73,24 +95,22 @@ function Dashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="max-w-7xl mx-auto px-4 py-4 mb-8 sm:px-6 lg:px-8">
       {/* Mobile Layout */}
-      {isMobile && (
+      {isMobile ? (
         <div className="flex flex-col w-full">
           <div className="w-full mb-4">
             <DashSidebar />
           </div>
           <div className="w-full">{renderContent()}</div>
         </div>
-      )}
-
-      {/* Desktop Layout */}
-      {!isMobile && (
+      ) : (
+        // Desktop Layout
         <div className="flex flex-row py-8 shadow-xl">
           <div className="w-56">
             <DashSidebar />
           </div>
-          <div className="flex-1 pl-4">{renderContent()}</div>
+          <div className="flex-1 min-h-[50vh] pl-4">{renderContent()}</div>
         </div>
       )}
     </div>
