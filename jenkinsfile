@@ -116,17 +116,20 @@ pipeline {
         }
 
         // ✅ Securely Write .env files using Jenkins Credentials
-        stage('Write Environment Files') {
-            steps {
-                withCredentials([ 
-                    string(credentialsId: 'env-backend', variable: 'BACK_ENV'),
-                    string(credentialsId: 'env-frontend', variable: 'FRONT_ENV')
-                ]) {
-                    writeFile file: '.env', text: "${BACK_ENV}"
-                    writeFile file: 'client/.env', text: "${FRONT_ENV}"
-                }
-            }
+       stage('Write Environment Files') {
+    steps {
+        withCredentials([
+            file(credentialsId: 'env-backend', variable: 'BACK_ENV_FILE'),
+            file(credentialsId: 'env-frontend', variable: 'FRONT_ENV_FILE')
+        ]) {
+            sh '''
+                cp "$BACK_ENV_FILE" .env
+                cp "$FRONT_ENV_FILE" client/.env
+            '''
         }
+    }
+}
+
 
         stage('Login to ACR') {
             steps {
