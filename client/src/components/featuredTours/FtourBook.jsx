@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { Form, FormGroup, Button } from 'reactstrap';
 import { BASE_URL } from '../../utils/config';
+import axios from "axios";
 
 const FtourBooking = ({ tour, onBookingUpdate }) => {
   const { title } = tour;
@@ -33,9 +34,9 @@ const FtourBooking = ({ tour, onBookingUpdate }) => {
     const fetchVehicles = async () => {
       setLoading(true);
       try {
-        const response = await fetch(`${BASE_URL}/vehicles/getvehicles`);
-        const data = await response.json();
-        setVehicles(data.vehicles || []);
+       const response = await axios.get('/api/vehicles/getvehicles');
+setVehicles(response.data.vehicles || []);
+
       } catch (error) {
         console.error("Error fetching vehicles:", error);
         setError("Failed to load vehicle options. Please try again later.");

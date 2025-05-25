@@ -74,7 +74,6 @@ export const SignIn = async (req, res, next) => {
 
 export const Google = async (req, res, next) => {
   const { email, name, googlePhotoUrl } = req.body;
-  console.log('Received googlePhotoUrl:', googlePhotoUrl);
   try {
       const user = await User.findOne({ email });
       if (user) {
@@ -90,7 +89,6 @@ export const Google = async (req, res, next) => {
           res.status(200).cookie('access_token', token, {
               httpOnly: true,
           }).json(rest);
-          console.log('Existing user response data:', rest);
       } else {
           // new user, create a new entry
           const generatedPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
@@ -101,11 +99,9 @@ export const Google = async (req, res, next) => {
               password: hashedPassword,
               profilePicture: googlePhotoUrl,
           });
-          console.log('New user data:', newUser);
           await newUser.save();
           const token = jwt.sign({ id: newUser._id, isAdmin:newUser.isAdmin }, process.env.JWT_SECRET_KEY);
           const { password, ...rest } = newUser._doc;
-          console.log('New user response data:', rest);
           res.status(200).cookie('access_token', token, {
               httpOnly: true,
           }).json(rest);

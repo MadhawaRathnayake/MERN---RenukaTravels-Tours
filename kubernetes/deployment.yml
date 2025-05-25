@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: travelapp-deployment
+  labels:
+    app: travelapp
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: travelapp
+  template:
+    metadata:
+      labels:
+        app: travelapp
+    spec:
+      containers:
+        - name: travelapp-container
+          image: travelwebapp.azurecr.io/travelapp-image:latest
+          ports:
+            - containerPort: 3000
+          imagePullPolicy: Always
+          # Explicitly set critical environment variables
+          env:
+            - name: FIREBASE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: FIREBASE_API_KEY
+            - name: VITE_FIREBASE_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: VITE_FIREBASE_API_KEY
+            - name: GOOGLE_MAP_API
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: GOOGLE_MAP_API
+            - name: VITE_GOOGLE_MAP_API
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: VITE_GOOGLE_MAP_API
+            - name: MAP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: MAP_ID
+            - name: VITE_MAP_ID
+              valueFrom:
+                secretKeyRef:
+                  name: travelapp-secrets
+                  key: VITE_MAP_ID
+          # Keep the rest of your env variables
+          envFrom:
+            - secretRef:
+                name: travelapp-secrets
+      imagePullSecrets:
+        - name: acr-auth
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: travelapp-service
+  annotations:
+    # Optional: use this if you want to bind a static public IP created in Azure
+    # service.beta.kubernetes.io/azure-load-balancer-resource-group: Travel_Agency
+    # service.beta.kubernetes.io/azure-load-balancer-ipv4: travelapp-public-ip
+spec:
+  type: LoadBalancer
+  selector:
+    app: travelapp
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3000
