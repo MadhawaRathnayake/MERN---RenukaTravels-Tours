@@ -6,7 +6,7 @@ import GalleryForm from "./galleryPage/GalleryForm";
 
 const GalleryTable = () => {
   const [galleries, setGalleries] = useState([]);
-  const [displayedCount, setDisplayedCount] = useState(10); // Show 5 items initially
+  const [displayedCount, setDisplayedCount] = useState(10);
   const [selectedGallery, setSelectedGallery] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showForm, setShowForm] = useState(false);
@@ -32,7 +32,6 @@ const GalleryTable = () => {
 
   return (
     <section className="container mx-auto p-4">
-      {/* Header and Add Button */}
       <div className="flex flex-wrap justify-between items-center mb-4">
         <h2 className="text-lg md:text-3xl font-semibold text-gray-900 text-center">
           <span className="text-[#F4AC20]">GALLERY</span> MANAGEMENT
@@ -44,8 +43,6 @@ const GalleryTable = () => {
           {showForm ? "Hide Form" : "Add an image"}
         </Button>
       </div>
-
-      {/* Table Wrapper for Mobile Scrolling */}
       {!showForm && (
         <div className="overflow-x-auto">
           <Table hoverable={true} className="w-full">
@@ -86,8 +83,6 @@ const GalleryTable = () => {
           </Table>
         </div>
       )}
-
-      {/* Show More Button */}
       {!showForm && displayedCount < galleries.length && (
         <div className="flex justify-center mt-4">
          
@@ -99,8 +94,6 @@ const GalleryTable = () => {
             </button>
         </div>
       )}
-
-      {/* Show Form if showForm is true */}
       {showForm && (
         <GalleryForm
           onSave={() => {
@@ -110,8 +103,6 @@ const GalleryTable = () => {
           initialValues={selectedGallery}
         />
       )}
-
-      {/* Delete Confirmation Modal */}
       <Modal show={showModal} onClose={() => setShowModal(false)} popup size="md">
         <Modal.Body>
           <div className="text-center">

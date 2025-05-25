@@ -2,7 +2,12 @@ import { FileInput, TextInput, Button, Alert } from "flowbite-react";
 import { useEffect, useState } from "react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  ref,
+  uploadBytesResumable,
+} from "firebase/storage";
 import { app } from "../../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
@@ -13,7 +18,7 @@ export default function UpdateTour() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
-  
+
   const [formData, setFormData] = useState({
     title: "",
     desc: "",
@@ -35,7 +40,7 @@ export default function UpdateTour() {
       try {
         const res = await fetch(`/api/tours/gettour/${tourId}`);
         const data = await res.json();
-       // console.log(data.destinations);
+        // console.log(data.destinations);
         if (!res.ok) {
           setPublishError(data.message);
           return;
@@ -43,21 +48,18 @@ export default function UpdateTour() {
         setPublishError(null);
         setFormData({
           ...data,
-          destinations: Array.isArray(data.destinations) 
-            ? data.destinations.map(destination => destination._id) 
+          destinations: Array.isArray(data.destinations)
+            ? data.destinations.map((destination) => destination._id)
             : [],
         });
-        
+
         console.log(formData.destinations);
       } catch (error) {
         setPublishError("Failed to fetch tour");
       }
     };
 
-   
-
     fetchTour();
-    
   }, [tourId]);
 
   const handleWaypointChange = (day, value) => {
@@ -164,29 +166,60 @@ export default function UpdateTour() {
           destinations={formData.destinations}
           onChange={handleWaypointChange}
         />
-        <div className="flex gap-4 items-center justify-between border-4 border-dotted p-3 border-[#F4AC20]">
-          <FileInput
-            type="file"
-            accept="image/*"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
-          <Button
-            type="button"
-            className="bg-[#F4AC20] text-white"
-            onClick={handleUploadImage}
-            disabled={!!imageUploadProgress}
-          >
-            {imageUploadProgress ? (
-              <div className="w-16 h-16">
-                <CircularProgressbar
-                  value={imageUploadProgress}
-                  text={`${imageUploadProgress}%`}
-                />
-              </div>
-            ) : (
-              "Upload Image"
-            )}
-          </Button>
+        <div className="flex flex-col sm:flex-row gap-4 items-center border-4 p-3">
+          <div className="w-full">
+            <FileInput
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const selectedFile = e.target.files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  const storage = getStorage(app);
+                  const fileName =
+                    new Date().getTime() + "-" + selectedFile.name;
+                  const storageRef = ref(storage, fileName);
+                  const uploadTask = uploadBytesResumable(
+                    storageRef,
+                    selectedFile
+                  );
+
+                  uploadTask.on(
+                    "state_changed",
+                    (snapshot) => {
+                      const progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      setImageUploadProgress(progress.toFixed(0));
+                    },
+                    (error) => {
+                      setImageUploadError("Image uploading failed!");
+                      setImageUploadProgress(null);
+                    },
+                    () => {
+                      getDownloadURL(uploadTask.snapshot.ref).then(
+                        (downloadURL) => {
+                          setImageUploadProgress(null);
+                          setImageUploadError(null);
+                          setFormData({
+                            ...formData,
+                            photo: downloadURL,
+                          });
+                        }
+                      );
+                    }
+                  );
+                }
+              }}
+            />
+          </div>
+          {imageUploadProgress && (
+            <div className="w-16 h-16 flex-shrink-0">
+              <CircularProgressbar
+                value={imageUploadProgress}
+                text={`${imageUploadProgress || 0}%`}
+              />
+            </div>
+          )}
         </div>
         {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
         {formData.photo && (

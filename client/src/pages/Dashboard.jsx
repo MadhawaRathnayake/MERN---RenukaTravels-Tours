@@ -75,8 +75,6 @@ function Dashboard() {
         return <DashDestinations />;
       case "tours":
         return <DashTours />;
-      case "createtour":
-        return <DashCreateTours />;
       case "vehicles":
         return <DashVehicles />;
       case "createvehicle":
