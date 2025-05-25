@@ -43,6 +43,7 @@ export default function DashDestinations() {
   const [publishError, setPublishError] = useState(null);
   const [activities, setActivities] = useState([]);
   const [activityInput, setActivityInput] = useState("");
+  const [additionalImageUploadProgress, setAdditionalImageUploadProgress] = useState(null);
 
   const navigate = useNavigate();
 
@@ -246,83 +247,115 @@ export default function DashDestinations() {
             )}
 
             {formData.destImage && (
-              <img
-                src={formData.destImage}
-                alt="upload"
-                className="w-full h-72 object-cover"
-              />
-            )}
+  <div className="mt-4">
+    <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+    <div className="relative">
+      <img 
+        src={formData.destImage} 
+        alt="Uploaded preview" 
+        className="max-w-full h-48 object-cover rounded-lg shadow-md border border-gray-200"
+      />
+      <div className="mt-2 text-xs text-green-600 flex items-center">
+        <svg className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+        </svg>
+        Image uploaded successfully
+      </div>
+    </div>
+  </div>
+)}
 
-            <div className="flex flex-col gap-4 border-4 p-3">
-              <label className="font-bold text-sm sm:text-base">
-                Upload Additional Images (Max 5)
-              </label>
-              <input
-                type="file"
-                accept="image/*"
-                className="w-full"
-                onChange={(e) => {
-                  const selectedFile = e.target.files[0];
-                  if (selectedFile && formData.additionalImages.length < 5) {
-                    const storage = getStorage(app);
-                    const fileName =
-                      new Date().getTime() + "-" + selectedFile.name;
-                    const storageRef = ref(storage, fileName);
-                    const uploadTask = uploadBytesResumable(
-                      storageRef,
-                      selectedFile
-                    );
+          <div className="flex flex-col gap-4 border-4 p-3">
+  <label className="font-bold text-sm sm:text-base">
+    Upload Additional Images (Max 5)
+  </label>
+  
+  <div className="flex flex-col sm:flex-row gap-4 items-center">
+    <div className="w-full">
+      <FileInput
+        type="file"
+        accept="image/*"
+        disabled={formData.additionalImages.length >= 5}
+        onChange={(e) => {
+          const selectedFile = e.target.files[0];
+          if (selectedFile && formData.additionalImages.length < 5) {
+            const storage = getStorage(app);
+            const fileName = new Date().getTime() + "-" + selectedFile.name;
+            const storageRef = ref(storage, fileName);
+            const uploadTask = uploadBytesResumable(storageRef, selectedFile);
 
-                    uploadTask.on(
-                      "state_changed",
-                      null,
-                      () => setImageUploadError("Upload failed!"),
-                      () => {
-                        getDownloadURL(uploadTask.snapshot.ref).then(
-                          (downloadURL) => {
-                            setFormData({
-                              ...formData,
-                              additionalImages: [
-                                ...formData.additionalImages,
-                                downloadURL,
-                              ],
-                            });
-                          }
-                        );
-                      }
-                    );
-                  }
-                }}
-              />
-            </div>
+            uploadTask.on(
+              "state_changed",
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                setAdditionalImageUploadProgress(progress.toFixed(0));
+              },
+              (error) => {
+                setImageUploadError("Upload failed!");
+                setAdditionalImageUploadProgress(null);
+              },
+              () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                  setAdditionalImageUploadProgress(null);
+                  setFormData({
+                    ...formData,
+                    additionalImages: [...formData.additionalImages, downloadURL],
+                  });
+                });
+              }
+            );
+          }
+        }}
+      />
+    </div>
+    
+    {additionalImageUploadProgress && (
+      <div className="w-16 h-16 flex-shrink-0">
+        <CircularProgressbar
+          value={additionalImageUploadProgress}
+          text={`${additionalImageUploadProgress || 0}%`}
+        />
+      </div>
+    )}
+  </div>
 
-            {formData.additionalImages && (
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                {formData.additionalImages.map((img, index) => (
-                  <div key={index} className="relative">
-                    <img
-                      src={img}
-                      alt={`upload-${index}`}
-                      className="w-full h-32 object-cover"
-                    />
-                    <button
-                      type="button"
-                      className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                      onClick={() => {
-                        setFormData({
-                          ...formData,
-                          additionalImages: formData.additionalImages.filter(
-                            (_, i) => i !== index
-                          ),
-                        });
-                      }}
-                    >
-                      X
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+  <div className="text-xs text-gray-500">
+    {formData.additionalImages.length}/5 images uploaded
+  </div>
+</div>
+
+{formData.additionalImages && formData.additionalImages.length > 0 && (
+  <div className="mt-4">
+    <p className="text-sm font-medium text-gray-700 mb-2">Additional Images Preview:</p>
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+      {formData.additionalImages.map((img, index) => (
+        <div key={index} className="relative">
+          <img
+            src={img}
+            alt={`upload-${index}`}
+            className="w-full h-32 object-cover rounded-lg shadow-md border border-gray-200"
+          />
+          <button
+            type="button"
+            className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-lg transition-colors duration-200"
+            onClick={() => {
+              setFormData({
+                ...formData,
+                additionalImages: formData.additionalImages.filter(
+                  (_, i) => i !== index
+                ),
+              });
+            }}
+          >
+            <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+            </svg>
+          </button>
+        </div>
+      ))}
+    </div>
+  </div>
+)}
 
             <div className="min-h-[300px]">
               <ReactQuill
@@ -412,10 +445,10 @@ export default function DashDestinations() {
                         Name
                       </Table.HeadCell>
                       <Table.HeadCell className="whitespace-nowrap">
-                        Delete
+                        Edit
                       </Table.HeadCell>
                       <Table.HeadCell className="whitespace-nowrap">
-                        Edit
+                        Delete
                       </Table.HeadCell>
                     </Table.Head>
                     {destinationsList.map((destination) => (
@@ -439,6 +472,14 @@ export default function DashDestinations() {
                             </Link>
                           </Table.Cell>
                           <Table.Cell>
+                            <Link
+                              className="text-teal-500 hover:underline"
+                              to={`/update-destination/${destination._id}`}
+                            >
+                              <span>Edit</span>
+                            </Link>
+                          </Table.Cell>
+                          <Table.Cell>
                             <span
                               onClick={() => {
                                 setShowModal(true);
@@ -449,14 +490,7 @@ export default function DashDestinations() {
                               Delete
                             </span>
                           </Table.Cell>
-                          <Table.Cell>
-                            <Link
-                              className="text-teal-500 hover:underline"
-                              to={`/update-destination/${destination._id}`}
-                            >
-                              <span>Edit</span>
-                            </Link>
-                          </Table.Cell>
+                          
                         </Table.Row>
                       </Table.Body>
                     ))}

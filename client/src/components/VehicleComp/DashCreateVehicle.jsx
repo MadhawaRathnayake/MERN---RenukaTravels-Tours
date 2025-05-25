@@ -18,44 +18,6 @@ export default function CreateVehicle() {
 
   const navigate = useNavigate();
 
-  const handleUploadImage = async () => {
-    try {
-      if (!file) {
-        setImageUploadError('Please select an image');
-        return;
-      }
-
-      setImageUploadError(null);
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + '-' + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = 
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
-        },
-        () => {
-          setImageUploadError("Image upload failed");
-          setImageUploadProgress(null);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            setFormData({ ...formData, image: downloadURL });
-          });
-        }
-      );
-    } catch (error) {
-      setImageUploadError("Image upload failed");
-      setImageUploadProgress(null);
-      console.log(error);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -100,41 +62,80 @@ export default function CreateVehicle() {
             )}
           />
         </div>
-        <div className="flex gap-4 items-center justify-between border-4 border-dotted p-3" style={{ borderColor: '#F4AC20' }}>
-          <FileInput 
-            type='file' 
-            accept='image/*' 
-            onChange={(e) => setFile(e.target.files[0])} 
-          />
-          <Button 
-            type='button' 
-            style={{ backgroundColor: '#F4AC20', color: '#FFF' }}
-            size='sm' 
-            outline 
-            onClick={handleUploadImage}
-            disabled={imageUploadProgress}
-          >
-            {imageUploadProgress ? (
-              <div className="w-16 h-16">
-                <CircularProgressbar value={imageUploadProgress} text={`${imageUploadProgress || 0}%`} />
-              </div>
-            ) : ("Upload Image")}
-          </Button>
+        
+        {/* Enhanced Image Upload Section - Automatic Upload */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center border-4 p-3">
+          <div className="w-full">
+            <FileInput 
+              type='file' 
+              accept='image/*' 
+              onChange={(e) => {
+                const selectedFile = e.target.files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  const storage = getStorage(app);
+                  const fileName = new Date().getTime() + '-' + selectedFile.name;
+                  const storageRef = ref(storage, fileName);
+                  const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+                  
+                  uploadTask.on(
+                    'state_changed',
+                    (snapshot) => {
+                      const progress = 
+                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      setImageUploadProgress(progress.toFixed(0));
+                    },
+                    (error) => {
+                      setImageUploadError("Image uploading failed!");
+                      setImageUploadProgress(null);
+                    },
+                    () => {
+                      getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                        setImageUploadProgress(null);
+                        setImageUploadError(null);
+                        setFormData({ ...formData, image: downloadURL });
+                      });
+                    }
+                  );
+                }
+              }}
+            />
+          </div>
+          {imageUploadProgress && (
+            <div className="w-16 h-16 flex-shrink-0">
+              <CircularProgressbar 
+                value={imageUploadProgress} 
+                text={`${imageUploadProgress || 0}%`} 
+              />
+            </div>
+          )}
         </div>
 
+        {/* Error Alert */}
         {imageUploadError && 
-          <Alert color='failure' style={{ backgroundColor: '#D8901A', color: '#FFF' }}>
+          <Alert color='failure'>
             {imageUploadError}
           </Alert>
         }
 
+        {/* Enhanced Image Preview Section */}
         {formData.image && (
-          <img 
-            src={formData.image} 
-            alt="Upload"
-            className="w-full h-72 object-cover"
-            style={{ borderColor: '#F4AC20' }}
-          />
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+            <div className="relative">
+              <img 
+                src={formData.image} 
+                alt="Vehicle preview"
+                className="max-w-full h-48 object-cover rounded-lg shadow-md border border-gray-200"
+              />
+              <div className="mt-2 text-xs text-green-600 flex items-center">
+                <svg className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                Image uploaded successfully
+              </div>
+            </div>
+          </div>
         )}
 
         <ReactQuill 
