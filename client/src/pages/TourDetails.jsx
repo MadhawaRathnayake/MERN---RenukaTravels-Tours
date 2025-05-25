@@ -4,7 +4,9 @@ import axios from 'axios';
 import TimelineComponent from '../components/shared/timeline';
 import FtourBooking from '../components/featuredTours/FtourBook';
 import EmailTourButton from '../components/featuredTours/EmailTourButton';
-
+import { PDFDownloadLink } from '@react-pdf/renderer';
+import TourPDFDocument from '../components/featuredTours/TourPdfDoc';
+import { MdOutlineFileDownload } from "react-icons/md";
 const TourDetails = () => {
   const { id } = useParams();
   const [tour, setTour] = useState(null);
@@ -43,7 +45,7 @@ const TourDetails = () => {
   if (loading) return <h4 className="text-center pt-5 text-lg font-semibold">Loading...</h4>;
   if (error) return <h4 className="text-center pt-5 text-lg font-semibold text-red-500">{error}</h4>;
   if (!tour || !destData) return <h4 className="text-center pt-5 text-lg font-semibold">No Tour Data Found</h4>;
-
+  
   const { title, destinations, days, photo, desc } = tour || {};
   const destinationList = destData?.destinations || [];
 
@@ -57,7 +59,7 @@ const TourDetails = () => {
                 <img
                   src={photo}
                   alt={title}
-                  className="w-full h-72 object-cover rounded-md mb-6"
+                  className="w-full h-80 object-cover rounded-md mb-6"
                 />
               )}
               <div className="tour__info">
@@ -77,6 +79,27 @@ const TourDetails = () => {
             <div className='mt-4'>
               <TimelineComponent dest_ids={destinations} dest_obj={destinationList} />
             </div>
+            <div>
+            <PDFDownloadLink
+                document={<TourPDFDocument tour={tour} destinationList={destinationList} bookingData={''} />}
+
+                fileName={`${tour.title}.pdf`}
+              >
+                {({ loading }) =>
+                  loading ? (
+                    <button className="bg-blue-500 text-white px-4 py-2 rounded-md">
+                      Loading PDF...
+                    </button>
+                  ) : (
+                    <button className="bg-blue-500 text-white ml-4 px-4 py-2 rounded-md inline-flex items-center space-x-2">
+                    <span>Tour Details</span>
+                    <MdOutlineFileDownload className="w-5 h-5" />
+                    </button>
+
+                  )
+                }
+              </PDFDownloadLink>
+            </div>
           </div>
           <div className="w-full lg:w-4/12 mt-6 lg:mt-0">
             <div className="ml-3 p-4 border border-gray-300 rounded-lg bg-white shadow-md">
@@ -88,6 +111,7 @@ const TourDetails = () => {
                   submit the form, we'll receive your inquiry. You can create multiple
                   inquiries. We'll contact you through the provided contact details
                   for further confirmation.
+                  You will receive an email with inquiry details.
                 </p>
               </div>
               <div className="ml-8 mt-4">
