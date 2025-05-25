@@ -5,13 +5,27 @@ export default function About() {
   return (
     <div className="bg-gradient-to-b from-[#fcf5f1] to-amber-50 min-h-screen">
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        {/* Hero Section */}
+        {/* Hero Section with Logo */}
         <motion.div 
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
           className="text-center mb-16"
         >
+          {/* Logo */}
+          <motion.div
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.6, delay: 0.2 }}
+            className="mb-8"
+          >
+            <img
+              src="https://firebasestorage.googleapis.com/v0/b/renuka-travels.appspot.com/o/Renuka%20Logo.png?alt=media&token=1e056f28-2bbd-4818-b0d3-54d2def3557d"
+              alt="Renuka Tours and Travels Logo"
+              className="h-24 md:h-32 mx-auto mb-4 drop-shadow-lg"
+            />
+          </motion.div>
+          
           <h1 className="text-4xl md:text-5xl font-bold text-gray-800 mb-4">
             Discover <span className="text-amber-500">Sri Lanka</span> with Us
           </h1>
@@ -28,20 +42,20 @@ export default function About() {
           className="flex flex-col lg:flex-row gap-10 items-center mb-24 overflow-hidden"
         >
           <div className="lg:w-1/2">
-  <motion.div 
-    initial={{ x: -50 }}
-    animate={{ x: 0 }}
-    transition={{ duration: 0.8, delay: 0.4 }}
-    className="relative"
-  >
-    <img
-      className="w-full h-auto rounded-2xl shadow-xl z-10 relative"
-      src="https://www.reddottours.com/uploads/Activities/Sri-Lanka-Waterfalls/Sri-Lanka-Waterfalls-gallery-pop-up-1-min.jpg"
-      alt="Beautiful Sri Lanka landscape"
-    />
-    <div className="absolute inset-0 border-4 border-amber-400 rounded-2xl -z-0 "></div>
-  </motion.div>
-</div>
+            <motion.div 
+              initial={{ x: -50 }}
+              animate={{ x: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="relative"
+            >
+              <img
+                className="w-full h-auto rounded-2xl shadow-xl z-10 relative"
+                src="https://www.reddottours.com/uploads/Activities/Sri-Lanka-Waterfalls/Sri-Lanka-Waterfalls-gallery-pop-up-1-min.jpg"
+                alt="Beautiful Sri Lanka landscape"
+              />
+              <div className="absolute inset-0 border-4 border-amber-400 rounded-2xl -z-0 "></div>
+            </motion.div>
+          </div>
           
           <motion.div 
             initial={{ x: 50 }}
@@ -133,7 +147,7 @@ export default function About() {
             <motion.div 
               initial={{ y: 20, opacity: 0 }}
               whileInView={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.5, delay:.3 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
               viewport={{ once: true }}
               className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1"
             >
@@ -177,9 +191,9 @@ export default function About() {
             Contact us today to start planning your perfect Sri Lankan adventure. Our team is ready to create a personalized experience just for you.
           </p>
           <a href="/customize">
-          <button className="bg-white text-amber-500 font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
-            Plan Your Journey
-          </button>
+            <button className="bg-white text-amber-500 font-bold py-3 px-8 rounded-full hover:shadow-lg transition-all duration-300 hover:scale-105">
+              Plan Your Journey
+            </button>
           </a>
         </motion.div>
       </section>
