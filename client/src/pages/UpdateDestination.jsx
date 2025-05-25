@@ -17,10 +17,11 @@ export default function UpdateDestination() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [imageUploadError, setImageUploadError] = useState(null);
+  const [additionalImageUploadProgress, setAdditionalImageUploadProgress] = useState(null);
   const [formData, setFormData] = useState({ additionalImages: [] });
   const [publishError, setPublishError] = useState(null);
-  const [activities, setActivities] = useState([]); // Added for activities
-  const [activityInput, setActivityInput] = useState(""); // Input for activities
+  const [activities, setActivities] = useState([]);
+  const [activityInput, setActivityInput] = useState("");
   const { destId } = useParams();
 
   const navigate = useNavigate();
@@ -38,7 +39,7 @@ export default function UpdateDestination() {
         if (res.ok) {
           setPublishError(null);
           setFormData(data.destinations[0]);
-          setActivities(data.destinations[0].activities || []); // Set activities from API response
+          setActivities(data.destinations[0].activities || []);
         }
       };
 
@@ -65,47 +66,9 @@ export default function UpdateDestination() {
     );
   };
 
-  const handleUpdloadImage = async () => {
-    try {
-      if (!file) {
-        setImageUploadError("Please select an image!");
-        return;
-      }
-      setImageUploadError(null);
-      const storage = getStorage(app);
-      const fileName = new Date().getTime() + "-" + file.name;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, file);
-
-      uploadTask.on(
-        "state_changed",
-        (snapshot) => {
-          const progress =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setImageUploadProgress(progress.toFixed(0));
-        },
-        () => {
-          setImageUploadError("Image uploading failed!");
-          setImageUploadProgress(null);
-        },
-        () => {
-          getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-            setImageUploadProgress(null);
-            setImageUploadError(null);
-            setFormData({ ...formData, destImage: downloadURL });
-          });
-        }
-      );
-    } catch (error) {
-      setImageUploadError("Image upload Failed!");
-      setImageUploadProgress(null);
-      console.log(error);
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const updatedFormData = { ...formData, activities }; // Include activities in the form data
+    const updatedFormData = { ...formData, activities };
     try {
       const res = await fetch(`/api/destination/update-dest/${formData._id}`, {
         method: "PUT",
@@ -148,49 +111,52 @@ export default function UpdateDestination() {
             value={formData.destinationName}
           />
         </div>
-        <div className="flex gap-4 items-center justify-between border-4 p-3">
-          <FileInput
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const selectedFile = e.target.files[0];
-              if (selectedFile) {
-                setFile(selectedFile);
-                // Start upload process immediately
-                const storage = getStorage(app);
-                const fileName = new Date().getTime() + "-" + selectedFile.name;
-                const storageRef = ref(storage, fileName);
-                const uploadTask = uploadBytesResumable(
-                  storageRef,
-                  selectedFile
-                );
 
-                uploadTask.on(
-                  "state_changed",
-                  (snapshot) => {
-                    const progress =
-                      (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                    setImageUploadProgress(progress.toFixed(0));
-                  },
-                  (error) => {
-                    setImageUploadError("Image uploading failed!");
-                    setImageUploadProgress(null);
-                  },
-                  () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then(
-                      (downloadURL) => {
-                        setImageUploadProgress(null);
-                        setImageUploadError(null);
-                        setFormData({ ...formData, destImage: downloadURL });
-                      }
-                    );
-                  }
-                );
-              }
-            }}
-          />
+        {/* Main Image Upload with improved styling */}
+        <div className="flex flex-col sm:flex-row gap-4 items-center border-4 p-3">
+          <div className="w-full">
+            <FileInput
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const selectedFile = e.target.files[0];
+                if (selectedFile) {
+                  setFile(selectedFile);
+                  const storage = getStorage(app);
+                  const fileName = new Date().getTime() + "-" + selectedFile.name;
+                  const storageRef = ref(storage, fileName);
+                  const uploadTask = uploadBytesResumable(
+                    storageRef,
+                    selectedFile
+                  );
+
+                  uploadTask.on(
+                    "state_changed",
+                    (snapshot) => {
+                      const progress =
+                        (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                      setImageUploadProgress(progress.toFixed(0));
+                    },
+                    (error) => {
+                      setImageUploadError("Image uploading failed!");
+                      setImageUploadProgress(null);
+                    },
+                    () => {
+                      getDownloadURL(uploadTask.snapshot.ref).then(
+                        (downloadURL) => {
+                          setImageUploadProgress(null);
+                          setImageUploadError(null);
+                          setFormData({ ...formData, destImage: downloadURL });
+                        }
+                      );
+                    }
+                  );
+                }
+              }}
+            />
+          </div>
           {imageUploadProgress && (
-            <div className="w-16 h-16">
+            <div className="w-16 h-16 flex-shrink-0">
               <CircularProgressbar
                 value={imageUploadProgress}
                 text={`${imageUploadProgress || 0}%`}
@@ -198,79 +164,118 @@ export default function UpdateDestination() {
             </div>
           )}
         </div>
+
         {imageUploadError && <Alert color="failure">{imageUploadError}</Alert>}
+
         {formData.destImage && (
-          <img
-            src={formData.destImage}
-            alt="upload"
-            className="w-full h-72 object-cover"
-          />
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-700 mb-2">Preview:</p>
+            <div className="relative">
+              <img 
+                src={formData.destImage} 
+                alt="Uploaded preview" 
+                className="max-w-full h-48 object-cover rounded-lg shadow-md border border-gray-200"
+              />
+              <div className="mt-2 text-xs text-green-600 flex items-center">
+                <svg className="h-4 w-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                </svg>
+                Image uploaded successfully
+              </div>
+            </div>
+          </div>
         )}
 
-        {/* Additional Images Section */}
+        {/* Additional Images Section with improved styling */}
         <div className="flex flex-col gap-4 border-4 p-3">
-          <label className="font-bold">Upload Additional Images (Max 5)</label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const selectedFile = e.target.files[0];
-              if (selectedFile && formData.additionalImages.length < 5) {
-                const storage = getStorage(app);
-                const fileName = new Date().getTime() + "-" + selectedFile.name;
-                const storageRef = ref(storage, fileName);
-                const uploadTask = uploadBytesResumable(
-                  storageRef,
-                  selectedFile
-                );
+          <label className="font-bold text-sm sm:text-base">
+            Upload Additional Images (Max 5)
+          </label>
+          
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="w-full">
+              <FileInput
+                type="file"
+                accept="image/*"
+                disabled={formData.additionalImages.length >= 5}
+                onChange={(e) => {
+                  const selectedFile = e.target.files[0];
+                  if (selectedFile && formData.additionalImages.length < 5) {
+                    const storage = getStorage(app);
+                    const fileName = new Date().getTime() + "-" + selectedFile.name;
+                    const storageRef = ref(storage, fileName);
+                    const uploadTask = uploadBytesResumable(storageRef, selectedFile);
 
-                uploadTask.on(
-                  "state_changed",
-                  null,
-                  () => setImageUploadError("Upload failed!"),
-                  () => {
-                    getDownloadURL(uploadTask.snapshot.ref).then(
-                      (downloadURL) => {
-                        setFormData({
-                          ...formData,
-                          additionalImages: [
-                            ...formData.additionalImages,
-                            downloadURL,
-                          ],
+                    uploadTask.on(
+                      "state_changed",
+                      (snapshot) => {
+                        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setAdditionalImageUploadProgress(progress.toFixed(0));
+                      },
+                      (error) => {
+                        setImageUploadError("Upload failed!");
+                        setAdditionalImageUploadProgress(null);
+                      },
+                      () => {
+                        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                          setAdditionalImageUploadProgress(null);
+                          setFormData({
+                            ...formData,
+                            additionalImages: [...formData.additionalImages, downloadURL],
+                          });
                         });
                       }
                     );
                   }
-                );
-              }
-            }}
-          />
-        </div>
-        {formData.additionalImages && (
-          <div className="grid grid-cols-3 gap-2">
-            {formData.additionalImages.map((img, index) => (
-              <div key={index} className="relative">
-                <img
-                  src={img}
-                  alt={`upload-${index}`}
-                  className="w-full h-32 object-cover"
+                }}
+              />
+            </div>
+            
+            {additionalImageUploadProgress && (
+              <div className="w-16 h-16 flex-shrink-0">
+                <CircularProgressbar
+                  value={additionalImageUploadProgress}
+                  text={`${additionalImageUploadProgress || 0}%`}
                 />
-                <button
-                  type="button"
-                  className="absolute top-0 right-0 bg-red-500 text-white p-1 rounded-full"
-                  onClick={() => {
-                    setFormData({
-                      ...formData,
-                      additionalImages: formData.additionalImages.filter(
-                        (_, i) => i !== index
-                      ),
-                    });
-                  }}
-                >
-                  X
-                </button>
               </div>
-            ))}
+            )}
+          </div>
+
+          <div className="text-xs text-gray-500">
+            {formData.additionalImages.length}/5 images uploaded
+          </div>
+        </div>
+
+        {formData.additionalImages && formData.additionalImages.length > 0 && (
+          <div className="mt-4">
+            <p className="text-sm font-medium text-gray-700 mb-2">Additional Images Preview:</p>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+              {formData.additionalImages.map((img, index) => (
+                <div key={index} className="relative">
+                  <img
+                    src={img}
+                    alt={`Additional upload ${index + 1}`}
+                    className="w-full h-32 object-cover rounded-lg shadow-md border border-gray-200"
+                  />
+                  <button
+                    type="button"
+                    className="absolute -top-2 -right-2 bg-red-500 hover:bg-red-600 text-white p-1.5 rounded-full shadow-lg transition-colors duration-200"
+                    onClick={() => {
+                      setFormData({
+                        ...formData,
+                        additionalImages: formData.additionalImages.filter(
+                          (_, i) => i !== index
+                        ),
+                      });
+                    }}
+                  >
+                    <svg className="w-3 h-3" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                    </svg>
+                  </button>
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
@@ -287,18 +292,18 @@ export default function UpdateDestination() {
 
         {/* Activities section */}
         <div className="flex flex-col gap-2">
-          <div className="flex gap-2 items-center">
+          <div className="flex flex-col sm:flex-row gap-2 items-center">
             <TextInput
               type="text"
               placeholder="Add an activity (e.g., Hiking, Swimming)"
               value={activityInput}
               onChange={(e) => setActivityInput(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleAddActivity(e)}
-              className="flex-1"
+              className="w-full"
             />
             <button
               type="button"
-              className="bg-[#ffffff] text-black py-2 px-6 rounded-lg hover:bg-[#f7dcbc] w-40 border-2 border-[#F4AC20]"
+              className="w-full sm:w-auto bg-[#ffffff] text-black py-2 px-6 rounded-lg hover:bg-[#f7dcbc] border-2 border-[#F4AC20]"
               onClick={handleAddActivity}
             >
               Add Activity
@@ -324,7 +329,7 @@ export default function UpdateDestination() {
           </div>
         </div>
 
-        <Button type="submit" color="warning">
+        <Button type="submit" color="warning" className="w-full sm:w-auto">
           Update Destination
         </Button>
         {publishError && (
