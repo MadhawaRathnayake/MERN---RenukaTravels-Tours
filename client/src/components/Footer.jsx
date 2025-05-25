@@ -10,7 +10,7 @@ const Footer = () => {
           {/* Logo and Tagline */}
           <div className="flex flex-col">
             <img
-              src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
+              src="https://firebasestorage.googleapis.com/v0/b/renuka-travels.appspot.com/o/Renuka%20Logo.png?alt=media&token=1e056f28-2bbd-4818-b0d3-54d2def3557d"
               alt="Renuka Tours & Travels"
               className="w-32 mb-4"
             />
