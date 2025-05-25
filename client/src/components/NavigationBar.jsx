@@ -93,8 +93,8 @@ export default function NavigationBar() {
             <div className="flex shrink-0 items-center">
               <Link to="/">
                 <img
-                  className="h-8 w-auto"
-                  src="https://firebasestorage.googleapis.com/v0/b/renuka-travels-and-tours.appspot.com/o/logo.png?alt=media&token=a7e8b83d-3459-463c-8a41-5439ec0b3f27"
+                  className="h-12 w-auto"
+                  src="https://firebasestorage.googleapis.com/v0/b/renuka-travels.appspot.com/o/Renuka%20Logo.png?alt=media&token=1e056f28-2bbd-4818-b0d3-54d2def3557d"
                   alt="Company Logo"
                 />
               </Link>
