@@ -8,7 +8,6 @@ import DashUsers from "../components/DashUsers";
 import DashboardComp from "../components/DashboardComp";
 import DashDestinations from "../components/DashDestinations";
 import DashTours from "../components/featuredTours/DashTours";
-import DashCreateTours from "../components/featuredTours/DashCreateTour";
 import DashVehicles from "../components/VehicleComp/DashVehicles";
 import DashBookings from "../components/DashBookings";
 import DashCreateVehicle from "../components/VehicleComp/DashCreateVehicle";
