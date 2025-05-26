@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 
 import { Page, Text, View, Document, StyleSheet ,Image } from '@react-pdf/renderer';
-import logo from '../../images/logo.png';
+import logo from '../../images/logo_t.png';
 
 const styles = StyleSheet.create({
   page: {
