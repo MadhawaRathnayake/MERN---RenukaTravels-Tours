@@ -3,7 +3,8 @@ import { useParams, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { BsChevronCompactLeft, BsChevronCompactRight } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
-import welcomeImg from "../images/Welcome.jpg";
+import welcomeImg from "../images/welcomeImage.jpg";
+import logoT from "../images/logo_t.png";
 
 export default function DestinationHome() {
   const { destSlug } = useParams();
@@ -11,120 +12,7 @@ export default function DestinationHome() {
   const [error, setError] = useState(false);
   const [destination, setDestination] = useState(null);
   const [destinationNames, setDestinationNames] = useState([]);
-  const [hotels, setHotels] = useState([]);
-  const [hotelLoading, setHotelLoading] = useState(true);
-  const [hotelError, setHotelError] = useState(false);
   const navigate = useNavigate();
-
-  const ImageSlider = ({ slides }) => {
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isFullScreen, setIsFullScreen] = useState(false);
-
-    const prevSlide = () => {
-      const isFirstSlide = currentIndex === 0;
-      const newIndex = isFirstSlide ? slides.length - 1 : currentIndex - 1;
-      setCurrentIndex(newIndex);
-    };
-
-    const nextSlide = () => {
-      const isLastSlide = currentIndex === slides.length - 1;
-      const newIndex = isLastSlide ? 0 : currentIndex + 1;
-      setCurrentIndex(newIndex);
-    };
-
-    const goToSlide = (slideIndex) => {
-      setCurrentIndex(slideIndex);
-    };
-
-    const toggleFullScreen = () => {
-      setIsFullScreen(!isFullScreen);
-    };
-
-    useEffect(() => {
-      const interval = setInterval(() => {
-        setCurrentIndex((prevIndex) => (prevIndex + 1) % slides.length);
-      }, 5000);
-      return () => clearInterval(interval);
-    }, [slides.length]);
-
-    return (
-      <>
-        <div className="mt-12">
-          <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="relative h-[400px] rounded-xl overflow-hidden group"
-          >
-            {/* Navigation Buttons */}
-            <div className="hidden group-hover:block absolute top-1/2 left-5 -translate-y-1/2 z-10 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/40 transition-all">
-              <BsChevronCompactLeft onClick={prevSlide} size={30} />
-            </div>
-            <div className="hidden group-hover:block absolute top-1/2 right-5 -translate-y-1/2 z-10 text-2xl rounded-full p-2 bg-black/20 text-white cursor-pointer hover:bg-black/40 transition-all">
-              <BsChevronCompactRight onClick={nextSlide} size={30} />
-            </div>
-            
-            {/* Image Container */}
-            <motion.div 
-              animate={{ scale: 1.05 }}
-              transition={{ 
-                duration: 10, 
-                repeat: Infinity, 
-                repeatType: "reverse" 
-              }}
-              style={{ backgroundImage: `url(${slides[currentIndex]})` }}
-              className="w-full h-full bg-center bg-cover cursor-pointer"
-              onClick={toggleFullScreen}
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
-          </motion.div>
-          
-          <div className="flex justify-center mt-4 space-x-3">
-            {slides.map((slide, slideIndex) => (
-              <button
-                key={slideIndex}
-                onClick={() => goToSlide(slideIndex)}
-                className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                  currentIndex === slideIndex ? "bg-amber-500 scale-125" : "bg-gray-300"
-                }`}
-                aria-label={`Go to slide ${slideIndex + 1}`}
-              />
-            ))}
-          </div>
-        </div>
-
-        {isFullScreen && (
-          <div className="fixed inset-0 bg-black bg-opacity-90 flex justify-center items-center z-50">
-            <div className="relative w-full h-full flex justify-center items-center">
-              <img
-                src={slides[currentIndex]}
-                alt={`Slide ${currentIndex + 1}`}
-                className="max-w-full max-h-full object-contain"
-              />
-              <button
-                className="absolute top-5 right-5 text-white text-3xl hover:text-amber-400 transition-colors duration-300"
-                onClick={toggleFullScreen}
-              >
-                <AiOutlineClose />
-              </button>
-              <button
-                className="absolute top-1/2 left-5 -translate-y-1/2 text-3xl text-white hover:text-amber-400 transition-colors duration-300"
-                onClick={prevSlide}
-              >
-                <BsChevronCompactLeft size={40} />
-              </button>
-              <button
-                className="absolute top-1/2 right-5 -translate-y-1/2 text-3xl text-white hover:text-amber-400 transition-colors duration-300"
-                onClick={nextSlide}
-              >
-                <BsChevronCompactRight size={40} />
-              </button>
-            </div>
-          </div>
-        )}
-      </>
-    );
-  };
 
   useEffect(() => {
     const fetchDestinations = async () => {
@@ -166,31 +54,6 @@ export default function DestinationHome() {
     };
     fetchDestinationNames();
   }, []);
-
-  useEffect(() => {
-    if (destination?.destinationName) {
-      const fetchHotels = async () => {
-        try {
-          setHotelLoading(true);
-          const res = await fetch(
-            `/api/hotels/hotels?city=${destination.destinationName}`
-          );
-          const data = await res.json();
-          if (!res.ok) {
-            setHotelError(true);
-            setHotelLoading(false);
-            return;
-          }
-          setHotels(data);
-          setHotelLoading(false);
-        } catch (error) {
-          setHotelError(true);
-          setHotelLoading(false);
-        }
-      };
-      fetchHotels();
-    }
-  }, [destination]);
 
   if (loading) {
     return (
@@ -235,14 +98,17 @@ export default function DestinationHome() {
           <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-transparent" />
         </div>
         
-        <div className="relative h-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-center items-center h-full pt-16">
+        <div className="relative flex flex-col justify-center items-center h-full max-w-7xl mx-auto px-4">
+          <div className="flex flex-col justify-center items-center">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
               className="text-center"
             >
+              <div className="w-full flex justify-center items-center">
+                <img src={logoT} alt="logo" className="w-36" />
+              </div>
               <h1 className="text-4xl md:text-6xl font-bold text-white mb-6">
                 Discover <span className="text-amber-400">Sri Lanka</span>
               </h1>
